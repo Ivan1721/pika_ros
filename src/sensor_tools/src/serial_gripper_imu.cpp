@@ -88,6 +88,7 @@ bool find_json(std::string &msg, int &start, int &end){
 class RosOperator: public rclcpp::Node{
 	public:
 	bool isGripper = false;
+	bool isHeader = false;
 
 	std::string msg;
 	std::string serialPort;
@@ -191,6 +192,8 @@ class RosOperator: public rclcpp::Node{
 		ctrlFreq = 1.0/ctrlRate;
 		if(serialPort == "/dev/ttyUSB60" || serialPort == "/dev/ttyUSB61")
 			isGripper = true;
+		if(serialPort == "/dev/ttyUSB70")
+			isHeader = true;
         char resolvedPath[PATH_MAX];
         int ret = readlink(serialPort.c_str(), resolvedPath, sizeof(resolvedPath));
 		if(ret >= 0){
@@ -259,23 +262,34 @@ class RosOperator: public rclcpp::Node{
 			serial->set_option(boost::asio::serial_port_base::parity(boost::asio::serial_port_base::parity::none));
 			serial->set_option(boost::asio::serial_port_base::flow_control(boost::asio::serial_port_base::flow_control::none));
 			
-			pubGripper = create_publisher<data_msgs::msg::Gripper>("/gripper/data", 1);
-			subGripper = this->create_subscription<data_msgs::msg::Gripper>("gripper/ctrl", 1, std::bind(&RosOperator::gripperCtrlHandler, this, std::placeholders::_1));
-			pubImu = create_publisher<sensor_msgs::msg::Imu>("/imu/data", 1);
-			pubGripperJointState = create_publisher<sensor_msgs::msg::JointState>("/gripper/joint_state", 1);
-			subJointStateCtrl = this->create_subscription<sensor_msgs::msg::JointState>("/gripper/joint_state_ctrl", 1, std::bind(&RosOperator::jointStateCtrlHandler, this, std::placeholders::_1));
-			subJointStateInfo = this->create_subscription<sensor_msgs::msg::JointState>("/joint_state_info", 1, std::bind(&RosOperator::jointStateInfoHandler, this, std::placeholders::_1));
-			pubArmJointStateWithGripper = create_publisher<sensor_msgs::msg::JointState>("/joint_state_gripper", 1);
-			subDataCaptureStatus = this->create_subscription<data_msgs::msg::CaptureStatus>("/data_capture_status", 1, std::bind(&RosOperator::dataCaptureStatusHandler, this, std::placeholders::_1));
-			subTeleopStatus = this->create_subscription<data_msgs::msg::TeleopStatus>("/teleop_status", 1, std::bind(&RosOperator::teleopStatusHandler, this, std::placeholders::_1));
-			subLocalizationStatus = this->create_subscription<data_msgs::msg::LocalizationStatus>("/localization_status", 1, std::bind(&RosOperator::localizationStatusHandler, this, std::placeholders::_1));
-			subArmControlStatus = this->create_subscription<data_msgs::msg::ArmControlStatus>("/arm_control_status", 1, std::bind(&RosOperator::armControlStatusHandler, this, std::placeholders::_1));
+			if (isHeader){
+				pubImu = create_publisher<sensor_msgs::msg::Imu>("/imu/data", 1);
+			}else{
+				pubGripper = create_publisher<data_msgs::msg::Gripper>("/gripper/data", 1);
+				subGripper = this->create_subscription<data_msgs::msg::Gripper>("gripper/ctrl", 1, std::bind(&RosOperator::gripperCtrlHandler, this, std::placeholders::_1));
+				
+				pubGripperJointState = create_publisher<sensor_msgs::msg::JointState>("/gripper/joint_state", 1);
+				subJointStateCtrl = this->create_subscription<sensor_msgs::msg::JointState>("/gripper/joint_state_ctrl", 1, std::bind(&RosOperator::jointStateCtrlHandler, this, std::placeholders::_1));
+				subJointStateInfo = this->create_subscription<sensor_msgs::msg::JointState>("/joint_state_info", 1, std::bind(&RosOperator::jointStateInfoHandler, this, std::placeholders::_1));
+				pubArmJointStateWithGripper = create_publisher<sensor_msgs::msg::JointState>("/joint_state_gripper", 1);
+				subDataCaptureStatus = this->create_subscription<data_msgs::msg::CaptureStatus>("/data_capture_status", 1, std::bind(&RosOperator::dataCaptureStatusHandler, this, std::placeholders::_1));
+				subTeleopStatus = this->create_subscription<data_msgs::msg::TeleopStatus>("/teleop_status", 1, std::bind(&RosOperator::teleopStatusHandler, this, std::placeholders::_1));
+				subLocalizationStatus = this->create_subscription<data_msgs::msg::LocalizationStatus>("/localization_status", 1, std::bind(&RosOperator::localizationStatusHandler, this, std::placeholders::_1));
+				subArmControlStatus = this->create_subscription<data_msgs::msg::ArmControlStatus>("/arm_control_status", 1, std::bind(&RosOperator::armControlStatusHandler, this, std::placeholders::_1));
 
-			client = this->create_client<data_msgs::srv::CaptureService>("/data_tools_dataCapture/capture_service");
-			teleopClient = this->create_client<std_srvs::srv::Trigger>("/teleop_trigger");
+				client = this->create_client<data_msgs::srv::CaptureService>("/data_tools_dataCapture/capture_service");
+				teleopClient = this->create_client<std_srvs::srv::Trigger>("/teleop_trigger");
+			}
+
 
 			statusSendingThread = new std::thread(&RosOperator::statusSending, this);
 			receivingThread = new std::thread(&RosOperator::receiving, this);
+			motorCurrentLimit = motorCurrentLimit/1000;
+			std::vector<uint8_t> command = createBinaryCommand<float>(EFFORT_CTRL, std::vector<float>{static_cast<float>(motorCurrentLimit)});
+			std::lock_guard<std::mutex> serialLock(serialMtx);
+			if(serial && serial->is_open()){
+				boost::asio::write(*serial, boost::asio::buffer(command));
+			}
 			return true;
 		} catch (boost::system::system_error& e) {
 			RCLCPP_ERROR(this->get_logger(), "Failed to open serial port: %s", e.what());
@@ -284,7 +298,8 @@ class RosOperator: public rclcpp::Node{
 	}
 
 	void statusSending(){
-		rclcpp::Rate rate(10);
+		rclcpp::Rate rate1(50);
+		rclcpp::Rate rate2(100);
 		int lastColorStatus = -1;
 		double lastColorStatusTime = -1;
 		while(rclcpp::ok()){
@@ -313,15 +328,14 @@ class RosOperator: public rclcpp::Node{
 				if(nowColorStatus != lastColorStatus){
 					lastColorStatusTime = rclcpp::Clock().now().seconds();
 					lastColorStatus = nowColorStatus;
-				}
-
-				std::vector<uint8_t> command = createBinaryCommand<int>(LIGHT_CTRL, std::vector<int>{static_cast<int>(nowColorStatus)}, true);
-				std::lock_guard<std::mutex> serialLock(serialMtx);
-				if(serial && serial->is_open()){
-					boost::asio::write(*serial, boost::asio::buffer(command));
+					std::vector<uint8_t> command = createBinaryCommand<int>(LIGHT_CTRL, std::vector<int>{static_cast<int>(nowColorStatus)}, true);
+					std::lock_guard<std::mutex> serialLock(serialMtx);
+					if(serial && serial->is_open()){
+						boost::asio::write(*serial, boost::asio::buffer(command));
+					}
 				}
 			}
-			
+			rate2.sleep();
 			// 处理振动状态
 			{
 				int nowVibrateStatus = VIBRATE_NONE;
@@ -341,7 +355,7 @@ class RosOperator: public rclcpp::Node{
 					}
 				}
 			}
-			rate.sleep();
+			rate1.sleep();
 		}
 	}
 
@@ -430,12 +444,12 @@ class RosOperator: public rclcpp::Node{
 		float motorCurrent = this->motorCurrent;
 		float motorAngle = this->angle;
 		receiveDataMtx.unlock();
-		if(fabs(motorCurrent) > motorCurrentLimit && motorCurrentLimit > 0){
-			if(motorCurrent < 0 && angle < motorAngle)
-				return;
-			if(motorCurrent > 0 && angle > motorAngle)
-				return;
-		}
+		// if(fabs(motorCurrent) > motorCurrentLimit && motorCurrentLimit > 0){
+		// 	if(motorCurrent < 0 && angle < motorAngle)
+		// 		return;
+		// 	if(motorCurrent > 0 && angle > motorAngle)
+		// 		return;
+		// }
 		std::vector<uint8_t> command = createBinaryCommand<float>(mitMode?POSITION_CTRL_MIT:POSITION_CTRL_POS_VEL, std::vector<float>{angle});
 		std::lock_guard<std::mutex> lock(serialMtx);
 		if(serial && serial->is_open()){
@@ -517,12 +531,12 @@ class RosOperator: public rclcpp::Node{
 			float motorCurrent = this->motorCurrent;
 			float motorAngle = this->angle;
 			receiveDataMtx.unlock();
-			if(fabs(motorCurrent) > motorCurrentLimit && motorCurrentLimit > 0){
-				if(motorCurrent < 0 && angle < motorAngle)
-					return;
-				if(motorCurrent > 0 && angle > motorAngle)
-					return;
-			}
+			// if(fabs(motorCurrent) > motorCurrentLimit && motorCurrentLimit > 0){
+			// 	if(motorCurrent < 0 && angle < motorAngle)
+			// 		return;
+			// 	if(motorCurrent > 0 && angle > motorAngle)
+			// 		return;
+			// }
 			std::vector<uint8_t> command = createBinaryCommand<float>(mitMode?POSITION_CTRL_MIT:POSITION_CTRL_POS_VEL, std::vector<float>{angle});
 			std::lock_guard<std::mutex> lock(serialMtx);
 			if(serial && serial->is_open()){
@@ -663,6 +677,59 @@ class RosOperator: public rclcpp::Node{
 					Json::Value root;
 					try{
 						jsonReader.parse(str, root);
+						if(isHeader){
+							// if(root.isMember("IMU")){
+							// 	sensor_msgs::msg::Imu imu;
+							// 	imu.header.stamp = time;
+							// 	Json::Value IMUValue = root["IMU"];
+							// 	imu.header.stamp = time;
+							// 	tf2::Quaternion quat_tf;
+							// 	quat_tf.setRPY(IMUValue["roll"].asDouble(), IMUValue["pitch"].asDouble(), IMUValue["yaw"].asDouble());
+							// 	geometry_msgs::msg::Quaternion quat_msg;
+							// 	tf2::convert(quat_tf, quat_msg);
+							// 	imu.orientation = quat_msg;
+							// 	imu.angular_velocity.x = IMUValue["gyr"][0].asDouble();
+							// 	imu.angular_velocity.y = IMUValue["gyr"][1].asDouble();
+							// 	imu.angular_velocity.z = IMUValue["gyr"][2].asDouble();
+							// 	imu.linear_acceleration.x = IMUValue["acc"][0].asDouble();
+							// 	imu.linear_acceleration.y = IMUValue["acc"][1].asDouble();
+							// 	imu.linear_acceleration.z = IMUValue["acc"][2].asDouble();
+							// 	pubImu->publish(imu);
+							// }
+
+							if(root.isMember("IMU")){
+								sensor_msgs::msg::Imu imu;
+								imu.header.stamp = time;
+								Json::Value IMUValue = root["IMU"];
+								// 如果IMUValue["quat"]字段存在且有效，可以使用四元数直接赋值
+								if (IMUValue["quat"].isArray())
+								{
+									imu.orientation.w = IMUValue["quat"][0].asDouble();
+									imu.orientation.x = IMUValue["quat"][1].asDouble();
+									imu.orientation.y = IMUValue["quat"][2].asDouble();
+									imu.orientation.z = IMUValue["quat"][3].asDouble();
+								}
+								else
+								{
+									// 否则，使用欧拉角转换为四元数
+									tf2::Quaternion quat_tf;
+									quat_tf.setRPY(
+										IMUValue["roll"].asDouble(),
+										IMUValue["pitch"].asDouble(),
+										IMUValue["yaw"].asDouble()
+									);
+									imu.orientation = tf2::toMsg(quat_tf);
+								}							
+								imu.angular_velocity.x = IMUValue["gyr"][0].asDouble();
+								imu.angular_velocity.y = IMUValue["gyr"][1].asDouble();
+								imu.angular_velocity.z = IMUValue["gyr"][2].asDouble();
+								imu.linear_acceleration.x = IMUValue["acc"][0].asDouble();
+								imu.linear_acceleration.y = IMUValue["acc"][1].asDouble();
+								imu.linear_acceleration.z = IMUValue["acc"][2].asDouble();
+								pubImu->publish(imu);
+							}
+							continue;
+						}
 						if(root.isMember("AS5047")){
 							data_msgs::msg::Gripper gripper;
 							gripper.header.stamp = time;
@@ -695,24 +762,6 @@ class RosOperator: public rclcpp::Node{
 								jointState.position[0] = gripper.distance;  // 0.77 - gripper.angle / 1.67 * (0.77 + 0.10);
 								pubGripperJointState->publish(jointState);
 							}
-						}
-						if(root.isMember("IMU")){
-							sensor_msgs::msg::Imu imu;
-							imu.header.stamp = time;
-							Json::Value IMUValue = root["IMU"];
-							imu.header.stamp = time;
-							tf2::Quaternion quat_tf;
-							quat_tf.setRPY(IMUValue["roll"].asDouble(), IMUValue["pitch"].asDouble(), IMUValue["yaw"].asDouble());
-							geometry_msgs::msg::Quaternion quat_msg;
-							tf2::convert(quat_tf, quat_msg);
-							imu.orientation = quat_msg;
-							imu.angular_velocity.x = IMUValue["gyr"][0].asDouble();
-							imu.angular_velocity.y = IMUValue["gyr"][1].asDouble();
-							imu.angular_velocity.z = IMUValue["gyr"][2].asDouble();
-							imu.linear_acceleration.x = IMUValue["acc"][0].asDouble();
-							imu.linear_acceleration.y = IMUValue["acc"][1].asDouble();
-							imu.linear_acceleration.z = IMUValue["acc"][2].asDouble();
-							pubImu->publish(imu);
 						}
 						if(root.isMember("motor")){
 							data_msgs::msg::Gripper gripper;
@@ -753,21 +802,21 @@ class RosOperator: public rclcpp::Node{
 							jointState.position[0] = gripper.distance;  // 0.77 - gripper.angle / 1.67 * (0.77 + 0.10);
 							pubGripperJointState->publish(jointState);
 
-							if(fabs(gripper.effort) > motorCurrentLimit + motorCurrentRedundancy && motorCurrentLimit > 0){
-								float step = 0;
-								if(gripper.effort < 0)
-									step = 0.01;
-								if(gripper.effort > 0)
-									step = -0.01;
-								std::vector<uint8_t> command = createBinaryCommand<float>(mitMode?POSITION_CTRL_MIT:POSITION_CTRL_POS_VEL, std::vector<float>{gripper.angle+step});
-								std::lock_guard<std::mutex> lock(serialMtx);
-								if(!((step > 0 && lastCommandAngle > gripper.angle+step) || (step < 0 && lastCommandAngle < gripper.angle+step))){
-									if(serial && serial->is_open()){
-										boost::asio::write(*serial, boost::asio::buffer(command));
-										lastCommandAngle = angle;
-									}
-								}
-							}
+							// if(fabs(gripper.effort) > motorCurrentLimit + motorCurrentRedundancy && motorCurrentLimit > 0){
+							// 	float step = 0;
+							// 	if(gripper.effort < 0)
+							// 		step = 0.01;
+							// 	if(gripper.effort > 0)
+							// 		step = -0.01;
+							// 	std::vector<uint8_t> command = createBinaryCommand<float>(mitMode?POSITION_CTRL_MIT:POSITION_CTRL_POS_VEL, std::vector<float>{gripper.angle+step});
+							// 	std::lock_guard<std::mutex> lock(serialMtx);
+							// 	if(!((step > 0 && lastCommandAngle > gripper.angle+step) || (step < 0 && lastCommandAngle < gripper.angle+step))){
+							// 		if(serial && serial->is_open()){
+							// 			boost::asio::write(*serial, boost::asio::buffer(command));
+							// 			lastCommandAngle = angle;
+							// 		}
+							// 	}
+							// }
 						}
 						if(root.isMember("motorstatus")){
 							Json::Value motorstatusValue = root["motorstatus"];
