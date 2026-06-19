@@ -52,6 +52,7 @@ def generate_launch_description():
         launch_arguments={'serial_no': l_depth_camera_no,
                           'camera_namespace': name,
                           'camera_name': "camera_l",
+                          'rgb_camera.color_profile': camera_profile, 
                           'depth_module.color_profile': camera_profile, 
                           'depth_module.depth_profile': camera_profile,
                           'depth_module.infra_profile': camera_profile}.items()
@@ -61,6 +62,7 @@ def generate_launch_description():
         launch_arguments={'serial_no': r_depth_camera_no,
                           'camera_namespace': name,
                           'camera_name': "camera_r",
+                          'rgb_camera.color_profile': camera_profile, 
                           'depth_module.color_profile': camera_profile, 
                           'depth_module.depth_profile': camera_profile,
                           'depth_module.infra_profile': camera_profile}.items()
@@ -121,6 +123,7 @@ def generate_launch_description():
                 ('/teleop_status', '/teleop_status_l'),
                 ('/localization_status', '/pika_localization_status_l'),
                 ('/arm_control_status', '/arm_control_status_l'),
+                ('/data_tools_dataCapture/capture_service', '/data_tools_dataCapture/capture_service_l'),
             ],
             respawn=True,
             output='screen'
@@ -144,6 +147,7 @@ def generate_launch_description():
                 ('/teleop_status', '/teleop_status_r'),
                 ('/localization_status', '/pika_localization_status_r'),
                 ('/arm_control_status', '/arm_control_status_r'),
+                ('/data_tools_dataCapture/capture_service', '/data_tools_dataCapture/capture_service_r'),
             ],
             respawn=True,
             output='screen'

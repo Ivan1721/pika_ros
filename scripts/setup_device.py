@@ -5,83 +5,134 @@ import re
 import os
 import cv2
 import time
+import os
+from pathlib import Path
+
+def set_env_var_persistent(key, value, shell_rc="~/.bashrc"):
+    rc_path = Path(shell_rc).expanduser()
+    if not rc_path.exists():
+        rc_path.touch()
+
+    lines = rc_path.read_text().splitlines()
+    export_line = f'export {key}={value}'
+    updated = False
+
+    for i, line in enumerate(lines):
+        if line.startswith(f"export {key}="):
+            lines[i] = export_line
+            updated = True
+            break
+
+    if not updated:
+        lines.append(export_line)
+
+    rc_path.write_text("\n".join(lines) + "\n")
+    print(f"Updated {rc_path}")
+
 
 def run_command(command):
-    """Ejecuta un comando y devuelve la salida"""
+    """运行命令并返回输出"""
     try:
         result = subprocess.run(command, shell=True, capture_output=True, text=True)
         return result.stdout.strip()
     except Exception as e:
-        print(f"Error al ejecutar el comando: {str(e)}")
+        print(f"执行命令时出错: {str(e)}")
         return None
 
 
-def get_device_info():
-    """Obtiene información del dispositivo"""
-    # Ejecutar el comando rs-enumerate-devices
+def get_device_info(localization_tag=True):
+    """获取设备信息"""
+    # 运行 rs-enumerate-devices 命令
     rs_output = run_command("rs-enumerate-devices -s")
     if not rs_output:
-        print("No se pudo obtener información de la cámara de profundidad")
-        return None, None
+        print("无法获取到深度摄像头数据")
+        return None, None, None, None
 
-    # Analizar la salida para obtener el número de serie
+    # 解析输出获取序列号
     serial_match = re.search(r'Intel RealSense D405\s+(\d+)', rs_output)
     if not serial_match:
-        print("No se pudo obtener información de la cámara de profundidad")
-        return None, None
+        print("无法获取到深度摄像头数据")
+        return None, None, None, None
     serial_number = serial_match.group(1)
 
-    # Ejecutar el comando udevadm
-    ls_output = run_command("ls /dev | grep ttyUSB | grep -v ttyUSB50 | grep -v ttyUSB51 | grep -v ttyUSB60 | grep -v ttyUSB61")
+    # 运行 udevadm 命令
+    ls_output = run_command("ls /dev | grep ttyUSB | grep -v ttyUSB50 | grep -v ttyUSB51 | grep -v ttyUSB60 | grep -v ttyUSB61 | grep -v ttyUSB70")
     count = ls_output.count("tty")
     if count > 1:
-        print("Asegúrese de que la computadora industrial tenga conectado solo un dispositivo USB serial")
-        return None, None
+        print("请确保工控机只插入一个USB串口设备")
+        return None, None, None, None
     udev_output = run_command(f"udevadm info /dev/{ls_output} | grep DEVPATH")
     if not udev_output:
-        print("No se pudo obtener información del puerto serial")
-        return None, None
+        print("无法获取到串口数据")
+        return None, None, None, None
 
-    # Analizar la ruta USB
-    usb_path = udev_output[:udev_output.find(ls_output)][:-1]  # Obtener un formato como 1-13.2.4:1.0
+    # 解析 USB 路径
+    usb_path = udev_output[:udev_output.find(ls_output)][:-1]  # 获取 1-13.2.4:1.0 这样的格式
     usb_path = usb_path[usb_path.rfind("/")+1:]
-    print("Buscando la cámara ojo de pez. Cuando aparezca la cámara ojo de pez presione 's'; si no es la cámara ojo de pez, presione 'q' (atención: presione en la ventana de imagen, no en la terminal).")
-    video_path = None
-    cv2.setLogLevel(0)
+    # print("寻找鱼眼摄像头，请在出现鱼眼摄像头时按下s，非鱼眼摄像头则按下q(注意在图像窗口按下，不要在终端！！！)")
+    # video_path = None
+    # cv2.setLogLevel(0)
+    # for i in range(50):
+    #     cap = cv2.VideoCapture(i)
+    #     fourcc = cv2.VideoWriter_fourcc(*'MJPG')
+    #     cap.set(cv2.CAP_PROP_FOURCC, fourcc)
+    #     cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+    #     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+    #     cap.set(cv2.CAP_PROP_FPS, 30)
+    #     key = None
+    #     if cap.isOpened():
+    #         # print("port:", "/dev/video"+str(i))
+    #         while True:
+    #             ret, frame = cap.read()
+    #             cv2.imshow("/dev/video"+str(i), frame)
+    #             key = cv2.waitKey(1)
+    #             if key & 0xFF == ord('q'):
+    #                 break
+    #             elif key & 0xFF == ord('s'):
+    #                 break
+    #     cv2.destroyAllWindows()
+    #     if key is not None and key & 0xFF == ord('s'):
+    #         video_path = 'video' + str(i)
+    #         break
+    # cv2.destroyAllWindows()
+    # if video_path is None:
+    #     print("无法获取到鱼眼摄像头数据")
+    #     return None, None
+
     for i in range(50):
-        cap = cv2.VideoCapture(i)
-        fourcc = cv2.VideoWriter_fourcc(*'MJPG')
-        cap.set(cv2.CAP_PROP_FOURCC, fourcc)
-        cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-        cap.set(cv2.CAP_PROP_FPS, 30)
-        key = None
-        if cap.isOpened():
-            # print("puerto:", "/dev/video"+str(i))
-            while True:
-                ret, frame = cap.read()
-                cv2.imshow("/dev/video"+str(i), frame)
-                key = cv2.waitKey(1)
-                if key & 0xFF == ord('q'):
-                    break
-                elif key & 0xFF == ord('s'):
-                    break
-        cv2.destroyAllWindows()
-        if key is not None and key & 0xFF == ord('s'):
+        video_output1 = run_command(f"cat /sys/class/video4linux/video{i}/device/../idVendor 2>/dev/null")
+        video_output2 = run_command(f"cat /sys/class/video4linux/video{i}/device/../idProduct 2>/dev/null")
+        if video_output1 == "1bcf" and video_output2 == "2cd1":
             video_path = 'video' + str(i)
             break
-    cv2.destroyAllWindows()
-    if video_path is None:
-        print("No se pudo obtener información de la cámara ojo de pez")
-        return None, None
+
     udev_output = run_command(f"udevadm info /dev/{video_path} | grep DEVPATH")
-    video_path = udev_output[:udev_output.find("video")][:-1]  # Obtener un formato como 1-13.2.4:1.0
+    video_path = udev_output[:udev_output.find("video")][:-1]  # 获取 1-13.2.4:1.0 这样的格式
     video_path = video_path[video_path.rfind("/")+1:]
 
-    return serial_number, usb_path, video_path
+    localization_tag_serial = None
+    if localization_tag:
+        # Find LHR device serial (28de:2300)
+        localization_tag_list = run_command("lsusb -d 28de:2300")
+        if localization_tag_list:
+            localization_tag_count = len([line for line in localization_tag_list.splitlines() if "28de:2300" in line])
+            if localization_tag_count > 1:
+                print("请确保工控机只插入一个定位标签设备")
+                return None, None, None, None
+
+        localization_tag_output = run_command("lsusb -v -d 28de:2300 2>/dev/null")
+        if not localization_tag_output:
+            localization_tag_output = run_command("lsusb -v | grep 28de:2300 -A 20")
+        localization_tag_serial_match = re.search(r'iSerial\s+\d+\s+([^\s]+)', localization_tag_output or "")
+        if not localization_tag_serial_match:
+            print("无法获取到设备定位标签序列号")
+            return None, None, None, None
+        localization_tag_serial = localization_tag_serial_match.group(1)
+
+    return serial_number, usb_path, video_path, localization_tag_serial
 
 
-def generate_setup_bash(left_info, right_info, select):
+def generate_setup_bash(left_info, right_info, select, helmet_with_tracker=False):
     if select == "1":
         path = "setup_multi_sensor.bash"
         usb_num1 = 50
@@ -90,6 +141,9 @@ def generate_setup_bash(left_info, right_info, select):
         name2 = "sensor_"
         to1 = ">"
         to2 = ">>"
+        set_env_var_persistent("pika_L_code", left_info[3])
+        set_env_var_persistent("pika_R_code", right_info[3])
+
     if select == "2":
         path = "setup_multi_gripper.bash"
         usb_num1 = 60
@@ -106,8 +160,20 @@ def generate_setup_bash(left_info, right_info, select):
         name2 = "gripper_"
         to1 = ">"
         to2 = ">"
-    """Genera el archivo setup.bash"""
-    content = f"""
+        set_env_var_persistent("pika_code", left_info[3])
+    if select == "4":
+        path = "setup_helmet.bash"
+        usb_num1 = 70
+        usb_num2 = None
+        name1 = "helmet_"
+        name2 = None
+        to1 = ">"
+        to2 = None
+        if helmet_with_tracker:
+            set_env_var_persistent("pika_H_code", left_info[3])
+    """生成 setup.bash 文件"""
+    if usb_num2 is not None:
+        content = f"""
 #/bin/bash
 
 sudo sh -c 'echo "ACTION==\\"add\\", KERNELS==\\"{left_info[1]}\\", SUBSYSTEMS==\\"usb\\", MODE:=\\"0777\\", SYMLINK+=\\"ttyUSB{usb_num1}\\"" {to1} /etc/udev/rules.d/{name1}serial.rules'
@@ -117,13 +183,24 @@ sudo sh -c 'echo "ACTION==\\"add\\", KERNEL==\\"video[0,2,4,6,8,10,12,14,16,18,2
 sudo sh -c 'echo "ACTION==\\"add\\", KERNEL==\\"video[0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48]*\\", KERNELS==\\"{right_info[2]}\\", SUBSYSTEMS==\\"usb\\", MODE:=\\"0777\\", SYMLINK+=\\"video{usb_num2}\\"" {to2} /etc/udev/rules.d/{name2}fisheye.rules'
 
 sudo udevadm control --reload-rules && sudo service udev restart && sudo udevadm trigger
-               """
+            """
+    else:
+        content = f"""
+#/bin/bash
+
+sudo sh -c 'echo "ACTION==\\"add\\", KERNELS==\\"{left_info[1]}\\", SUBSYSTEMS==\\"usb\\", MODE:=\\"0777\\", SYMLINK+=\\"ttyUSB{usb_num1}\\"" {to1} /etc/udev/rules.d/{name1}serial.rules'
+
+sudo sh -c 'echo "ACTION==\\"add\\", KERNEL==\\"video[0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48]*\\", KERNELS==\\"{left_info[2]}\\", SUBSYSTEMS==\\"usb\\", MODE:=\\"0777\\", SYMLINK+=\\"video{usb_num1}\\"" {to1} /etc/udev/rules.d/{name1}fisheye.rules'
+
+sudo udevadm control --reload-rules && sudo service udev restart && sudo udevadm trigger
+            """
+
     with open(path, "w") as f:
         f.write(content)
     os.chmod(path, 0o755)
 
 
-def generate_start_bash(left_info, right_info, select):
+def generate_start_bash(left_info, right_info, select, helmet_with_tracker=False):
     if select == "1":
         path = "start_multi_sensor.bash"
         usb_num1 = 50
@@ -185,18 +262,34 @@ SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 camera_fps=30
 camera_width=640
 camera_height=480
-sensor_depth_camera_no={left_info[0]}
 gripper_depth_camera_no={right_info[0]}
 
 sensor_serial_port=/dev/ttyUSB{usb_num1}
 gripper_serial_port=/dev/ttyUSB{usb_num2}
 sudo chmod a+rw /dev/ttyUSB*
-sensor_fisheye_port={usb_num1}
 gripper_fisheye_port={usb_num2}
 sudo chmod a+rw /dev/video*
 
 source /opt/ros/humble/setup.bash && cd $SCRIPT_DIR/../install/sensor_tools/share/sensor_tools/scripts/ && chmod 777 usb_camera.py
-source $SCRIPT_DIR/../install/setup.bash && ros2 launch sensor_tools open_sensor_gripper.launch.py sensor_depth_camera_no:=_$sensor_depth_camera_no gripper_depth_camera_no:=_$gripper_depth_camera_no sensor_serial_port:=$sensor_serial_port gripper_serial_port:=$gripper_serial_port sensor_fisheye_port:=$sensor_fisheye_port gripper_fisheye_port:=$gripper_fisheye_port camera_fps:=$camera_fps camera_width:=$camera_width camera_height:=$camera_height camera_profile:=$camera_width,$camera_height,$camera_fps
+source $SCRIPT_DIR/../install/setup.bash && ros2 launch sensor_tools open_sensor_gripper.launch.py gripper_depth_camera_no:=_$gripper_depth_camera_no sensor_serial_port:=$sensor_serial_port gripper_serial_port:=$gripper_serial_port  gripper_fisheye_port:=$gripper_fisheye_port camera_fps:=$camera_fps camera_width:=$camera_width camera_height:=$camera_height camera_profile:=$camera_width,$camera_height,$camera_fps
+                """
+    if select == "4":
+        path = "start_helmet.bash"
+        usb_num1 = 70
+        helmet_launch = "open_helmet_whit_tracker.launch.py" if helmet_with_tracker else "open_helmet.launch.py"
+        content = f"""
+SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
+camera_fps=30
+camera_width=640
+camera_height=480
+helmet_depth_camera_no={left_info[0]}
+helmet_serial_port=/dev/ttyUSB{usb_num1}
+sudo chmod a+rw /dev/ttyUSB*
+helmet_fisheye_port={usb_num1}
+sudo chmod a+rw /dev/video*
+
+source /opt/ros/humble/setup.bash && cd $SCRIPT_DIR/../install/sensor_tools/share/sensor_tools/scripts/ && chmod 777 usb_camera.py
+source $SCRIPT_DIR/../install/setup.bash && ros2 launch sensor_tools {helmet_launch} depth_camera_no:=_$helmet_depth_camera_no serial_port:=$helmet_serial_port fisheye_port:=$helmet_fisheye_port camera_fps:=$camera_fps camera_width:=$camera_width camera_height:=$camera_height camera_profile:=$camera_width,$camera_height,$camera_fps
                 """
     with open(path, "w") as f:
         f.write(content)
@@ -204,96 +297,108 @@ source $SCRIPT_DIR/../install/setup.bash && ros2 launch sensor_tools open_sensor
 
 
 def main():
-    print("=== Herramienta de configuración de Pika ===")
+    print("=== pika配置工具 ===")
+    helmet_with_tracker = False
     select = None
     while True:
-        select = input("Seleccione el tipo de vinculación:\n1. Dos Pika Sensor (gripper manual)\n2. Dos Pika Gripper (gripper montado en brazo robótico)\n3. Un Pika Sensor y un Pika Gripper\nIngrese opción:")
+        select = input("请选择绑定\n1.两个pika sensor(手持夹爪)\n2.两个pika gripper(安装于机械臂上的夹爪)\n3.一个pika sensor 一个pika gripper\n4.一个pika helmet\n请输入：")
         if select == "1":
-            device1 = "izquierdo"
-            device2 = "derecho"
+            device1 = "左"
+            device2 = "右"
             break
         if select == "2":
-            device1 = "izquierdo"
-            device2 = "derecho"
+            device1 = "左"
+            device2 = "右"
             break
         if select == "3":
             device1 = "sensor"
             device2 = "gripper"
             break
+        if select == "4":
+            device1 = "helmet"
+            device2 = None
+            tracker_select = input("helmet是否带定位器(Tracker)？\n1.带定位器\n2.不带定位器\n请输入：").strip()
+            helmet_with_tracker = tracker_select == "1"
+            break
         else:
-            print("Ingrese 1, 2 o 3")
+            print("请输入1、2、3或4")
             continue
 
-    print(f"Conecte el dispositivo {device1} y luego presione Enter para continuar...")
+    print(f"请插入{device1}设备，然后按回车键继续...")
     input()
-    print(f"Obteniendo información del dispositivo {device1}...")
+    print(f"正在获取{device1}设备信息...")
     while True:
-        left_info = get_device_info()
+        left_info = get_device_info(True if select == "1" or select == "3" or (select == "4" and helmet_with_tracker) else False)
         if not left_info[0]:
-            print(f"No se pudo obtener información del dispositivo {device1}. Verifique la conexión y luego presione Enter para continuar...")
+            print(f"无法获取{device1}设备信息，请检查设备连接，然后按回车键继续...")
             input()
         else:
             break
-    print(f"Información del dispositivo {device1}: {left_info[0]} {left_info[1]} {left_info[2]}")
+    print(f"{device1}设备信息: {left_info[0]} {left_info[1]} {left_info[2]} {left_info[3]}")
 
-    print(f"Desconecte el dispositivo {device1} y conecte el dispositivo {device2} (ojo: no lo conecte al mismo puerto USB; después de configurar, el puerto USB no debe cambiar). Luego presione Enter para continuar...")
-    input()
-    print(f"Obteniendo información del dispositivo {device2}...")
-    while True:
-        right_info = get_device_info()
-        if not right_info[0]:
-            print(f"No se pudo obtener información del dispositivo {device2}. Verifique la conexión y luego presione Enter para continuar...")
-            input()
-        else:
-            break
-    print(f"Información del dispositivo {device2}: {right_info[0]} {right_info[1]} {right_info[2]}")
+    right_info = None
+    if device2 is not None:
+        print(f"请拔出{device1}设备，插入{device2}设备（注意不要插在同一个USB口，配置完成后USB口不能改变），然后按回车键继续...")
+        input()
+        print(f"正在获取{device2}设备信息...")
+        while True:
+            right_info = get_device_info(True if select == "1" else False)
+            if not right_info[0]:
+                print(f"无法获取{device2}设备信息，请检查设备连接，然后按回车键继续...")
+                input()
+            else:
+                break
+        print(f"{device2}设备信息: {right_info[0]} {right_info[1]} {right_info[2]} {right_info[3]}")
 
-    # Generar archivos de configuración
-    print("Generando archivos de configuración...")
-    generate_setup_bash(left_info, right_info, select)
-    generate_start_bash(left_info, right_info, select)
-    setup_path = "setup_multi_sensor.bash" if select=="1" else ("setup_multi_gripper.bash" if select=="2" else "setup_sensor_gripper.bash")
-    start_path = "start_multi_sensor.bash" if select=="1" else ("start_multi_gripper.bash" if select=="2" else "start_sensor_gripper.bash")
-    print("¡Configuración completada! Se generaron los siguientes archivos:")
+    # 生成配置文件
+    print("正在生成配置文件...")
+    generate_setup_bash(left_info, right_info, select, helmet_with_tracker)
+    generate_start_bash(left_info, right_info, select, helmet_with_tracker)
+    setup_path = "setup_multi_sensor.bash" if select=="1" else ("setup_multi_gripper.bash" if select=="2" else ("setup_sensor_gripper.bash" if select == "3" else "setup_helmet.bash"))
+    start_path = "start_multi_sensor.bash" if select=="1" else ("start_multi_gripper.bash" if select=="2" else ("start_sensor_gripper.bash" if select == "3" else "start_helmet.bash"))
+    print("配置完成！已生成以下文件：")
     print(f"1. {setup_path}")
     print(f"2. {start_path}")
-    print(f"Ejecutando {setup_path}")
+    print(f"执行{setup_path}")
     run_command(f"bash {setup_path}")
-    print("Ejecución completada.")
+    print("执行完成。")
     while True:
-        print("Desconecte y vuelva a conectar los dispositivos, asegurándose de usar el mismo puerto USB previamente vinculado. Luego presione Enter para verificar si la vinculación fue exitosa...")
+        print("请拔插设备，注意插入先前绑定的同一个USB口。然后按回车键检查是否绑定成功...")
         input()
-        print("Espere...")
+        print("请等待...")
         time.sleep(5)
         video_list = run_command("ls /dev | grep video")
         usb_list = run_command("ls /dev | grep ttyUSB")
         if (select == "1" or select == "3") and video_list.find("50") < 0:
-            print("No se encuentra la cámara ojo de pez del sensor (izquierdo)")
+            print("找不到sensor（左）鱼眼")
             continue
         if (select == "1") and video_list.find("51") < 0:
-            print("No se encuentra la cámara ojo de pez del sensor (derecho)")
+            print("找不到sensor（右）鱼眼")
             continue
         if (select == "2" or select == "3") and video_list.find("60") < 0:
-            print("No se encuentra la cámara ojo de pez del gripper (izquierdo)")
+            print("找不到gripper（左）鱼眼")
             continue
         if (select == "2") and video_list.find("61") < 0:
-            print("No se encuentra la cámara ojo de pez del gripper (derecho)")
+            print("找不到gripper（右）鱼眼")
             continue
         if (select == "1" or select == "3") and usb_list.find("50") < 0:
-            print("No se encuentra el puerto serial del sensor (izquierdo)")
+            print("找不到sensor（左）串口")
             continue
         if (select == "1") and usb_list.find("51") < 0:
-            print("No se encuentra el puerto serial del sensor (derecho)")
+            print("找不到sensor（右）串口")
             continue
         if (select == "2" or select == "3") and usb_list.find("60") < 0:
-            print("No se encuentra el puerto serial del gripper (izquierdo)")
+            print("找不到gripper（左）串口")
             continue
         if (select == "2") and usb_list.find("61") < 0:
-            print("No se encuentra el puerto serial del gripper (derecho)")
+            print("找不到gripper（右）串口")
+            continue
+        if (select == "4") and usb_list.find("70") < 0:
+            print("找不到helmet串口")
             continue
         break
-    print("Vinculación exitosa. Método para iniciar los dispositivos:")
-    print(f"2. Luego ejecute: bash {start_path}")
+    print("绑定成功，启动设备方法：")
+    print(f"2. 然后运行: bash {start_path}")
 
 
 if __name__ == "__main__":
