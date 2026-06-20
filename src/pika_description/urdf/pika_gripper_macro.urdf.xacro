@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
 <!--
   Pika Gripper URDF — Agilex Robotics
-  Estructura idéntica al Piper arm (piper_description), con cámaras añadidas.
+  Paquete autónomo — todas las mallas están en pika_description/meshes/.
+  No requiere piper_ros ni realsense2_description en tiempo de ejecución.
 
   Dimensiones de referencia:
     Eje de garras:  0.1358 m desde gripper_base (igual que joint7/joint8 del Piper)
@@ -15,11 +16,11 @@
     +X  : apertura de las garras
     +Y  : cara frontal (hacia el espacio de trabajo)
 
-  Visuals activos:
-    - gripper_base      : gripper_base.STL (piper_description)
-    - pika_jaw_left     : link7.STL        (piper_description)
-    - pika_jaw_right    : link8.STL        (piper_description)
-    - pika_depth_link   : d405.stl         (realsense2_description)
+  Visuals activos (meshes en pika_description/meshes/):
+    - gripper_base      : gripper_base.STL
+    - pika_jaw_left     : link7.STL
+    - pika_jaw_right    : link8.STL
+    - pika_depth_link   : d405.stl
   Visuals pendientes:
     - pika_fisheye_link : TODO malla real
 -->

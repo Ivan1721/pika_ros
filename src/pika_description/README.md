@@ -2,16 +2,20 @@
 
 Paquete ROS 2 con la descripción URDF del gripper Pika (Agilex Robotics).
 
-## Dependencias externas
+## Dependencias
 
-| Paquete | Fuente | Contenido utilizado |
-|---|---|---|
-| `piper_description` | `~/piper_ros` | `gripper_base.STL`, `link7.STL`, `link8.STL` |
-| `realsense2_description` | submódulo `src/realsense-ros` | `d405.stl` |
+`pika_description` es autónomo — todas las mallas están en `meshes/`.
 
-El workspace `piper_ros` debe estar sourced antes que `pika_ros`:
+| Launch | Requiere |
+|---|---|
+| `display_pika_gripper.launch.py` | solo `pika_ros` |
+| `display_pika_piper.launch.py` | `piper_ros` (brazo link1–6) + `pika_ros` (gripper) |
 
 ```bash
+# Solo el gripper
+source ~/pika_ros/install/setup.bash
+
+# Brazo completo + gripper Pika
 source ~/piper_ros/install/setup.bash
 source ~/pika_ros/install/setup.bash
 ```
@@ -52,12 +56,16 @@ Origen = cara de la brida (interfaz con link6 del Piper / parent)
 ## Lanzar visualización
 
 ```bash
-source ~/piper_ros/install/setup.bash
+# Solo el gripper Pika (independiente de piper_ros)
 source ~/pika_ros/install/setup.bash
 ros2 launch pika_description display_pika_gripper.launch.py
-```
 
-Abre RViz con el modelo completo y un slider para controlar la apertura de las garras.
+# Brazo Piper (link1–6) + gripper Pika
+source ~/piper_ros/install/setup.bash
+source ~/pika_ros/install/setup.bash
+ros2 launch pika_description display_pika_piper.launch.py           # gripper pika (default)
+ros2 launch pika_description display_pika_piper.launch.py gripper:=otro  # gripper futuro
+```
 
 ## Archivos
 
