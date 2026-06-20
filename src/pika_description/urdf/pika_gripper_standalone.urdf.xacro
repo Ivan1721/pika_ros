@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!-- URDF standalone del Pika Gripper — para display y desarrollo -->
+<robot name="pika_gripper" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find pika_description)/urdf/pika_gripper_macro.urdf.xacro"/>
+
+  <!-- Anchor fijo al mundo -->
+  <link name="world"/>
+
+  <!-- Instancia del gripper sin prefix, colgando verticalmente del mundo -->
+  <xacro:pika_gripper
+    prefix=""
+    parent="world"
+    origin_xyz="0 0 0.15"
+    origin_rpy="0 0 0"
+  />
+
+</robot>
