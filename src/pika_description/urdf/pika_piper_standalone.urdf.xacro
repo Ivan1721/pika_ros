@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<!--
+  Robot completo: Piper arm + gripper intercambiable
+  - Brazo:   piper_no_gripper_description.urdf (piper_description)
+  - Gripper: seleccionable con el argumento xacro 'gripper'
+  - Conexión: link6 del Piper → gripper
+
+  Uso:
+    xacro pika_piper_standalone.urdf.xacro gripper:=pika
+    ros2 launch pika_description display_pika_piper.launch.py gripper:=pika
+
+  Grippers disponibles:
+    pika  — Pika gripper con cámaras D405 y fisheye (pika_gripper_macro)
+-->
+<robot name="pika_piper" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:arg name="gripper" default="pika"/>
+
+  <!-- Piper arm (base_link es root en el .urdf original, sin world) -->
+  <xacro:include filename="$(find piper_description)/urdf/piper_no_gripper_description.urdf"/>
+
+  <!-- Frame raíz explícito -->
+  <link name="world"/>
+  <joint name="world_to_base" type="fixed">
+    <parent link="world"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ── Pika gripper ──────────────────────────────────────────────── -->
+  <xacro:if value="${'$(arg gripper)' == 'pika'}">
+    <xacro:include filename="$(find pika_description)/urdf/pika_gripper_macro.urdf.xacro"/>
+    <xacro:pika_gripper prefix="" parent="link6" origin_xyz="0 0 0" origin_rpy="0 0 0"/>
+  </xacro:if>
+
+  <!-- ── Gripper futuro: añadir bloque xacro:if aquí ─────────────────
+  <xacro:if value="${'$(arg gripper)' == 'otro'}">
+    <xacro:include filename="$(find otro_description)/urdf/otro_gripper_macro.urdf.xacro"/>
+    <xacro:otro_gripper prefix="" parent="link6" origin_xyz="0 0 0" origin_rpy="0 0 0"/>
+  </xacro:if>
+  ─────────────────────────────────────────────────────────────────── -->
+
+</robot>
