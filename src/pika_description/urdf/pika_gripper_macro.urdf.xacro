@@ -50,14 +50,14 @@
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://piper_description/meshes/gripper_base.STL"/>
+          <mesh filename="package://pika_description/meshes/gripper_base.STL"/>
         </geometry>
         <material name="${prefix}pika_mid"/>
       </visual>
       <collision>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://piper_description/meshes/gripper_base.STL"/>
+          <mesh filename="package://pika_description/meshes/gripper_base.STL"/>
         </geometry>
       </collision>
       <inertial>
@@ -80,7 +80,7 @@
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://realsense2_description/meshes/d405.stl"
+          <mesh filename="package://pika_description/meshes/d405.stl"
                 scale="0.001 0.001 0.001"/>
         </geometry>
         <material name="${prefix}pika_aluminum"/>
@@ -130,14 +130,14 @@
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://piper_description/meshes/link7.STL"/>
+          <mesh filename="package://pika_description/meshes/link7.STL"/>
         </geometry>
         <material name="${prefix}pika_dark"/>
       </visual>
       <collision>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://piper_description/meshes/link7.STL"/>
+          <mesh filename="package://pika_description/meshes/link7.STL"/>
         </geometry>
       </collision>
       <inertial>
@@ -159,14 +159,14 @@
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://piper_description/meshes/link8.STL"/>
+          <mesh filename="package://pika_description/meshes/link8.STL"/>
         </geometry>
         <material name="${prefix}pika_dark"/>
       </visual>
       <collision>
         <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://piper_description/meshes/link8.STL"/>
+          <mesh filename="package://pika_description/meshes/link8.STL"/>
         </geometry>
       </collision>
       <inertial>
