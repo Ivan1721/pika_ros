@@ -37,11 +37,13 @@ La geometría de garras y su conexión a la brida es idéntica a la del Piper ar
 
 ## Posiciones de referencia (desde `gripper_base`)
 
-| Elemento | Z (m) | Y (m) | Notas |
+Medidas extraídas del plano técnico oficial de Agilex (`Images/`).
+
+| Elemento | Z (m) | Y (m) | Fuente |
 |---|---|---|---|
 | Eje de garras | 0.1358 | 0 | = joint7/joint8 del Piper |
-| Intel D405 | 0.0898 | 0.095 | 46 mm sobre eje de garras |
-| Cámara fisheye | 0.0623 | 0.092 | 73.5 mm sobre eje de garras |
+| Intel D405 (双目) | 0.0908 | 0.132 | plano: 45 mm sobre eje garras, 132 mm desde brida |
+| Cámara fisheye (单目) | 0.0623 | 0.122 | plano: 73.5 mm sobre eje garras, 122 mm desde brida |
 | TCP | 0.185 | 0 | estimado |
 
 ## Marco de coordenadas

@@ -4,11 +4,11 @@
   Paquete autónomo — todas las mallas están en pika_description/meshes/.
   No requiere piper_ros ni realsense2_description en tiempo de ejecución.
 
-  Dimensiones de referencia:
+  Dimensiones de referencia (plano técnico Agilex):
     Eje de garras:  0.1358 m desde gripper_base (igual que joint7/joint8 del Piper)
     Apertura máx:   ±35 mm por lado
-    Cámara D405:    centrada en X, 46 mm sobre el eje del gripper  → Z = 0.0898 m
-    Fisheye (广角): centrada en X, 73.5 mm sobre el eje del gripper → Z = 0.0623 m
+    Cámara D405:    X=0, Y=132 mm desde brida, Z=90.8 mm (45 mm sobre eje garras)
+    Fisheye (广角): X=0, Y=122 mm desde brida, Z=62.3 mm (73.5 mm sobre eje garras)
 
   Marco de coordenadas (gripper_base):
     Origen = cara de la brida (interfaz con link6 / parent)
@@ -69,17 +69,18 @@
 
     <!-- ══════════════════════════════════════════════════════════════
          DEPTH CAMERA — Intel RealSense D405
-         46 mm sobre el eje del gripper → Z = 0.1358 - 0.046 = 0.0898 m
+         Plano técnico: 132 mm desde brida (Y), 45 mm sobre eje garras (Z)
+         Z = 0.1358 - 0.045 = 0.0908 m
     ══════════════════════════════════════════════════════════════════ -->
     <joint name="${prefix}pika_depth_joint" type="fixed">
       <parent link="${prefix}gripper_base"/>
       <child  link="${prefix}pika_depth_link"/>
-      <origin xyz="0 0.095 0.0898" rpy="0 0 0"/>
+      <origin xyz="-0.132 0 0.0908" rpy="0 0 0"/>
     </joint>
 
     <link name="${prefix}pika_depth_link">
       <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <origin xyz="0 0 0" rpy="0 3.1416 1.5708"/>
         <geometry>
           <mesh filename="package://pika_description/meshes/d405.stl"
                 scale="0.001 0.001 0.001"/>
@@ -87,7 +88,7 @@
         <material name="${prefix}pika_aluminum"/>
       </visual>
       <collision>
-        <origin xyz="0 -0.0115 0" rpy="0 0 0"/>
+        <origin xyz="0 -0.0115 0" rpy="0 3.1416 1.5708"/>
         <geometry><box size="0.042 0.023 0.042"/></geometry>
       </collision>
       <inertial>
@@ -98,13 +99,14 @@
 
     <!-- ══════════════════════════════════════════════════════════════
          FISHEYE CAMERA (广角单目, FOV diagonal 200°)
-         73.5 mm sobre el eje del gripper → Z = 0.1358 - 0.0735 = 0.0623 m
+         Plano técnico: 122 mm desde brida (Y), 73.5 mm sobre eje garras (Z)
+         Z = 0.1358 - 0.0735 = 0.0623 m
          TODO: reemplazar por malla real
     ══════════════════════════════════════════════════════════════════ -->
     <joint name="${prefix}pika_fisheye_joint" type="fixed">
       <parent link="${prefix}gripper_base"/>
       <child  link="${prefix}pika_fisheye_link"/>
-      <origin xyz="0 0.092 0.0623" rpy="-1.5708 0 0"/>
+      <origin xyz="0 0.122 0.0623" rpy="-1.5708 0 0"/>
     </joint>
 
     <link name="${prefix}pika_fisheye_link">
