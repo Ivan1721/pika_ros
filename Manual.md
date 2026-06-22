@@ -154,10 +154,24 @@ cd ~/pika_ros/install/libsurvive/bin && ./survive-cli --force-calibrate
 
 ## 11. Configurar CAN bus (brazo Piper)
 
+**Configuración dual (can_left + can_right) — recomendada:**
 ```bash
-chmod 777 -R ~/pika_ros/install
+bash ~/pika_ros/src/PikaAnyArm/piper/piper_ros/can_config.sh
+```
+
+El script activa ambas interfaces a 1 Mbps con las siguientes rutas USB:
+
+| Interfaz | Ruta USB |
+|---|---|
+| `can_left` | `3-1.1.3:1.0` |
+| `can_right` | `1-1.1.3:1.0` |
+
+> Si la topología USB cambia (hub diferente), editar `can_config.sh` con las rutas correctas antes de ejecutarlo.
+
+**Configuración manual de una sola interfaz:**
+```bash
 cd ~/pika_ros/src/PikaAnyArm/piper/piper_ros
-bash can_activate.sh can0 1000000
+bash can_activate.sh can_left 1000000 "3-1.1.3:1.0"
 ```
 
 ---
@@ -238,6 +252,56 @@ Se abrirán tres ventanas:
 Mover un slider mueve el brazo en Gazebo y en RViz simultáneamente.
 
 > **Nota técnica:** el nodo `gui_to_trajectory` hace de puente entre el GUI y el controlador `arm_controller`. Usa timestamp cero en la trayectoria para que el controlador la ejecute inmediatamente sin depender del reloj de simulación.
+
+---
+
+## Flujo E — Pipeline de datos (captura → HDF5 → LeRobot)
+
+Tipos de configuración disponibles: `single_pika` | `multi_pika` | `single_pika_teleop` | `multi_pika_teleop` | `aloha` | `lift`
+
+**1. Capturar episodio:**
+```bash
+source ~/pika_ros/install/setup.bash
+ros2 launch data_tools run_data_capture.launch.py \
+  type:=single_pika \
+  datasetDir:=/ruta/datos \
+  episodeIndex:=0
+# Presionar ENTER para detener; esperar "Done"
+```
+
+**2. Sincronizar (Python, recomendado):**
+```bash
+# episodeName = nombre de la carpeta (p.ej. "episode0"); omitir para procesar todos
+python3 ~/pika_ros/src/data_tools/scripts/data_sync.py \
+  --type single_pika \
+  --datasetDir /ruta/datos \
+  --episodeName episode0
+```
+
+**3. Convertir a HDF5:**
+```bash
+cd ~/pika_ros/src/data_tools/scripts/
+python3 data_to_hdf5.py \
+  --type single_pika \
+  --datasetDir /ruta/datos \
+  --episodeName episode0 \
+  --useCameraPointCloud ""
+# Omitir --episodeName para procesar todos los episodios del dataset
+```
+
+**4. Convertir a formato LeRobot:**
+```bash
+cd ~/pika_ros/src/data_tools/scripts/
+python3 hdf5_to_lerobot.py --datasetDir /ruta/hdf5
+```
+
+**5. Publicar datos grabados:**
+```bash
+ros2 launch data_tools run_data_publish.launch.py \
+  type:=single_pika \
+  datasetDir:=/ruta/datos \
+  episodeIndex:=0
+```
 
 ---
 
