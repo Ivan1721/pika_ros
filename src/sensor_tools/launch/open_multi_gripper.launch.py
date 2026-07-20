@@ -157,6 +157,8 @@ def generate_launch_description():
                 ('/gripper/joint_state_ctrl', [name,TextSubstitution(text='/joint_states_l')]),
                 ('/joint_state_info', '/joint_states_single_l'),
                 ('/joint_state_gripper', '/joint_states_single_gripper_l'),
+                ('/teleop_trigger', 'teleop_trigger_l'),
+                ('/teleop_status', '/teleop_status_l'),
             ],
             respawn=True,
             output='screen'
@@ -179,6 +181,8 @@ def generate_launch_description():
                 ('/gripper/joint_state_ctrl', [name,TextSubstitution(text='/joint_states_r')]),
                 ('/joint_state_info', '/joint_states_single_r'),
                 ('/joint_state_gripper', '/joint_states_single_gripper_r'),
+                ('/teleop_trigger', 'teleop_trigger_r'),
+                ('/teleop_status', '/teleop_status_r'),
             ],
             respawn=True,
             output='screen'

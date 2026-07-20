@@ -200,12 +200,53 @@ python3 setup_device.py
 
 ---
 
-## 10. Calibración de Pika Station
+## 10. Despliegue y calibración de Pika Station
+
+### 10.1 Colocación física de las base stations
+
+- Instalar cada base station a **90° de ángulo de visión** entre sí (pared, trípode, o superficie estable — evitar vibraciones).
+- Altura mínima: **0.5 m**. Idealmente por encima de la cabeza (>2 m) con un ángulo de inclinación de **25°–35°** hacia el área de trabajo.
+- Distancia mínima entre el Pika Sense y cada base station: **0.5 m**. Distancia máxima para posicionamiento preciso: **7 m**.
+- Cobertura según número de base stations:
+
+  | Base stations | Área mínima | Área máxima |
+  |---|---|---|
+  | 2 | 2×1.5 m | 5×5 m |
+  | 4 | — | 10×10 m (máximo soportado por escena) |
+
+- Evitar luz solar directa, superficies de vidrio/acrílico (causan drift), y no bloquear el panel frontal.
+- Retirar la película protectora del panel frontal antes de encender.
+
+### 10.2 Configurar canal (primer uso)
+
+Con un objeto puntiagudo, presionar el botón trasero de cada base station (posición 9). Cada pulsación sube el canal en 1 (rango 0–15); el LED verde parpadea una vez por pulsación. **Todas las base stations en la misma escena deben tener canales distintos.**
+
+Verificar que el LED de cada base station quede en **verde fijo** (operación normal).
+
+### 10.3 Calibración
 
 ```bash
 sudo chmod 777 -R /dev/*
-cd ~/pika_ros/install/libsurvive/bin && ./survive-cli --force-calibrate
+cd ~/pika_ros/install/pika_locator/lib && ./survive-cli --force-calibrate
 ```
+
+Usar `--force-calibrate` en estos casos:
+- Primera vez en este equipo.
+- Se agregaron o quitaron base stations.
+- Se cambió el canal de alguna base station.
+
+Usar sin la bandera (`./survive-cli`) si solo hubo drift de posición o se movieron las base stations sin cambiar canal.
+
+**Antes de calibrar:**
+- Encender la etiqueta de posicionamiento (tracker) y dejarla **quieta**, dentro del campo de visión de las base stations.
+- Confirmar que el LED de la etiqueta y el de las base stations estén en verde.
+- Sin luz solar directa ni objetos reflectantes (vidrio/acrílico) en el área.
+
+**Verificar éxito:** la terminal imprime el error de la etiqueta en metros. Cuando el valor baja de **0.005**, cerrar con Ctrl+C (los mensajes en rojo después de cerrar son normales e ignorables).
+
+### 10.4 Verificación visual en RViz
+
+Tras lanzar el Sense (`start_single_sensor.bash` / `start_multi_sensor.bash` / `pika_double_locator.launch.py`), se abre una ventana de RViz con el TF del tracker. Presionar **Ctrl+Z** para centrar coordenadas, mover el Pika Sense y confirmar que el TF sigue el movimiento sin saltos. Si hay drift repentino, repetir la calibración (10.3, sin `--force-calibrate`).
 
 ---
 
