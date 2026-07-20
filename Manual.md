@@ -132,7 +132,9 @@ cd ~/pika_ros/scripts/
 python3 setup_device.py
 ```
 
-Seleccionar opción **3** (un Pika Sensor + un Pika Gripper). El script genera los archivos `setup_sensor_gripper.bash` y `start_sensor_gripper.bash` con las rutas fijas:
+### Opción A: Sensor Pika + un Gripper Pika (predeterminado)
+
+Seleccionar opción **3**. El script genera `setup_sensor_gripper.bash` y `start_sensor_gripper.bash`:
 
 | Dispositivo | Puerto |
 |---|---|
@@ -140,6 +142,61 @@ Seleccionar opción **3** (un Pika Sensor + un Pika Gripper). El script genera l
 | Gripper serial | `/dev/ttyUSB60` |
 | Fisheye sensor | `/dev/video50` |
 | Fisheye gripper | `/dev/video60` |
+
+### Opción B: Dos Sensores Pika (para captura bilateral)
+
+Seleccionar opción **1**. El script genera `setup_multi_sensor.bash` y `start_multi_sensor.bash`:
+
+| Dispositivo | Puerto |
+|---|---|
+| Sensor izquierdo serial | `/dev/ttyUSB50` |
+| Sensor derecho serial | `/dev/ttyUSB51` |
+| Fisheye sensor izquierdo | `/dev/video50` |
+| Fisheye sensor derecho | `/dev/video51` |
+
+### Opción C: Dos Grippers Pika (para dos brazos Piper)
+
+Seleccionar opción **2**. El script genera `setup_multi_gripper.bash` y `start_multi_gripper.bash`:
+
+| Dispositivo | Puerto |
+|---|---|
+| Gripper izquierdo serial | `/dev/ttyUSB60` |
+| Gripper derecho serial | `/dev/ttyUSB61` |
+| Fisheye gripper izquierdo | `/dev/video60` |
+| Fisheye gripper derecho | `/dev/video61` |
+
+### Opción D: Dos Sensores + Dos Grippers (captura + ejecución bilateral)
+
+**Ejecutar en dos pasos:**
+
+**Paso 1:** Ejecutar `setup_device.py` y seleccionar opción **1** (dos sensores)
+```bash
+cd ~/pika_ros/scripts/
+python3 setup_device.py
+# Seleccionar opción 1
+# Conectar sensor izquierdo → localizar fisheye → desconectar
+# Conectar sensor derecho → localizar fisheye → desconectar/reconectar ambos
+```
+
+**Paso 2:** Ejecutar `setup_device.py` nuevamente y seleccionar opción **2** (dos grippers)
+```bash
+python3 setup_device.py
+# Seleccionar opción 2
+# Conectar gripper izquierdo → localizar fisheye → desconectar
+# Conectar gripper derecho → localizar fisheye → desconectar/reconectar ambos
+```
+
+**Resultado final:**
+| Dispositivo | Puerto |
+|---|---|
+| Sensor izquierdo serial | `/dev/ttyUSB50` |
+| Sensor derecho serial | `/dev/ttyUSB51` |
+| Gripper izquierdo serial | `/dev/ttyUSB60` |
+| Gripper derecho serial | `/dev/ttyUSB61` |
+| Fisheye sensor izquierdo | `/dev/video50` |
+| Fisheye sensor derecho | `/dev/video51` |
+| Fisheye gripper izquierdo | `/dev/video60` |
+| Fisheye gripper derecho | `/dev/video61` |
 
 ---
 
@@ -154,29 +211,34 @@ cd ~/pika_ros/install/libsurvive/bin && ./survive-cli --force-calibrate
 
 ## 11. Configurar CAN bus (brazo Piper)
 
-**Configuración dual (can_left + can_right) — recomendada:**
-```bash
-bash ~/pika_ros/src/PikaAnyArm/piper/piper_ros/can_config.sh
-```
+### Para un solo brazo:
 
-El script activa ambas interfaces a 1 Mbps con las siguientes rutas USB:
-
-| Interfaz | Ruta USB |
-|---|---|
-| `can_left` | `3-1.1.3:1.0` |
-| `can_right` | `1-1.1.3:1.0` |
-
-> Si la topología USB cambia (hub diferente), editar `can_config.sh` con las rutas correctas antes de ejecutarlo.
-
-**Configuración manual de una sola interfaz:**
 ```bash
 cd ~/pika_ros/src/PikaAnyArm/piper/piper_ros
 bash can_activate.sh can_left 1000000 "3-1.1.3:1.0"
 ```
 
+### Para dos brazos (recomendado):
+
+```bash
+bash ~/pika_ros/src/PikaAnyArm/piper/piper_ros/can_config.sh
+```
+
+El script `can_config.sh` configura automáticamente ambas interfaces a 1 Mbps:
+
+| Interfaz | Ruta USB | Descripción |
+|---|---|---|
+| `can_left` | `3-1.1.3:1.0` | Brazo izquierdo |
+| `can_right` | `1-1.1.3:1.0` | Brazo derecho |
+
+> **Importante:** Si la topología USB cambia (hub diferente), editar `can_config.sh` con las rutas correctas antes de ejecutarlo. Ejecutar:
+> ```bash
+> lsusb -t  # para ver la topología actual
+> ```
+
 ---
 
-## Flujo A — Teleoperación Pika + Piper
+## Flujo A — Teleoperación Pika + Un Piper (1 brazo + 1 gripper)
 
 **Terminal 1** (sensores Pika):
 ```bash
@@ -194,7 +256,36 @@ ros2 launch pika_remote_piper teleop_rand_single_piper.launch.py
 
 ---
 
+## Flujo A+ — Teleoperación Pika + Dos Pipers (2 brazos + 2 grippers)
+
+**Requisitos previos:**
+- Ejecutar `setup_device.py` con opción **2** (dos grippers Pika)
+- Configurar CAN bus: `bash ~/pika_ros/src/PikaAnyArm/piper/piper_ros/can_config.sh`
+
+**Terminal 1** (grippers Pika):
+```bash
+conda deactivate
+source ~/pika_ros/install/setup.bash
+cd ~/pika_ros/scripts && bash start_multi_gripper.bash
+```
+
+**Terminal 2** (nodos de teleoperación — dos brazos):
+```bash
+source ~/pika_ros/install/setup.bash
+conda activate pika
+ros2 launch pika_remote_piper teleop_rand_multi_piper.launch.py
+```
+
+Este flujo lanza:
+- Dos nodos Piper (izquierdo + derecho) via CAN
+- FK + IK para ambos brazos
+- Teleop bilateral
+
+---
+
 ## Flujo B — Solo control del brazo Piper (con RViz)
+
+### B.1 — Un solo brazo Piper
 
 **Terminal 1**:
 ```bash
@@ -202,6 +293,22 @@ conda deactivate
 source ~/pika_ros/install/setup.bash
 ros2 launch piper start_single_piper_rviz.launch.py
 ```
+
+### B.2 — Dos brazos Piper
+
+**Terminal 1** (configurar CAN bus):
+```bash
+bash ~/pika_ros/src/PikaAnyArm/piper/piper_ros/can_config.sh
+```
+
+**Terminal 2** (visualizar dos brazos):
+```bash
+conda deactivate
+source ~/pika_ros/install/setup.bash
+ros2 launch piper start_double_piper.launch.py
+```
+
+En RViz se visualizarán ambos brazos (izquierdo y derecho).
 
 ---
 
@@ -305,6 +412,25 @@ ros2 launch data_tools run_data_publish.launch.py \
 
 ---
 
+## Tabla Rápida — Configuración por escenario
+
+| Escenario | Setup | CAN | Comando Launch | Notas |
+|---|---|---|---|---|
+| **1 sensor + 1 gripper** | Opción 3 | `can_left` | `teleop_rand_single_piper.launch.py` | Básico |
+| **2 sensores** | Opción 1 | — | `start_multi_sensor.bash` | Captura bilateral |
+| **2 grippers** | Opción 2 | `can_config.sh` | `teleop_rand_multi_piper.launch.py` | 2 brazos Piper |
+| **2 sensores + 2 grippers** | Opción 1 + 2 | `can_config.sh` | `teleop_rand_multi_piper.launch.py` | Captura + ejecución |
+| **2 brazos (solo RViz)** | — | `can_config.sh` | `start_double_piper.launch.py` | Visualización |
+
+**Checklist para 2 sensores + 2 grippers:**
+- [ ] Ejecutar `setup_device.py` → Opción 1 (dos sensores)
+- [ ] Ejecutar `setup_device.py` → Opción 2 (dos grippers)
+- [ ] Ejecutar `bash ~/pika_ros/src/PikaAnyArm/piper/piper_ros/can_config.sh`
+- [ ] Terminal 1: `cd ~/pika_ros/scripts && bash start_multi_sensor.bash`
+- [ ] Terminal 2 (si se usan brazos): `ros2 launch pika_remote_piper teleop_rand_multi_piper.launch.py`
+
+---
+
 ## Problemas frecuentes
 
 **Error `driver_openvr.so` no encontrado:**
@@ -326,4 +452,32 @@ chmod 777 -R ~/pika_ros/install/
 **Error `GLIBCXX_3.4.29` con CasADi en Conda:**
 ```bash
 export LD_PRELOAD=~/miniconda3/envs/<nombre_env>/lib/libstdc++.so.6
+```
+
+### Problemas específicos de dos brazos
+
+**Las interfaces CAN no aparecen (`can_left`, `can_right`):**
+```bash
+# Verificar que los adaptadores estén reconocidos
+lsusb -t
+
+# Reintentar configuración manualmente
+sudo bash ~/pika_ros/src/PikaAnyArm/piper/piper_ros/can_config.sh
+
+# Verificar estado de las interfaces
+ip link show | grep can
+```
+
+**Solo un brazo responde en teleoperación:**
+- Verificar que `can_config.sh` activó ambas interfaces: `ip link show`
+- Verificar logs en Terminal 2: buscar errores en `piper_left_ctrl_node` o `piper_right_ctrl_node`
+- Reiniciar los nodos de CAN: desconectar y reconectar los adaptadores USB
+
+**Los grippers Pika no comunican correctamente:**
+```bash
+# Verificar que ambos puertos seriales están presentes
+ls -la /dev/ttyUSB60 /dev/ttyUSB61
+
+# Dar permisos si es necesario
+sudo chmod 666 /dev/ttyUSB60 /dev/ttyUSB61
 ```
