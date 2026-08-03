@@ -324,9 +324,12 @@ cd ~/pika_ros/scripts && bash start_multi_gripper.bash
 
 **Terminal 2** (localización — publica `/pika_pose_l` y `/pika_pose_r`, abre RViz):
 ```bash
+conda deactivate
 source ~/pika_ros/install/setup.bash
 ros2 launch pika_locator pika_double_locator.launch.py
 ```
+
+> `pika_double_locator_node` y `rviz2` son binarios C++, sin dependencia de `casadi` — no necesitan (ni deben usar) el entorno conda. Mantenerlo desactivado evita que el Python de conda interfiera con `ros2 launch`.
 
 **Terminal 3** (nodos de teleoperación — dos brazos):
 ```bash
