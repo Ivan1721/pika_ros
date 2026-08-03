@@ -313,6 +313,7 @@ ros2 launch pika_remote_piper teleop_rand_single_piper.launch.py
 **Requisitos previos:**
 - Ejecutar `setup_device.py` con opción **2** (dos grippers Pika)
 - Configurar CAN bus: `bash ~/pika_ros/src/PikaAnyArm/piper/piper_ros/can_config.sh`
+- Base stations calibradas (sección 10)
 
 **Terminal 1** (grippers Pika):
 ```bash
@@ -321,12 +322,20 @@ source ~/pika_ros/install/setup.bash
 cd ~/pika_ros/scripts && bash start_multi_gripper.bash
 ```
 
-**Terminal 2** (nodos de teleoperación — dos brazos):
+**Terminal 2** (localización — publica `/pika_pose_l` y `/pika_pose_r`, abre RViz):
+```bash
+source ~/pika_ros/install/setup.bash
+ros2 launch pika_locator pika_double_locator.launch.py
+```
+
+**Terminal 3** (nodos de teleoperación — dos brazos):
 ```bash
 source ~/pika_ros/install/setup.bash
 conda activate pika
 ros2 launch pika_remote_piper teleop_rand_multi_piper.launch.py
 ```
+
+> Sin la Terminal 2, los brazos se habilitan por CAN pero no siguen el movimiento: `teleop_piper_publish.py` se queda esperando datos de `/pika_pose_l`/`_r` que nunca llegan.
 
 Este flujo lanza:
 - Dos nodos Piper (izquierdo + derecho) via CAN
