@@ -92,6 +92,8 @@ Extraer `source/install.zip` y colocar la carpeta `install/` dentro de `~/pika_r
 chmod 777 -R ~/pika_ros/install/
 ```
 
+Atajo equivalente (definido en `.bashrc`, correr cuando haga falta — no es automático): `pika_fix_install_perms`
+
 ---
 
 ## 7. Variables de entorno
@@ -200,6 +202,11 @@ python3 setup_device.py
 
 ---
 
+> **Orden recomendado de preparación (pasos 6, 9, 10 y 11) y por qué:**
+> 1. **Permisos de `install/`** (paso 6) primero — todo lo demás (survive-cli, launch files) vive ahí; sin esto, hasta la calibración falla por "Permission denied".
+> 2. **Permisos de `/dev/*` → calibrar → recién después instalar la regla udev permanente** (paso 10.3) — el `chmod 777 -R /dev/*` es un desbloqueo bruto e inmediato para poder calibrar ya, incluso si la regla udev del tracker aún no existe. La regla `81-vive.rules` (paso 4) se instala/recarga *después*, para que los permisos persistan tras reinicios sin tener que repetir el chmod amplio.
+> 3. **CAN del brazo** (paso 11) y **vincular dispositivos USB** (paso 9) son independientes entre sí y del resto — se pueden hacer en cualquier momento antes de lanzar teleoperación, pero conviene dejarlos al final porque son específicos del hardware que vayas a usar (cuántos brazos, qué opción de `setup_device.py`).
+
 ## 10. Despliegue y calibración de Pika Station
 
 ### 10.1 Colocación física de las base stations
@@ -230,6 +237,8 @@ sudo chmod 777 -R /dev/*
 cd ~/pika_ros/install/pika_locator/lib && ./survive-cli --force-calibrate
 ```
 
+Atajo equivalente para el primer comando (definido en `.bashrc`): `pika_fix_dev_perms`
+
 Usar `--force-calibrate` en estos casos:
 - Primera vez en este equipo.
 - Se agregaron o quitaron base stations.
@@ -256,8 +265,10 @@ Tras lanzar el Sense (`start_single_sensor.bash` / `start_multi_sensor.bash` / `
 
 ```bash
 cd ~/pika_ros/src/PikaAnyArm/piper/piper_ros
-bash can_activate.sh can_left 1000000 "3-1.1.3:1.0"
+bash can_activate.sh can0 1000000
 ```
+
+> **Importante:** para un solo brazo, la interfaz debe llamarse **`can0`** (no `can_left`) — `start_single_piper.launch.py` y `teleop_rand_single_piper.launch.py` esperan ese nombre por defecto (`can_port:=can0`) y ninguno de los dos lo sobreescribe. El tercer argumento (dirección USB) es opcional: `can_activate.sh` lo pide solo si detecta más de una interfaz CAN en el sistema; con un solo adaptador conectado, dos argumentos bastan.
 
 ### Para dos brazos (recomendado):
 
