@@ -310,26 +310,29 @@ ros2 launch pika_remote_piper teleop_rand_single_piper.launch.py
 
 ## Flujo A+ — Teleoperación Pika + Dos Pipers (2 brazos + 2 grippers)
 
+Requiere **2 Pika Sense** (uno por mano, con tracker Vive) + **2 Pika Gripper** (montados en los brazos como efector final) — son dispositivos físicos distintos, no confundir uno con otro.
+
 **Requisitos previos:**
-- Ejecutar `setup_device.py` con opción **2** (dos grippers Pika)
+- Ejecutar `setup_device.py` con opción **1** (dos sensores Pika) → genera `start_multi_sensor.bash`
+- Ejecutar `setup_device.py` con opción **2** (dos grippers Pika) → genera `start_multi_gripper.bash`
 - Configurar CAN bus: `bash ~/pika_ros/src/PikaAnyArm/piper/piper_ros/can_config.sh`
 - Base stations calibradas (sección 10)
 
-**Terminal 1** (grippers Pika):
+**Terminal 1** (Pika Sense — lectura de pinza + tracker; **incluye el localizador**, publica `/pika_pose_l` y `/pika_pose_r`, abre RViz):
+```bash
+conda deactivate
+source ~/pika_ros/install/setup.bash
+cd ~/pika_ros/scripts && bash start_multi_sensor.bash
+```
+
+**Terminal 2** (Pika Gripper — actuadores montados en los brazos):
 ```bash
 conda deactivate
 source ~/pika_ros/install/setup.bash
 cd ~/pika_ros/scripts && bash start_multi_gripper.bash
 ```
 
-**Terminal 2** (localización — publica `/pika_pose_l` y `/pika_pose_r`, abre RViz):
-```bash
-conda deactivate
-source ~/pika_ros/install/setup.bash
-ros2 launch pika_locator pika_double_locator.launch.py
-```
-
-> `pika_double_locator_node` y `rviz2` son binarios C++, sin dependencia de `casadi` — no necesitan (ni deben usar) el entorno conda. Mantenerlo desactivado evita que el Python de conda interfiera con `ros2 launch`.
+> **No** lanzar `pika_locator/pika_double_locator.launch.py` por separado — `open_multi_sensor.launch.py` (usado por `start_multi_sensor.bash`) ya lo incluye. Correrlo aparte crea una segunda instancia compitiendo por el mismo dongle Vive.
 
 **Terminal 3** (nodos de teleoperación — dos brazos):
 ```bash
@@ -338,7 +341,7 @@ conda activate pika
 ros2 launch pika_remote_piper teleop_rand_multi_piper.launch.py
 ```
 
-> Sin la Terminal 2, los brazos se habilitan por CAN pero no siguen el movimiento: `teleop_piper_publish.py` se queda esperando datos de `/pika_pose_l`/`_r` que nunca llegan.
+> Si solo lanzas la Terminal 2 (grippers) sin la Terminal 1 (sensores), nada escucha el pellizco/doble-click de los Pika Sense: el LED del Sense puede cambiar de color por su propio firmware local, pero `/teleop_trigger_l`/`_r` nunca se llama y la teleoperación no arranca.
 
 Este flujo lanza:
 - Dos nodos Piper (izquierdo + derecho) via CAN
@@ -490,8 +493,9 @@ ros2 launch data_tools run_data_publish.launch.py \
 - [ ] Ejecutar `setup_device.py` → Opción 1 (dos sensores)
 - [ ] Ejecutar `setup_device.py` → Opción 2 (dos grippers)
 - [ ] Ejecutar `bash ~/pika_ros/src/PikaAnyArm/piper/piper_ros/can_config.sh`
-- [ ] Terminal 1: `cd ~/pika_ros/scripts && bash start_multi_sensor.bash`
-- [ ] Terminal 2 (si se usan brazos): `ros2 launch pika_remote_piper teleop_rand_multi_piper.launch.py`
+- [ ] Terminal 1: `cd ~/pika_ros/scripts && bash start_multi_sensor.bash` (incluye el localizador — no lanzar `pika_locator` aparte)
+- [ ] Terminal 2: `cd ~/pika_ros/scripts && bash start_multi_gripper.bash`
+- [ ] Terminal 3 (si se usan brazos): `ros2 launch pika_remote_piper teleop_rand_multi_piper.launch.py`
 
 ---
 
