@@ -2,6 +2,25 @@
 
 Ubuntu 22.04 · ROS 2 Humble · x86_64
 
+## Antes de empezar
+
+Este documento configura y opera el kit **Pika** (sensores de captura + trackers Vive) junto con brazos robóticos **Piper** de AgileX, sobre ROS 2 Humble.
+
+**Hardware que puedes tener** (esta guía cubre cualquier combinación):
+- 1 o 2 **Pika Sense** — dispositivo de mano con tracker Vive, cámaras y encoder de pinza.
+- 1 o 2 **Pika Gripper** — pinza motorizada montada como efector final en un brazo Piper.
+- 1 o 2 **brazos Piper** — cada uno con su propio adaptador USB-CAN.
+- 2 o más **Pika Station** (base stations) — para localización espacial del tracker.
+
+**Cómo está organizado este documento:**
+1. **Instalación (pasos 1–9)** — se hace **una sola vez** por máquina.
+2. **Calibración y CAN (pasos 10–11)** — la calibración es puntual (se repite solo si mueves las base stations); el CAN **se debe reactivar en cada sesión/reinicio**, no es persistente.
+3. **[Tabla rápida](#tabla-rápida-qué-flujo-necesito)** — identifica qué combinación de terminales corresponde a tu hardware.
+4. **Flujos (A–E)** — el paso a paso de comandos para cada escenario de uso diario.
+5. **Problemas frecuentes** — al final.
+
+Si ya hiciste la instalación inicial alguna vez, puedes saltar directo a la Tabla Rápida.
+
 ---
 
 ## 1. Instalar ROS 2 Humble
@@ -92,7 +111,7 @@ Extraer `source/install.zip` y colocar la carpeta `install/` dentro de `~/pika_r
 chmod 777 -R ~/pika_ros/install/
 ```
 
-Atajo equivalente (definido en `.bashrc`, correr cuando haga falta — no es automático): `pika_fix_install_perms`
+> Atajo opcional: si defines en tu `~/.bashrc` una función como `pika_fix_install_perms() { chmod 777 -R ~/pika_ros/install/; }`, puedes invocar solo `pika_fix_install_perms` (por ejemplo, cada vez que recompiles). No viene incluido por defecto.
 
 ---
 
@@ -202,11 +221,6 @@ python3 setup_device.py
 
 ---
 
-> **Orden recomendado de preparación (pasos 6, 9, 10 y 11) y por qué:**
-> 1. **Permisos de `install/`** (paso 6) primero — todo lo demás (survive-cli, launch files) vive ahí; sin esto, hasta la calibración falla por "Permission denied".
-> 2. **Permisos de `/dev/*` → calibrar → recién después instalar la regla udev permanente** (paso 10.3) — el `chmod 777 -R /dev/*` es un desbloqueo bruto e inmediato para poder calibrar ya, incluso si la regla udev del tracker aún no existe. La regla `81-vive.rules` (paso 4) se instala/recarga *después*, para que los permisos persistan tras reinicios sin tener que repetir el chmod amplio.
-> 3. **CAN del brazo** (paso 11) y **vincular dispositivos USB** (paso 9) son independientes entre sí y del resto — se pueden hacer en cualquier momento antes de lanzar teleoperación, pero conviene dejarlos al final porque son específicos del hardware que vayas a usar (cuántos brazos, qué opción de `setup_device.py`).
-
 ## 10. Despliegue y calibración de Pika Station
 
 ### 10.1 Colocación física de las base stations
@@ -237,7 +251,9 @@ sudo chmod 777 -R /dev/*
 cd ~/pika_ros/install/pika_locator/lib && ./survive-cli --force-calibrate
 ```
 
-Atajo equivalente para el primer comando (definido en `.bashrc`): `pika_fix_dev_perms`
+El `chmod` es un desbloqueo amplio e inmediato para poder calibrar ya, incluso si la regla udev del tracker (paso 4) aún no tomó efecto — no reemplaza esa regla, que es la que deja los permisos correctos de forma permanente tras reinicios.
+
+> Atajo opcional: si defines en tu `~/.bashrc` una función como `pika_fix_dev_perms() { sudo chmod 777 -R /dev/*; }`, puedes invocar solo `pika_fix_dev_perms` en vez del comando completo. No viene incluido por defecto — es una conveniencia que puedes crear tú mismo.
 
 Usar `--force-calibrate` en estos casos:
 - Primera vez en este equipo.
@@ -290,7 +306,34 @@ El script `can_config.sh` configura automáticamente ambas interfaces a 1 Mbps:
 
 ---
 
+Con esto termina la instalación única. Los pasos 10 (calibración) y 11 (CAN) puede que debas repetirlos: la calibración solo si mueves las base stations, y el CAN **en cada sesión nueva** (no persiste tras un reinicio o al desconectar el adaptador USB).
+
+## Tabla Rápida — ¿Qué flujo necesito?
+
+| Tu hardware | Setup (`setup_device.py`) | CAN | Ir a |
+|---|---|---|---|
+| 1 Pika Sense + 1 Pika Gripper + 1 Piper | Opción 3 | `can0` | [Flujo A](#flujo-a-teleoperación-pika-un-piper-1-brazo-1-gripper) |
+| 2 Pika Sense + 2 Pika Gripper + 2 Piper | Opción 1 **y** Opción 2 | `can_config.sh` | [Flujo A+](#flujo-a-teleoperación-pika-dos-pipers-2-brazos-2-grippers) |
+| Solo brazo(s) Piper, sin Pika (visualizar/probar) | — | `can0` o `can_config.sh` | [Flujo B](#flujo-b-solo-control-del-brazo-piper-con-rviz) |
+| Captura de cámaras + joints guiando el brazo a mano (drag-teach), sin teleoperación Pika | Opción 3 | `can0` | [Flujo C](#flujo-c-captura-de-cámaras-y-joints-del-robot) |
+| Simulación sin hardware físico | — | — | [Flujo D](#flujo-d-simulación-gazebo-del-brazo-piper) |
+| Convertir episodios grabados a HDF5/LeRobot | — | — | [Flujo E](#flujo-e-pipeline-de-datos-captura-hdf5-lerobot) |
+
+> **Nota sobre "2 Pika Gripper" sin sensores:** no es una configuración funcional por sí sola — sin los 2 Pika Sense, nada escucha el pellizco/doble-click que activa la teleoperación, y la pinza del brazo no mimetiza ninguna mano. Siempre usa Flujo A+ completo (sensores **y** grippers) para dos brazos.
+
+**Checklist para 2 sensores + 2 grippers (Flujo A+):**
+- [ ] Ejecutar `setup_device.py` → Opción 1 (dos sensores)
+- [ ] Ejecutar `setup_device.py` → Opción 2 (dos grippers)
+- [ ] Ejecutar `bash ~/pika_ros/src/PikaAnyArm/piper/piper_ros/can_config.sh`
+- [ ] Terminal 1: `cd ~/pika_ros/scripts && bash start_multi_sensor.bash` (incluye el localizador — no lanzar `pika_locator` aparte)
+- [ ] Terminal 2: `cd ~/pika_ros/scripts && bash start_multi_gripper.bash`
+- [ ] Terminal 3: `ros2 launch pika_remote_piper teleop_rand_multi_piper.launch.py`
+
+---
+
 ## Flujo A — Teleoperación Pika + Un Piper (1 brazo + 1 gripper)
+
+*Uso: teleoperar un brazo Piper con un Pika Sense, con el Pika Gripper como efector final.*
 
 **Terminal 1** (sensores Pika):
 ```bash
@@ -310,7 +353,7 @@ ros2 launch pika_remote_piper teleop_rand_single_piper.launch.py
 
 ## Flujo A+ — Teleoperación Pika + Dos Pipers (2 brazos + 2 grippers)
 
-Requiere **2 Pika Sense** (uno por mano, con tracker Vive) + **2 Pika Gripper** (montados en los brazos como efector final) — son dispositivos físicos distintos, no confundir uno con otro.
+*Uso: teleoperación bimanual — un Piper por mano.* Requiere **2 Pika Sense** (uno por mano, con tracker Vive) + **2 Pika Gripper** (montados en los brazos como efector final) — son dispositivos físicos distintos, no confundir uno con otro.
 
 **Requisitos previos:**
 - Ejecutar `setup_device.py` con opción **1** (dos sensores Pika) → genera `start_multi_sensor.bash`
@@ -352,6 +395,8 @@ Este flujo lanza:
 
 ## Flujo B — Solo control del brazo Piper (con RViz)
 
+*Uso: verificar que el brazo (y su CAN) funcionan correctamente, sin ningún hardware Pika de por medio — útil como primera prueba tras instalar o mover un brazo.*
+
 ### B.1 — Un solo brazo Piper
 
 **Terminal 1**:
@@ -381,6 +426,8 @@ En RViz se visualizarán ambos brazos (izquierdo y derecho).
 
 ## Flujo C — Captura de cámaras y joints del robot
 
+*Uso: capturar cámaras y estado de articulaciones mientras guías el brazo **a mano** (modo drag-teach del Piper), sin usar teleoperación por Pika. El brazo solo se visualiza en RViz, ninguna terminal aquí lo mueve activamente.*
+
 **Terminal 1** (sensores Pika):
 ```bash
 conda deactivate
@@ -388,9 +435,8 @@ source ~/pika_ros/install/setup.bash
 cd ~/pika_ros/scripts && bash start_sensor_gripper.bash
 ```
 
-**Terminal 2** (brazo Piper + captura):
+**Terminal 2** (brazo Piper + captura — recuerda activar el CAN primero, ver sección 11):
 ```bash
-chmod 777 -R ~/pika_ros/install
 cd ~/pika_ros/src/PikaAnyArm/piper/piper_ros
 bash can_activate.sh can0 1000000
 
@@ -403,7 +449,7 @@ ros2 launch piper start_single_piper_rviz.launch.py
 
 ## Flujo D — Simulación Gazebo del brazo Piper
 
-Workspace independiente en `~/piper_ros`. No requiere hardware CAN ni Pika.
+*Uso: probar el movimiento del brazo en simulación, sin ningún hardware físico.* Workspace independiente en `~/piper_ros`. No requiere hardware CAN ni Pika.
 
 **Compilar (primera vez o tras cambios):**
 ```bash
@@ -430,6 +476,8 @@ Mover un slider mueve el brazo en Gazebo y en RViz simultáneamente.
 ---
 
 ## Flujo E — Pipeline de datos (captura → HDF5 → LeRobot)
+
+*Uso: después de grabar episodios (Flujo A/A+/C con `run_data_capture.launch.py`), convertirlos a un formato utilizable para entrenar modelos.*
 
 Tipos de configuración disponibles: `single_pika` | `multi_pika` | `single_pika_teleop` | `multi_pika_teleop` | `aloha` | `lift`
 
@@ -476,26 +524,6 @@ ros2 launch data_tools run_data_publish.launch.py \
   datasetDir:=/ruta/datos \
   episodeIndex:=0
 ```
-
----
-
-## Tabla Rápida — Configuración por escenario
-
-| Escenario | Setup | CAN | Comando Launch | Notas |
-|---|---|---|---|---|
-| **1 sensor + 1 gripper** | Opción 3 | `can_left` | `teleop_rand_single_piper.launch.py` | Básico |
-| **2 sensores** | Opción 1 | — | `start_multi_sensor.bash` | Captura bilateral |
-| **2 grippers** | Opción 2 | `can_config.sh` | `teleop_rand_multi_piper.launch.py` | 2 brazos Piper |
-| **2 sensores + 2 grippers** | Opción 1 + 2 | `can_config.sh` | `teleop_rand_multi_piper.launch.py` | Captura + ejecución |
-| **2 brazos (solo RViz)** | — | `can_config.sh` | `start_double_piper.launch.py` | Visualización |
-
-**Checklist para 2 sensores + 2 grippers:**
-- [ ] Ejecutar `setup_device.py` → Opción 1 (dos sensores)
-- [ ] Ejecutar `setup_device.py` → Opción 2 (dos grippers)
-- [ ] Ejecutar `bash ~/pika_ros/src/PikaAnyArm/piper/piper_ros/can_config.sh`
-- [ ] Terminal 1: `cd ~/pika_ros/scripts && bash start_multi_sensor.bash` (incluye el localizador — no lanzar `pika_locator` aparte)
-- [ ] Terminal 2: `cd ~/pika_ros/scripts && bash start_multi_gripper.bash`
-- [ ] Terminal 3 (si se usan brazos): `ros2 launch pika_remote_piper teleop_rand_multi_piper.launch.py`
 
 ---
 
@@ -549,3 +577,7 @@ ls -la /dev/ttyUSB60 /dev/ttyUSB61
 # Dar permisos si es necesario
 sudo chmod 666 /dev/ttyUSB60 /dev/ttyUSB61
 ```
+
+**El doble-click activa la teleoperación del brazo contrario** (pinza derecha activa el brazo izquierdo o viceversa, pero el movimiento en sí no está cruzado): esto es un emparejamiento de dispositivos, no un bug de software. `setup_device.py` etiqueta "izquierdo"/"derecho" según el **orden en que conectaste** cada Pika Sense durante el asistente, no según qué mano ibas a usar. Para corregirlo sin repetir el asistente completo, intercambia los valores `l_serial_port`/`r_serial_port` (y las cámaras/puertos fisheye correspondientes) dentro de `scripts/start_multi_sensor.bash`.
+
+**El Pika Gripper no mimetiza la pinza del Pika Sense correspondiente:** confirma que ambos, `start_multi_sensor.bash` **y** `start_multi_gripper.bash`, están corriendo (el Gripper necesita al Sense para recibir su ángulo de pinza — ver Flujo A+). Si ambos corren y aun así no mimetiza, verifica con `ros2 node list` que no haya nombres de nodo duplicados entre las dos terminales.
