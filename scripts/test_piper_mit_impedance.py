@@ -45,9 +45,9 @@ if __name__ == "__main__":
     piper.ConnectPort()
     while not piper.EnablePiper():
         time.sleep(0.01)
-    print(f"Brazo habilitado en {CAN_PORT}. Modo MIT hacia {TARGETS} durante {DURATION_S}s.")
-    print("Muevelo con la mano y sueltalo para sentir el efecto resorte. Ctrl+C para detener antes.")
-    print("Aviso: al terminar (tiempo agotado o Ctrl+C), el brazo puede perder sujecion activa de golpe.")
+    print(f"Brazo habilitado en {CAN_PORT}. Modo MIT hacia {TARGETS} durante {DURATION_S}s.", flush=True)
+    print("Muevelo con la mano y sueltalo para sentir el efecto resorte. Ctrl+C para detener antes.", flush=True)
+    print("Aviso: al terminar (tiempo agotado o Ctrl+C), el brazo puede perder sujecion activa de golpe.", flush=True)
 
     period = 1.0 / HZ
     start = time.time()
@@ -59,4 +59,4 @@ if __name__ == "__main__":
             time.sleep(period)
     except KeyboardInterrupt:
         pass
-    print("Prueba terminada.")
+    print("Prueba terminada.", flush=True)
