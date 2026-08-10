@@ -26,8 +26,15 @@ from piper_sdk import *
 CAN_PORT = sys.argv[1] if len(sys.argv) > 1 else "can_left"
 DURATION_S = 30
 HZ = 100
-KP = 5
-KD = 0.8
+
+# Ganancias por joint (1-6). Cada joint puede tener su propia rigidez
+# (kp) y amortiguacion (kd) -- JointMitCtrl las acepta por llamada, no
+# hay que usar el mismo valor para los 6. Por ejemplo, J2/J3 (los que
+# mas peso del brazo sostienen contra la gravedad) pueden llevar un kp
+# mas alto para no hundirse, mientras J4-J6 (muneca, mas livianos)
+# pueden ir mas sueltos.
+KP = [5.0, 5.0, 5.0, 5.0, 5.0, 5.0]  # joints 1-6
+KD = [0.8, 0.8, 0.8, 0.8, 0.8, 0.8]  # joints 1-6
 
 # Posicion objetivo (radianes) para cada joint 1-6. Capturada a mano
 # via el GUI de sliders de start_single_piper_rviz.launch.py + lectura
@@ -55,7 +62,7 @@ if __name__ == "__main__":
         while time.time() - start < DURATION_S:
             piper.ModeCtrl(0x01, 0x04, 0, 0xAD)
             for motor in range(1, 7):
-                piper.JointMitCtrl(motor, TARGETS[motor - 1], 0.0, KP, KD, 0.0)
+                piper.JointMitCtrl(motor, TARGETS[motor - 1], 0.0, KP[motor - 1], KD[motor - 1], 0.0)
             time.sleep(period)
     except KeyboardInterrupt:
         pass
