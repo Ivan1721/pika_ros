@@ -33,7 +33,7 @@ HZ = 100
 # mas peso del brazo sostienen contra la gravedad) pueden llevar un kp
 # mas alto para no hundirse, mientras J4-J6 (muneca, mas livianos)
 # pueden ir mas sueltos.
-KP = [5.0, 5.0, 5.0, 5.0, 5.0, 5.0]  # joints 1-6
+KP = [5.0, 20.0, 15.0, 5.0, 5.0, 5.0]  # joints 1-6 (J2/J3 mas altos: sostienen mas peso, sin compensacion de gravedad)
 KD = [0.8, 0.8, 0.8, 0.8, 0.8, 0.8]  # joints 1-6
 
 # Posicion objetivo (radianes) para cada joint 1-6. Capturada a mano
@@ -67,3 +67,4 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         pass
     print("Prueba terminada.", flush=True)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
