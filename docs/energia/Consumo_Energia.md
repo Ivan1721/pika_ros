@@ -51,7 +51,7 @@ No hay una cifra total de consumo publicada para todo el conjunto. Se alimenta d
 
 ### 2.3 Pika Gripper (unidad ejecutora)
 - Conector de potencia: **XT30(PB)**, línea de **24 V DC** dedicada al motor sin escobillas de la pinza (dato ✅ oficial, tabla de pines de la sección 1.6.2).
-- El firmware (`sensor_tools`) limita la corriente del motor a **1000 mA** por defecto (parámetro `motor_current_limit`, en [open_multi_gripper.launch.py:33](src/sensor_tools/launch/open_multi_gripper.launch.py#L33) y equivalentes) → **24 W pico** a 24 V.
+- El firmware (`sensor_tools`) limita la corriente del motor a **1000 mA** por defecto (parámetro `motor_current_limit`, en [open_multi_gripper.launch.py:33](../../src/sensor_tools/launch/open_multi_gripper.launch.py#L33) y equivalentes) → **24 W pico** a 24 V.
 - En reposo/sujeción estática el consumo real es mucho menor (~2–7 W estimado), ya que el motor solo corrige posición.
 - Cámaras y sensores del Gripper (mismas que en Sense) se alimentan vía Type-C, mismas estimaciones que en 2.2.
 
