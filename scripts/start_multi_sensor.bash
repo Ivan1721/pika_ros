@@ -3,14 +3,14 @@ SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 camera_fps=30
 camera_width=640
 camera_height=480
-l_depth_camera_no=230322276438
-r_depth_camera_no=230322275875
+l_depth_camera_no=230322275875
+r_depth_camera_no=230322276438
 
-l_serial_port=/dev/ttyUSB50
-r_serial_port=/dev/ttyUSB51
+l_serial_port=/dev/ttyUSB51
+r_serial_port=/dev/ttyUSB50
 sudo chmod a+rw /dev/ttyUSB*
-l_fisheye_port=50
-r_fisheye_port=51
+l_fisheye_port=51
+r_fisheye_port=50
 sudo chmod a+rw /dev/video*
 
 source /opt/ros/humble/setup.bash && cd $SCRIPT_DIR/../install/sensor_tools/share/sensor_tools/scripts/ && chmod 777 usb_camera.py
