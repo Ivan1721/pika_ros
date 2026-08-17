@@ -8,5 +8,6 @@
 | [`datasheets/`](datasheets/) | Hoja de datos oficial del producto Pika (chino y español) |
 | [`calibracion/`](calibracion/) | Guía de despliegue y calibración de Pika Station / Tracker (Vive) |
 | [`energia/`](energia/) | Consumo energético por componente e inventario de equipo |
+| [`presentaciones/`](presentaciones/) | Resumen de contribuciones de este fork frente al repositorio original de AgileX |
 
 Fuente primaria de todo el contenido oficial de AgileX: [portal de documentación técnica de Pika en Yuque](https://agilexsupport.yuque.com/staff-hso6mo/peoot3/rcrola7ogxquhivi).
