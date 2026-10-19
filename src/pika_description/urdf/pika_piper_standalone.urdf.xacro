@@ -15,15 +15,19 @@
 <robot name="pika_piper" xmlns:xacro="http://ros.org/wiki/xacro">
 
   <xacro:arg name="gripper" default="pika"/>
+  <!-- Link raíz del URDF del Piper: el piper_description de este workspace
+       (src/PikaAnyArm) empieza en dummy_link; el de ~/piper_ros empieza en
+       base_link (usar arm_root:=base_link si es ese el que queda en el path) -->
+  <xacro:arg name="arm_root" default="dummy_link"/>
 
-  <!-- Piper arm (base_link es root en el .urdf original, sin world) -->
+  <!-- Piper arm -->
   <xacro:include filename="$(find piper_description)/urdf/piper_no_gripper_description.urdf"/>
 
   <!-- Frame raíz explícito -->
   <link name="world"/>
   <joint name="world_to_base" type="fixed">
     <parent link="world"/>
-    <child link="base_link"/>
+    <child link="$(arg arm_root)"/>
     <origin xyz="0 0 0" rpy="0 0 0"/>
   </joint>
 

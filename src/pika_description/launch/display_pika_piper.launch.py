@@ -11,10 +11,11 @@ from ament_index_python.packages import get_package_share_directory
 def launch_setup(context, *args, **kwargs):
     pkg = get_package_share_directory('pika_description')
     gripper_val = LaunchConfiguration('gripper').perform(context)
+    arm_root_val = LaunchConfiguration('arm_root').perform(context)
 
     urdf_path = os.path.join(pkg, 'urdf/pika_piper_standalone.urdf.xacro')
     doc = xacro.parse(open(urdf_path))
-    xacro.process_doc(doc, mappings={'gripper': gripper_val})
+    xacro.process_doc(doc, mappings={'gripper': gripper_val, 'arm_root': arm_root_val})
     robot_description = {'robot_description': doc.toxml()}
 
     rviz_config = os.path.join(pkg, 'rviz/pika_piper.rviz')
@@ -48,6 +49,11 @@ def generate_launch_description():
             name='gripper',
             default_value='pika',
             description='Gripper a montar en link6 del Piper (pika | ...)',
+        ),
+        DeclareLaunchArgument(
+            name='arm_root',
+            default_value='dummy_link',
+            description='Link raiz del URDF del Piper: dummy_link (este workspace) | base_link (~/piper_ros)',
         ),
         OpaqueFunction(function=launch_setup),
     ])

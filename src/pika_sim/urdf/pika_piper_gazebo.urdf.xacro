@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!--
+  Piper + gripper Pika para Gazebo Classic.
+  Reutiliza pika_piper_standalone.urdf.xacro (pika_description) y le agrega
+  ros2_control + el plugin gazebo_ros2_control.
+
+  Las mallas usan package://; sim_piper_single.launch.py las convierte a
+  file:// antes de pasarlas a Gazebo.
+-->
+<robot name="pika_piper" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find pika_description)/urdf/pika_piper_standalone.urdf.xacro"/>
+
+  <xacro:macro name="position_joint" params="name initial:=0.0">
+    <joint name="${name}">
+      <command_interface name="position"/>
+      <state_interface name="position">
+        <param name="initial_value">${initial}</param>
+      </state_interface>
+      <state_interface name="velocity"/>
+    </joint>
+  </xacro:macro>
+
+  <ros2_control name="GazeboSystem" type="system">
+    <hardware>
+      <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+    </hardware>
+    <xacro:position_joint name="joint1"/>
+    <xacro:position_joint name="joint2"/>
+    <xacro:position_joint name="joint3"/>
+    <xacro:position_joint name="joint4"/>
+    <xacro:position_joint name="joint5"/>
+    <xacro:position_joint name="joint6"/>
+    <xacro:position_joint name="pika_jaw_left_joint"/>
+    <xacro:position_joint name="pika_jaw_right_joint"/>
+  </ros2_control>
+
+  <gazebo>
+    <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+      <parameters>$(find pika_sim)/config/pika_piper_controllers.yaml</parameters>
+    </plugin>
+  </gazebo>
+
+</robot>
