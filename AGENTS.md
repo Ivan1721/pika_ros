@@ -48,6 +48,10 @@ ros2 launch pika_remote_piper teleop_rand_single_piper.launch.py sim:=true   # t
 
 `pika_sim` replaces the Piper CAN driver with `piper_sim_bridge.py`. The bridge keeps the driver's topic contract: it reads `/joint_states_gripper` (6 joints in rad, plus the total gripper opening in m) and publishes `/joint_states_single` with names `joint0..joint6` at 200 Hz. `fake_pika_sense.py` optionally replaces the Pika Sense and Vive tracker with an RViz interactive marker. Keep this contract when you extend the simulation, so that simulators stay swappable and the teleop and capture code stays untouched. The details and pitfalls (joint reordering, `/joint_states` name clash, `package://` meshes in Gazebo Classic) are in `src/pika_sim/README.md`.
 
+## Active Perception Research
+
+This repo hosts the active-perception code (next-best-view planner, metrics, fruit scenes), with Piper in `pika_sim` as the first robot. `milo_ws` (Ivan1721/milo_ws, branch `brazo`) is the intermediate step: it provides templates that already work (eye-in-hand camera simulation, MoveIt + OctoMap, randomized scenes, auto-labelled datasets) and is the second robot. The literature survey lives in Ivan1721/ActivePerceptionArms. Before working on this, read `docs/percepcion_activa/README.md`: decisions, the per-robot parameter contract, the roadmap, and how to resume work from another machine. Keep the code robot-agnostic: no robot names in the code, only parameters.
+
 ## Coding Style & Naming Conventions
 
 Follow existing ROS package conventions:

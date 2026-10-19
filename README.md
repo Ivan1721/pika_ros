@@ -50,6 +50,7 @@ This repository is a fork of [agilexrobotics/pika_ros](https://github.com/agilex
 | Gazebo simulation of the Piper + Pika gripper that plugs into the real teleoperation chain. It needs no CAN, Pika Sense or base stations | [src/pika_sim](src/pika_sim/README.md) |
 | PikaAnyArm fork that keeps the `piper/` layout (`pika_remote_piper`, `piper_ros`) removed upstream in V2 | submodule `src/PikaAnyArm` → [Ivan1721/PikaAnyArm](https://github.com/Ivan1721/PikaAnyArm) |
 | Fixes: USB pairing in `setup_device.py`, node names and gripper mirroring in `open_multi_gripper.launch.py`, IK/teleop fixes ported from upstream | git history |
+| Active perception research plan: how Pika + Piper, Milo ([Ivan1721/milo_ws](https://github.com/Ivan1721/milo_ws)) and the ActivePerceptionArms survey fit together, with Milo as the intermediate step | [docs/percepcion_activa](docs/percepcion_activa/README.md) |
 | Calibration guide, datasheets, power budget | [docs/](docs/README.md) |
 
 ### Quick start

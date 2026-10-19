@@ -8,6 +8,7 @@
 | [`datasheets/`](datasheets/) | Hoja de datos oficial del producto Pika (chino y español) |
 | [`calibracion/`](calibracion/) | Guía de despliegue y calibración de Pika Station / Tracker (Vive) |
 | [`energia/`](energia/) | Consumo energético por componente e inventario de equipo |
+| [`percepcion_activa/`](percepcion_activa/README.md) | Cómo se conectan Pika + Piper, Milo (`milo_ws`) y el survey ActivePerceptionArms: Milo como punto intermedio, decisiones, contrato por robot y hoja de ruta |
 | [`presentaciones/`](presentaciones/) | Resumen de contribuciones de este fork frente al repositorio original de AgileX |
 
 Documentación de paquetes (READMEs dentro de `src/`; `pika_description` y `pika_sim` son propios de este fork):

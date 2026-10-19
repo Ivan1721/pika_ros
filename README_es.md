@@ -50,6 +50,7 @@ Este repositorio es un fork de [agilexrobotics/pika_ros](https://github.com/agil
 | Simulación Gazebo del Piper + gripper Pika conectada a la cadena de teleoperación real. No necesita CAN, Pika Sense ni base stations | [src/pika_sim](src/pika_sim/README.md) |
 | Fork de PikaAnyArm que conserva la estructura `piper/` (`pika_remote_piper`, `piper_ros`), eliminada en la V2 de upstream | submódulo `src/PikaAnyArm` → [Ivan1721/PikaAnyArm](https://github.com/Ivan1721/PikaAnyArm) |
 | Correcciones: emparejamiento USB en `setup_device.py`, nombres de nodo y mimetismo del gripper en `open_multi_gripper.launch.py`, fixes de IK/teleop traídos de upstream | historial de git |
+| Plan de investigación en percepción activa: cómo se conectan Pika + Piper, Milo ([Ivan1721/milo_ws](https://github.com/Ivan1721/milo_ws)) y el survey ActivePerceptionArms, con Milo como punto intermedio | [docs/percepcion_activa](docs/percepcion_activa/README.md) |
 | Guía de calibración, hojas de datos, presupuesto energético | [docs/](docs/README.md) |
 
 ### Inicio rápido

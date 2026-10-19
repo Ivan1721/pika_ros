@@ -50,6 +50,7 @@ pika 遥操作：https://github.com/agilexrobotics/PikaAnyArm
 | Piper + Pika 夹爪的 Gazebo 仿真，接入真实遥操作链路，无需 CAN、Pika Sense 或定位基站 | [src/pika_sim](src/pika_sim/README.md) |
 | PikaAnyArm 分支，保留上游 V2 中删除的 `piper/` 结构（`pika_remote_piper`、`piper_ros`） | 子模块 `src/PikaAnyArm` → [Ivan1721/PikaAnyArm](https://github.com/Ivan1721/PikaAnyArm) |
 | 修复：`setup_device.py` 的 USB 配对、`open_multi_gripper.launch.py` 的节点名与夹爪跟随、从上游移植的 IK/遥操作修复 | git 历史 |
+| 主动感知研究计划：Pika + Piper、Milo（[Ivan1721/milo_ws](https://github.com/Ivan1721/milo_ws)）与 ActivePerceptionArms 综述如何衔接（Milo 作为中间环节） | [docs/percepcion_activa](docs/percepcion_activa/README.md) |
 | 标定指南、数据手册、功耗预算 | [docs/](docs/README.md) |
 
 ### 快速开始
