@@ -8,3 +8,4 @@ __pycache__/
 frames_*.gv
 frames_*.pdf
 Presentación sin título.pdf
+.claude/settings.local.json
