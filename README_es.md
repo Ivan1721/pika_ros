@@ -38,3 +38,30 @@ Para más información, consulta el [Manual de Usuario del Producto Pika beta (C
 - Arquitectura: x86_64
 - Sistema operativo: Ubuntu 22.04
 - ROS: Humble
+
+## Sobre este fork
+
+Este repositorio es un fork de [agilexrobotics/pika_ros](https://github.com/agilexrobotics/pika_ros) (rama `ros2`), mantenido en [Ivan1721/pika_ros](https://github.com/Ivan1721/pika_ros). La rama de trabajo es `pika-custom-ros2`.
+
+| Qué agrega | Dónde |
+|---|---|
+| Guía de instalación y uso paso a paso, con los flujos A/A+ (teleoperación), B (solo brazo), C (captura de cámaras y joints), D/D+ (simulación) y E (pipeline de datos) | [docs/manuales/Manual.md](docs/manuales/Manual.md) |
+| URDF del gripper Pika (D405 + fisheye) y del brazo Piper + Pika | [src/pika_description](src/pika_description/README.md) |
+| Simulación Gazebo del Piper + gripper Pika conectada a la cadena de teleoperación real. No necesita CAN, Pika Sense ni base stations | [src/pika_sim](src/pika_sim/README.md) |
+| Fork de PikaAnyArm que conserva la estructura `piper/` (`pika_remote_piper`, `piper_ros`), eliminada en la V2 de upstream | submódulo `src/PikaAnyArm` → [Ivan1721/PikaAnyArm](https://github.com/Ivan1721/PikaAnyArm) |
+| Correcciones: emparejamiento USB en `setup_device.py`, nombres de nodo y mimetismo del gripper en `open_multi_gripper.launch.py`, fixes de IK/teleop traídos de upstream | historial de git |
+| Guía de calibración, hojas de datos, presupuesto energético | [docs/](docs/README.md) |
+
+### Inicio rápido
+
+```bash
+cd ~/pika_ros
+git submodule update --init --recursive
+source /opt/ros/humble/setup.bash
+colcon build --packages-select data_msgs && source install/setup.bash
+colcon build && source install/setup.bash
+```
+
+`pika_locator` y `libsurvive` (localización Vive) solo existen como binarios precompilados en `source/install.zip`; ver la sección 6 del Manual. Para elegir el flujo según tu hardware, usa la tabla rápida del Manual. Sin ningún hardware, usa el **Flujo D+** (`ros2 launch pika_sim sim_piper_single.launch.py`).
+
+Los problemas conocidos están al final del Manual. Las pautas de contribución y de sincronización con upstream están en [AGENTS.md](AGENTS.md).

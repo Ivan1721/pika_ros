@@ -10,4 +10,14 @@
 | [`energia/`](energia/) | Consumo energético por componente e inventario de equipo |
 | [`presentaciones/`](presentaciones/) | Resumen de contribuciones de este fork frente al repositorio original de AgileX |
 
+Documentación de paquetes (READMEs dentro de `src/`; `pika_description` y `pika_sim` son propios de este fork):
+
+| Paquete | Contenido |
+|---|---|
+| [`pika_description`](../src/pika_description/README.md) | URDF del gripper Pika y del brazo Piper + Pika |
+| [`pika_sim`](../src/pika_sim/README.md) | Simulación Gazebo del Piper + Pika conectada a la teleoperación real (Flujo D+ del Manual) |
+| [`sensor_tools`](../src/sensor_tools/README.md) | Launch files y topics del hardware Pika |
+
+Problemas conocidos del software: al final de [Manual.md](manuales/Manual.md#problemas-conocidos-del-software).
+
 Fuente primaria de todo el contenido oficial de AgileX: [portal de documentación técnica de Pika en Yuque](https://agilexsupport.yuque.com/staff-hso6mo/peoot3/rcrola7ogxquhivi).

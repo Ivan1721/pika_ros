@@ -4,21 +4,29 @@ Paquete ROS 2 con la descripción URDF del gripper Pika (Agilex Robotics).
 
 ## Dependencias
 
-`pika_description` es autónomo — todas las mallas están en `meshes/`.
+`pika_description` es autónomo: todas las mallas del gripper están en `meshes/`, y el brazo
+Piper sale del `piper_description` que se compila en este mismo workspace
+(`src/PikaAnyArm/piper/piper_ros/src/piper_description`). No hace falta `~/piper_ros`.
 
 | Launch | Requiere |
 |---|---|
 | `display_pika_gripper.launch.py` | solo `pika_ros` |
-| `display_pika_piper.launch.py` | `piper_ros` (brazo link1–6) + `pika_ros` (gripper) |
+| `display_pika_piper.launch.py` | solo `pika_ros` |
 
 ```bash
-# Solo el gripper
-source ~/pika_ros/install/setup.bash
-
-# Brazo completo + gripper Pika
-source ~/piper_ros/install/setup.bash
 source ~/pika_ros/install/setup.bash
 ```
+
+`pika_piper_standalone.urdf.xacro` une `world` con el link raíz del brazo, que se fija con el
+argumento `arm_root`:
+
+| `piper_description` en el path | Link raíz | Argumento |
+|---|---|---|
+| el de este workspace (default) | `dummy_link` | — |
+| el de `~/piper_ros` | `base_link` | `arm_root:=base_link` |
+
+Si el que queda en el path es el de `~/piper_ros` y no pasas el argumento, el URDF falla con
+*Two root links found*.
 
 ## Estructura del modelo
 
@@ -79,16 +87,18 @@ Origen = cara de la brida (interfaz con link6 del Piper / parent)
 ## Lanzar visualización
 
 ```bash
-# Solo el gripper Pika (independiente de piper_ros)
 source ~/pika_ros/install/setup.bash
+
+# Solo el gripper Pika
 ros2 launch pika_description display_pika_gripper.launch.py
 
 # Brazo Piper (link1–6) + gripper Pika
-source ~/piper_ros/install/setup.bash
-source ~/pika_ros/install/setup.bash
 ros2 launch pika_description display_pika_piper.launch.py              # gripper pika (default)
 ros2 launch pika_description display_pika_piper.launch.py gripper:=otro  # gripper futuro
+ros2 launch pika_description display_pika_piper.launch.py arm_root:=base_link  # con ~/piper_ros
 ```
+
+Para simular este mismo modelo en Gazebo, ver [`pika_sim`](../pika_sim/README.md).
 
 ## Archivos
 
@@ -96,10 +106,10 @@ ros2 launch pika_description display_pika_piper.launch.py gripper:=otro  # gripp
 urdf/
   pika_gripper_macro.urdf.xacro      ← macro xacro parametrizable (prefix, parent, origin)
   pika_gripper_standalone.urdf.xacro ← wrapper standalone: world → gripper_base
-  pika_piper_standalone.urdf.xacro   ← Piper arm (link1–6) + gripper Pika intercambiable
+  pika_piper_standalone.urdf.xacro   ← Piper arm (link1–6) + gripper Pika intercambiable (args gripper, arm_root)
 launch/
   display_pika_gripper.launch.py     ← robot_state_publisher + joint_state_publisher_gui + rviz2
-  display_pika_piper.launch.py       ← igual, con arg gripper:=pika | ...
+  display_pika_piper.launch.py       ← igual, con args gripper:=pika | ... y arm_root
 rviz/
   pika_gripper.rviz                  ← config RViz standalone (Fixed Frame: world)
   pika_piper.rviz                    ← config RViz brazo completo

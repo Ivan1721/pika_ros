@@ -2,39 +2,62 @@
 
 ## Project Structure & Module Organization
 
-This is a ROS workspace for Pika data collection, sensing, and teleoperation. Primary source packages live under `src/`: `data_msgs` defines custom messages and services, `data_tools` contains dataset capture/publish/sync utilities, `sensor_tools` contains camera/gripper/localization launch files and scripts, `realsense-ros` is the RealSense driver stack, `PikaAnyArm` contains Piper teleoperation code, and `pika_description` contains the URDF/xacro description of the Pika gripper end-effector (meshes from `piper_description` and `realsense2_description`). Root `scripts/` holds device setup and helper automation. `img/` and `src/PikaAnyArm/docs_img/` contain documentation assets. `docs/` holds project documentation: `docs/manuales/` (Manual.md Spanish setup guide, official AgileX manuals), `docs/datasheets/` (Pika product datasheets CN/ES), `docs/calibracion/` (tracker/base-station calibration guide), and `docs/energia/` (power consumption docs). Treat `install/` and `build/` as generated build output unless a task explicitly targets deployed artifacts.
+This is a ROS 2 Humble workspace for Pika data collection, sensing, teleoperation and simulation. It is a fork of `agilexrobotics/pika_ros` (branch `ros2`); the working branch is `pika-custom-ros2`.
+
+Primary source packages live under `src/`:
+
+- `sensor_tools`: camera/gripper/localization launch files and scripts.
+- `data_msgs` and `data_tools` (submodules of AgileX): custom messages, and dataset capture/sync/publish/conversion.
+- `realsense-ros`: the RealSense driver stack.
+- `PikaAnyArm` (submodule, fork `Ivan1721/PikaAnyArm`, branch `pika-custom-ros2`): Piper teleoperation. `pika_remote_piper` and the Piper packages `piper`, `piper_msgs`, `piper_description` are nested under `src/PikaAnyArm/piper/`.
+- `pika_description`: URDF/xacro of the Pika gripper and of the Piper + Pika arm.
+- `pika_sim`: Gazebo Classic simulation of the Piper + Pika gripper that plugs into the real teleoperation chain.
+
+Root `scripts/` holds device setup and the start scripts generated for this machine; `src/sensor_tools/scripts/` holds the upstream templates. `img/` and `src/PikaAnyArm/docs_img/` contain documentation assets. `docs/` holds project documentation, indexed in `docs/README.md`; the operator guide is `docs/manuales/Manual.md` (Spanish), organized in workflows A/A+/B/C/D/D+/E.
+
+Treat `install/` and `build/` as generated output, with one exception: `pika_locator` and `libsurvive` (Vive localization) exist only as precompiled binaries in `install/`, extracted from `source/install.zip`. Do not delete `install/`; `colcon build` cannot regenerate them.
 
 ## Build, Test, and Development Commands
 
-Use ROS 2 Humble on Ubuntu 22.04 unless a package-specific README says otherwise.
-
 ```bash
 source /opt/ros/humble/setup.bash
+git submodule update --init --recursive
+colcon build --packages-select data_msgs   # first, on a fresh clone
+source install/setup.bash
 colcon build
-```
-
-Builds all workspace packages. For a focused build, use:
-
-```bash
-colcon build --packages-select data_msgs data_tools sensor_tools pika_description
-```
-
-After building, source the overlay:
-
-```bash
 source install/setup.bash
 ```
+
+For a focused build, use `colcon build --packages-select <pkg> ...`.
+
+Use two Python environments, and do not mix them in one terminal:
+
+- **Sensor, capture, localization and simulation** (`scripts/start_*.bash`, `data_tools`, `pika_sim`): system Python, after `conda deactivate`.
+- **Teleoperation nodes** (`pika_remote_piper`): `conda activate pika`. They need `casadi`, `pinocchio` and `meshcat`.
 
 Common launch examples:
 
 ```bash
 ros2 launch data_tools run_data_capture.launch.py type:=single_pika datasetDir:=/path/to/data episodeIndex:=0
 ros2 launch sensor_tools open_single_sensor.launch.py
+ros2 launch pika_sim sim_piper_single.launch.py                              # simulated arm, no hardware
+ros2 launch pika_remote_piper teleop_rand_single_piper.launch.py sim:=true   # teleop against the simulation
 ```
+
+## Simulation
+
+`pika_sim` replaces the Piper CAN driver with `piper_sim_bridge.py`. The bridge keeps the driver's topic contract: it reads `/joint_states_gripper` (6 joints in rad, plus the total gripper opening in m) and publishes `/joint_states_single` with names `joint0..joint6` at 200 Hz. `fake_pika_sense.py` optionally replaces the Pika Sense and Vive tracker with an RViz interactive marker. Keep this contract when you extend the simulation, so that simulators stay swappable and the teleop and capture code stays untouched. The details and pitfalls (joint reordering, `/joint_states` name clash, `package://` meshes in Gazebo Classic) are in `src/pika_sim/README.md`.
 
 ## Coding Style & Naming Conventions
 
-Follow existing ROS package conventions. Use 2-space indentation in XML/YAML, 4 spaces in Python, and the prevailing C++ style in nearby files. Name ROS packages, launch files, Python scripts, topics, and parameters with `snake_case`. Keep message and service types in PascalCase, such as `CaptureStatus.msg` and `CaptureService.srv`. Prefer clear launch argument names matching existing examples, such as `datasetDir` and `episodeIndex`.
+Follow existing ROS package conventions:
+
+- **Indentation:** 2 spaces in XML/YAML, 4 spaces in Python, and the prevailing C++ style in nearby files.
+- **`snake_case`:** ROS packages, launch files, Python scripts, topics and parameters.
+- **PascalCase:** message and service types, such as `CaptureStatus.msg` and `CaptureService.srv`.
+- **Launch arguments:** prefer names that match existing examples, such as `datasetDir` and `episodeIndex`.
+
+Documentation and comments in this fork's own packages are written in Spanish.
 
 ## Testing Guidelines
 
@@ -45,12 +68,31 @@ colcon test --packages-select <package_name>
 colcon test-result --verbose
 ```
 
-There is limited local test coverage outside upstream RealSense tests, so verify changes with targeted builds and, when hardware behavior is touched, the relevant launch file on connected devices. Add tests near the affected package when introducing reusable logic.
+Test coverage is limited: only ament lint in `piper`, besides the upstream RealSense tests. Verify changes with targeted builds. When hardware behavior is touched, run the relevant launch file on connected devices. When hardware is unavailable, run the simulation headless (`gui:=false rviz:=false`) with an unused `ROS_DOMAIN_ID`.
+
+## Syncing with Upstream
+
+Remote `upstream` is `agilexrobotics/pika_ros`. Only the `ros2` branch matters; upstream `master` is ROS 1. Merge `upstream/ros2` into `pika-custom-ros2` and resolve conflicts as follows:
+
+- **Ours:** `README.md`, `scripts/setup_device.py`, `src/PikaAnyArm`. Upstream PikaAnyArm V2 deleted the `piper/` layout this fork depends on; port individual fixes by hand when they apply.
+- **Theirs:** `src/data_tools`, `src/data_msgs`, `source/install.zip`.
+
+After merging, rebuild `data_msgs` first, then the dependent packages.
 
 ## Commit & Pull Request Guidelines
 
-Recent history uses short imperative or descriptive commits, sometimes bilingual, for example `update data_tools` or `修复IK在ros2初始化之后出现的报错`. Keep commits focused and avoid committing generated caches such as `__pycache__/` or `.pyc` files. Pull requests should describe the changed packages, list build/test commands run, note required hardware, and link related issues. Include screenshots or logs for launch, RViz, camera, or dataset workflow changes.
+Commits are short, imperative and descriptive. This fork writes them in Spanish, for example `Corregir emparejamiento de puertos USB en Sense/Gripper multi`. Keep commits focused, and do not commit generated caches such as `__pycache__/` or `.pyc` files.
+
+Changes inside `src/PikaAnyArm` are committed and pushed in the submodule first; then commit the updated submodule pointer in this repo.
+
+Pull requests should:
+
+- describe the changed packages,
+- list the build and test commands that were run,
+- note the hardware required,
+- link related issues,
+- include screenshots or logs for launch, RViz, camera or dataset workflow changes.
 
 ## Security & Configuration Tips
 
-Do not commit machine-specific device IDs, secrets, or private dataset paths. Local CAN, udev, and tracker settings belong in shell setup or ignored local notes. Review scripts that use `sudo`, device permissions, or `/dev/*` paths before running them on shared machines.
+Do not commit machine-specific device IDs (Vive tracker serials, RealSense serial numbers outside the generated start scripts), secrets, or private dataset paths. Push over SSH; never embed tokens in remote URLs. Local CAN, udev and tracker settings belong in shell setup or in ignored local notes. Before running scripts that use `sudo`, device permissions or `/dev/*` paths on shared machines, review them.

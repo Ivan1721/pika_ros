@@ -39,15 +39,29 @@ pika 遥操作：https://github.com/agilexrobotics/PikaAnyArm
 - 操作系统：Ubuntu22.04
 - ROS：humble
 
+## 关于本分支（fork）
 
-notas---
-echo 'export pika_L_code=LHR-55384C5D' >> ~/.bashrc
-echo 'export pika_R_code=LHR-ACF8CAD3' >> ~/.bashrc
-source ~/.bashrc
+本仓库是 [agilexrobotics/pika_ros](https://github.com/agilexrobotics/pika_ros)（`ros2` 分支）的分支，维护于 [Ivan1721/pika_ros](https://github.com/Ivan1721/pika_ros)，工作分支为 `pika-custom-ros2`。
 
+| 新增内容 | 位置 |
+|---|---|
+| 西班牙语安装与操作指南，包含流程 A/A+（遥操作）、B（仅机械臂）、C（相机与关节采集）、D/D+（仿真）、E（数据处理） | [docs/manuales/Manual.md](docs/manuales/Manual.md) |
+| Pika 夹爪（D405 + 鱼眼相机）及 Piper + Pika 的 URDF | [src/pika_description](src/pika_description/README.md) |
+| Piper + Pika 夹爪的 Gazebo 仿真，接入真实遥操作链路，无需 CAN、Pika Sense 或定位基站 | [src/pika_sim](src/pika_sim/README.md) |
+| PikaAnyArm 分支，保留上游 V2 中删除的 `piper/` 结构（`pika_remote_piper`、`piper_ros`） | 子模块 `src/PikaAnyArm` → [Ivan1721/PikaAnyArm](https://github.com/Ivan1721/PikaAnyArm) |
+| 修复：`setup_device.py` 的 USB 配对、`open_multi_gripper.launch.py` 的节点名与夹爪跟随、从上游移植的 IK/遥操作修复 | git 历史 |
+| 标定指南、数据手册、功耗预算 | [docs/](docs/README.md) |
 
-# can_config.sh
-#!/bin/bash
-SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
-bash $SCRIPT_DIR/can_activate.sh can_left 1000000 "3-1.1.3:1.0"
-bash $SCRIPT_DIR/can_activate.sh can_right 1000000 "1-1.1.3:1.0"
+### 快速开始
+
+```bash
+cd ~/pika_ros
+git submodule update --init --recursive
+source /opt/ros/humble/setup.bash
+colcon build --packages-select data_msgs && source install/setup.bash
+colcon build && source install/setup.bash
+```
+
+`pika_locator` 与 `libsurvive`（Vive 定位）仅以预编译二进制形式提供于 `source/install.zip`，见 Manual 第 6 节。没有任何硬件时，使用 **Flujo D+**（`ros2 launch pika_sim sim_piper_single.launch.py`）。
+
+已知问题见 Manual 末尾；贡献与上游同步规范见 [AGENTS.md](AGENTS.md)。

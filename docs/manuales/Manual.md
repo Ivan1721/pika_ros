@@ -15,7 +15,7 @@ Este documento configura y opera el kit **Pika** (sensores de captura + trackers
 **Cómo está organizado este documento:**
 1. **Instalación (pasos 1–9)** — se hace **una sola vez** por máquina.
 2. **Calibración y CAN (pasos 10–11)** — la calibración es puntual (se repite solo si mueves las base stations); el CAN **se debe reactivar en cada sesión/reinicio**, no es persistente.
-3. **[Tabla rápida](#tabla-rápida-qué-flujo-necesito)** — identifica qué combinación de terminales corresponde a tu hardware.
+3. **[Tabla rápida](#tabla-rápida--qué-flujo-necesito)** — identifica qué combinación de terminales corresponde a tu hardware.
 4. **Flujos (A–E)** — el paso a paso de comandos para cada escenario de uso diario.
 5. **Problemas frecuentes** — al final.
 
@@ -312,12 +312,13 @@ Con esto termina la instalación única. Los pasos 10 (calibración) y 11 (CAN) 
 
 | Tu hardware | Setup (`setup_device.py`) | CAN | Ir a |
 |---|---|---|---|
-| 1 Pika Sense + 1 Pika Gripper + 1 Piper | Opción 3 | `can0` | [Flujo A](#flujo-a-teleoperación-pika-un-piper-1-brazo-1-gripper) |
-| 2 Pika Sense + 2 Pika Gripper + 2 Piper | Opción 1 **y** Opción 2 | `can_config.sh` | [Flujo A+](#flujo-a-teleoperación-pika-dos-pipers-2-brazos-2-grippers) |
-| Solo brazo(s) Piper, sin Pika (visualizar/probar) | — | `can0` o `can_config.sh` | [Flujo B](#flujo-b-solo-control-del-brazo-piper-con-rviz) |
-| Captura de cámaras + joints guiando el brazo a mano (drag-teach), sin teleoperación Pika | Opción 3 | `can0` | [Flujo C](#flujo-c-captura-de-cámaras-y-joints-del-robot) |
-| Simulación sin hardware físico | — | — | [Flujo D](#flujo-d-simulación-gazebo-del-brazo-piper) |
-| Convertir episodios grabados a HDF5/LeRobot | — | — | [Flujo E](#flujo-e-pipeline-de-datos-captura-hdf5-lerobot) |
+| 1 Pika Sense + 1 Pika Gripper + 1 Piper | Opción 3 | `can0` | [Flujo A](#flujo-a--teleoperación-pika--un-piper-1-brazo--1-gripper) |
+| 2 Pika Sense + 2 Pika Gripper + 2 Piper | Opción 1 **y** Opción 2 | `can_config.sh` | [Flujo A+](#flujo-a--teleoperación-pika--dos-pipers-2-brazos--2-grippers) |
+| Solo brazo(s) Piper, sin Pika (visualizar/probar) | — | `can0` o `can_config.sh` | [Flujo B](#flujo-b--solo-control-del-brazo-piper-con-rviz) |
+| Captura de cámaras + joints guiando el brazo a mano (drag-teach), sin teleoperación Pika | Opción 3 | `can0` | [Flujo C](#flujo-c--captura-de-cámaras-y-joints-del-robot) |
+| Simulación sin hardware físico | — | — | [Flujo D](#flujo-d--simulación-gazebo-del-brazo-piper) |
+| Teleop Pika → Piper simulado, sin hardware | — | — | [Flujo D+](#d--teleoperación-simulada-piper--gripper-pika-sin-hardware) |
+| Convertir episodios grabados a HDF5/LeRobot | — | — | [Flujo E](#flujo-e--pipeline-de-datos-captura--hdf5--lerobot) |
 
 > **Nota sobre "2 Pika Gripper" sin sensores:** no es una configuración funcional por sí sola — sin los 2 Pika Sense, nada escucha el pellizco/doble-click que activa la teleoperación, y la pinza del brazo no mimetiza ninguna mano. Siempre usa Flujo A+ completo (sensores **y** grippers) para dos brazos.
 
@@ -473,6 +474,28 @@ Mover un slider mueve el brazo en Gazebo y en RViz simultáneamente.
 
 > **Nota técnica:** el nodo `gui_to_trajectory` hace de puente entre el GUI y el controlador `arm_controller`. Usa timestamp cero en la trayectoria para que el controlador la ejecute inmediatamente sin depender del reloj de simulación.
 
+### D+ — Teleoperación simulada (Piper + gripper Pika, sin hardware)
+
+*Uso: probar la cadena de teleop del Flujo A completa (FK, IK, teleop) con el brazo simulado. No requiere CAN, Pika Sense ni base stations.* Paquete `pika_sim`, dentro de este workspace (no usa `~/piper_ros`). Detalles en [src/pika_sim/README.md](../../src/pika_sim/README.md).
+
+**Terminal 1** (simulación):
+```bash
+conda deactivate
+source ~/pika_ros/install/setup.bash
+ros2 launch pika_sim sim_piper_single.launch.py
+```
+
+**Terminal 2** (teleop — igual que el Flujo A, con `sim:=true` para no lanzar el driver CAN):
+```bash
+source ~/pika_ros/install/setup.bash
+conda activate pika
+ros2 launch pika_remote_piper teleop_rand_single_piper.launch.py sim:=true
+```
+
+En RViz, click derecho sobre el bloque naranja → **Teleop: iniciar / detener** (equivale al doble click del Sense). Luego arrastra el marcador: el brazo sigue el movimiento. Las opciones **Pinza: abrir / media / cerrar** del mismo menú controlan la pinza.
+
+> Con el Pika Sense y las base stations conectados se puede usar la mano real: `sense:=real` en la Terminal 1 y `bash scripts/start_single_sensor.bash` en otra terminal.
+
 ---
 
 ## Flujo E — Pipeline de datos (captura → HDF5 → LeRobot)
@@ -516,6 +539,8 @@ python3 data_to_hdf5.py \
 cd ~/pika_ros/src/data_tools/scripts/
 python3 hdf5_to_lerobot.py --datasetDir /ruta/hdf5
 ```
+
+> Requiere el paquete Python `lerobot` **≥ 0.2** (`hdf5_to_lerobot.py` importa `lerobot.datasets`; las versiones anteriores usaban `lerobot.common.datasets`). Es solo software: no hace falta ningún robot LeRobot. Los pasos 1–3 no lo necesitan.
 
 **5. Publicar datos grabados:**
 ```bash
@@ -581,3 +606,16 @@ sudo chmod 666 /dev/ttyUSB60 /dev/ttyUSB61
 **El doble-click activa la teleoperación del brazo contrario** (pinza derecha activa el brazo izquierdo o viceversa, pero el movimiento en sí no está cruzado): esto es un emparejamiento de dispositivos, no un bug de software. `setup_device.py` etiqueta "izquierdo"/"derecho" según el **orden en que conectaste** cada Pika Sense durante el asistente, no según qué mano ibas a usar. Para corregirlo sin repetir el asistente completo, intercambia los valores `l_serial_port`/`r_serial_port` (y las cámaras/puertos fisheye correspondientes) dentro de `scripts/start_multi_sensor.bash`.
 
 **El Pika Gripper no mimetiza la pinza del Pika Sense correspondiente:** confirma que ambos, `start_multi_sensor.bash` **y** `start_multi_gripper.bash`, están corriendo (el Gripper necesita al Sense para recibir su ángulo de pinza — ver Flujo A+). Si ambos corren y aun así no mimetiza, verifica con `ros2 node list` que no haya nombres de nodo duplicados entre las dos terminales.
+
+### Problemas conocidos del software
+
+**La captura teleop no graba el brazo (`type:=single_pika_teleop` / `multi_pika_teleop`).** Desde la actualización de `data_tools` de octubre 2026 (commit upstream `b3704f4`), esas configs esperan los topics de la versión V2 de PikaAnyArm (`/control/joint_states`, `/feedback/joint_states`, `/ik_fk_pose`, `/feedback/tcp_pose`), que el fork `piper/` de este repo no publica. Mientras no se corrija, en `src/data_tools/config/single_pika_teleop_data_params.yaml` usa los topics que sí existen y recompila `data_tools`:
+
+| Campo | Topic correcto (un brazo) |
+|---|---|
+| `arm.jointState` master / puppet | `/joint_states_gripper` / `/joint_states_single_gripper` |
+| `arm.endPose` master / puppet | `/piper_IK/receive_end_pose_orient` / `/piper_FK/urdf_end_pose_orient` |
+
+Para dos brazos son los mismos topics con sufijo `_l` / `_r`. `data_tools` es un submódulo de AgileX, así que este cambio queda local hasta que se mantenga una config propia.
+
+**`display_pika_piper.launch.py` falla con "Two root links found".** Pasa si en el path queda el `piper_description` de `~/piper_ros`, que empieza en `base_link`, en lugar del de este workspace, que empieza en `dummy_link`. Lanza con `arm_root:=base_link`, o sourcea solo `~/pika_ros/install/setup.bash`.

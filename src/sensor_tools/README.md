@@ -1,35 +1,55 @@
 # sensor_tools
 
-ros package sensor_tools, used to open the fisheye camera, retrieve topic /camera_fisheye/color/image_raw, gripper data topic /gripper/data and realsense data.
+ROS 2 (Humble) package that opens the Pika hardware: the fisheye USB camera (`usb_camera.py`), the RealSense D405 (through `realsense2_camera`), and the serial gripper/IMU (`serial_gripper_imu`). Its `open_*sensor*` launch files also start the Vive localization (`pika_locator`).
 
-## Get Ready
-## Installation
-Ensure that the realsense SDK has been installed and place the realsense-ros package in the pika_ws/src directory.
-Place this package and libsurvive in the workspace pika_ws/src.
+## Build
+
+From the workspace root (see the main [README](../../README.md)):
+
 ```bash
-cd ~/pika_ws
-catkin_make
+cd ~/pika_ros
+colcon build --packages-select data_msgs && source install/setup.bash
+colcon build --packages-select sensor_tools
 ```
 
 ## Start
-Ensure that your device is connected to the computer.
-if you using conda, please activate your env
-```bash
-conda activate YOUR_ENV
-```
-and then
-```bash
-cd ~/pika_ws/src/sensor_tools/scripts/
-bash start.bash
-```
-or
-```bash
-sudo sh -c 'echo "KERNEL==\"video*\", ATTRS{idVendor}==\"1bcf\", ATTRS{idProduct}==\"2cd1\", MODE:=\"0777\", SYMLINK+=\"video22\"" > /etc/udev/rules.d/fisheye.rules'
-sudo udevadm control --reload-rules && sudo service udev restart && sudo udevadm trigger
 
-sudo chmod a+rw /dev/ttyACM0
-sudo chmod a+rw /dev/video22
+Bind the devices once with `python3 scripts/setup_device.py` (root `scripts/` folder). It writes the udev rules and generates a `start_*.bash` script with this machine's serial numbers and device paths. Then run that script:
 
-chmod 777 usb_camera.py
-source ~/pika_ws/devel/setup.bash && roslaunch sensor_tools open_sensor.launch
+```bash
+conda deactivate
+bash ~/pika_ros/scripts/start_sensor_gripper.bash   # 1 Pika Sense + 1 Pika Gripper
+bash ~/pika_ros/scripts/start_multi_sensor.bash     # 2 Pika Sense
+bash ~/pika_ros/scripts/start_multi_gripper.bash    # 2 Pika Gripper
+bash ~/pika_ros/scripts/start_single_sensor.bash    # 1 Pika Sense
+bash ~/pika_ros/scripts/start_single_gripper.bash   # 1 Pika Gripper
 ```
+
+The copies in `src/sensor_tools/scripts/` are the upstream templates. The root `scripts/` folder holds the ones generated for this machine. Full workflows are in [docs/manuales/Manual.md](../../docs/manuales/Manual.md).
+
+## Launch files
+
+| Launch | Devices | Localization |
+|---|---|---|
+| `open_single_sensor.launch.py` | 1 Sense: D405, fisheye, serial | `pika_single_locator` |
+| `open_single_gripper.launch.py` | 1 Gripper: D405, fisheye, serial motor | — |
+| `open_sensor_gripper.launch.py` | 1 Sense + 1 Gripper | `pika_single_locator` |
+| `open_multi_sensor.launch.py` | 2 Sense (`l_` / `r_` arguments) | `pika_double_locator` |
+| `open_multi_gripper.launch.py` | 2 Gripper | — |
+| `open_single_sensor_with_teleop.launch.py`, `open_multi_sensor_with_teleop.launch.py` | Sense serial only (no cameras), for teleoperation | single / double locator |
+| `open_fisheye.launch.py` | fisheye only | — |
+| `open_helmet*.launch.py` | helmet variants | helmet locator (`_whit_tracker`) |
+
+Do not start `pika_locator` separately next to a launch that already includes it, because both instances compete for the Vive dongle.
+
+## Main topics (single Sense)
+
+| Topic | Type |
+|---|---|
+| `/camera/color/image_raw`, `/camera/aligned_depth_to_color/image_raw` | `sensor_msgs/Image` |
+| `/camera_fisheye/color/image_raw` | `sensor_msgs/Image` |
+| `/gripper/data` | `data_msgs/Gripper` |
+| `/imu/data` | `sensor_msgs/Imu` |
+| `/pika_pose` | `geometry_msgs/PoseStamped` |
+
+With several devices, the launch files add prefixes (`/sensor/...`, `/gripper/...`) or `_l` / `_r` suffixes. `serial_gripper_imu` also takes the IK output on `/joint_states`, replaces position 6 with the gripper opening measured by the Sense, and republishes the result as `/joint_states_gripper`, which is the command the Piper driver consumes. A double-click on the Sense calls `/teleop_trigger`.
