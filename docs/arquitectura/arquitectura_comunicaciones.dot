@@ -1,0 +1,146 @@
+// Arquitectura de alimentación y comunicaciones: Pika + Piper bimanual (Flujo A+).
+// Fuente editable. Cada bloque tiene posición fija (pos, en puntos); se dibuja con neato -n2.
+// Para regenerar las imágenes (desde docs/arquitectura/):
+//   neato -n2 -Tsvg arquitectura_comunicaciones.dot -o arquitectura_comunicaciones.svg
+//   neato -n2 -Tpng -Gdpi=100 arquitectura_comunicaciones.dot -o arquitectura_comunicaciones.png
+// Colores AgileX (ver src/pika_description/scripts/figuras_piper_pika.py): negro #1d2124,
+// grafito #55585c, plata #a9acb0, rojo #c8323f.
+// Líneas y bordes punteados: por confirmar o recomendado (no existe todavía).
+//
+// Grilla: una franja por capa y una columna por cadena, para que las flechas bajen rectas.
+//   x:  A 160 (CAN) · B 500 (Gripper) · hub/udev 670 · C 840 (Sense) · D 1180 (Tracker) · E 1520 (cámaras)
+//   y:  alimentación 1440 · equipos 1220 · tracker 1090 · adaptadores 960 · laptop 800 · ROS 630 / 450
+
+digraph arquitectura {
+  graph [splines=false, outputorder=nodesfirst, bgcolor="#fcfcfb", pad=0.3,
+         fontname="DejaVu Sans", fontsize=17,
+         label=<<B>Pika + Piper bimanual: alimentación y comunicaciones</B><BR/><FONT POINT-SIZE="13" COLOR="#6b6a63">Lado izquierdo y derecho iguales (×2). Rutas fijas por udev: Sense L/R = ttyUSB50/51, video50/51 · Gripper L/R = ttyUSB60/61, video60/61 · CAN L/R = can_left/can_right</FONT>>,
+         labelloc=t];
+  node  [shape=box, style="rounded,filled", fontname="DejaVu Sans", fontsize=13,
+         color="#55585c", fillcolor="#f1f1ef", fontcolor="#2b2b29", penwidth=1.2, margin="0.15,0.07"];
+  edge  [fontname="DejaVu Sans", fontsize=11, color="#55585c", fontcolor="#4a4944", arrowsize=0.8];
+
+  // ───────── Franjas de fondo (una por capa; se dibujan primero) ─────────
+  node [shape=box, style="rounded", fixedsize=true, penwidth=1.4, fontsize=14, labelloc=t, fillcolor="none"];
+  f_energia [pos="930,1500!", width=25.2, height=3.35, color="#c8323f",
+             label=<<TABLE BORDER="0" WIDTH="1790" CELLPADDING="2"><TR><TD ALIGN="LEFT"><FONT COLOR="#c8323f"><B>1 · Alimentación</B></FONT></TD></TR></TABLE>>];
+  f_equipos [pos="930,1165!", width=25.2, height=3.2, color="#55585c",
+             label=<<TABLE BORDER="0" WIDTH="1790" CELLPADDING="2"><TR><TD ALIGN="LEFT"><B>2 · Equipos (×2: izquierdo y derecho)</B></TD></TR></TABLE>>];
+  f_adapt   [pos="930,960!", width=25.2, height=1.6, color="#55585c",
+             label=<<TABLE BORDER="0" WIDTH="1790" CELLPADDING="2"><TR><TD ALIGN="LEFT"><B>3 · Adaptadores y concentradores</B></TD></TR></TABLE>>];
+  f_host    [pos="930,795!", width=25.2, height=1.75, color="#1d2124",
+             label=<<TABLE BORDER="0" WIDTH="1790" CELLPADDING="2"><TR><TD ALIGN="LEFT"><B>4 · Laptop MSI MS17E3 · Ubuntu 22.04 · ROS 2 Humble</B></TD></TR></TABLE>>];
+  f_ros     [pos="930,535!", width=25.2, height=4.45, color="#c8323f",
+             label=<<TABLE BORDER="0" WIDTH="1790" CELLPADDING="2"><TR><TD ALIGN="LEFT"><FONT COLOR="#c8323f"><B>5 · Nodos y topics ROS 2</B></FONT></TD></TR></TABLE>>];
+
+  // ───────── Bloques ─────────
+  node [shape=box, style="rounded,filled", fixedsize=false, penwidth=1.2, fontsize=13, labelloc=c,
+        color="#55585c", fillcolor="#f1f1ef"];
+
+  // 1 · Alimentación
+  red       [pos="930,1560!", label=<<B>Red 220 V AC</B>>, fillcolor="#fbe9eb", color="#c8323f"];
+  fte_piper [pos="160,1440!", label=<<B>Fuente Piper</B> · ×2<BR/><FONT POINT-SIZE="11">24 V DC (≤ 26 V)<BR/>≤ 40 W continuo · ≤ 120 W pico</FONT>>];
+  fte_grip  [pos="420,1440!", label=<<B>24 V del Gripper</B><BR/><FONT POINT-SIZE="11">XT30 · ≤ 24 W (1 A)<BR/>fuente por confirmar</FONT>>,
+             style="rounded,dashed", color="#c8323f", fillcolor="#fcfcfb"];
+  fte_hub   [pos="670,1440!", label=<<B>Fuente PD hub</B> · ×2<BR/><FONT POINT-SIZE="11">USB-C PD ≤ 100 W</FONT>>];
+  fte_st    [pos="1180,1440!", label=<<B>Fuente Pika Station</B> · ×2<BR/><FONT POINT-SIZE="11">12 V, o batería 12 V / 10 Ah (30 h)</FONT>>];
+  fte_pc    [pos="1700,1440!", label=<<B>Cargador laptop</B><BR/><FONT POINT-SIZE="11">20 V · 280 W</FONT>>];
+  estop     [pos="160,1335!", label=<<B>Parada de emergencia</B><BR/><FONT POINT-SIZE="11">recomendada, no instalada</FONT>>,
+             style="rounded,dashed", color="#c8323f", fontcolor="#c8323f", fillcolor="#fcfcfb"];
+
+  // 2 · Equipos
+  piper   [pos="160,1215!", label=<<B>Brazo AgileX Piper</B><BR/><FONT POINT-SIZE="11">conector aviación en la base<BR/>24 V+ · 24 V− · CAN-H · CAN-L</FONT>>,
+           fillcolor="#1d2124", fontcolor="white", color="#1d2124"];
+  gripper [pos="500,1215!", label=<<B>Pika Gripper</B><BR/><FONT POINT-SIZE="11">en la brida del Piper<BR/>D405 · fisheye · encoder · motor</FONT>>,
+           fillcolor="#2b2c2e", fontcolor="white", color="#2b2c2e"];
+  sense   [pos="840,1215!", label=<<B>Pika Sense</B><BR/><FONT POINT-SIZE="11">en la mano<BR/>D405 · fisheye · encoder/IMU</FONT>>,
+           fillcolor="#2b2c2e", fontcolor="white", color="#2b2c2e"];
+  station [pos="1180,1215!", label=<<B>Pika Station</B><BR/><FONT POINT-SIZE="11">lighthouse 2.0 · 3 W<BR/>sin datos al PC</FONT>>,
+           fillcolor="#a9acb0", color="#55585c"];
+  d435    [pos="1520,1215!", label=<<B>RealSense D435i</B> · ×2<BR/><FONT POINT-SIZE="11">cámara de escena<BR/>fuera del kit · opcional</FONT>>,
+           style="rounded,filled,dashed"];
+  tracker [pos="1180,1090!", label=<<B>Tracker (etiqueta)</B><BR/><FONT POINT-SIZE="11">sobre el Sense · batería 9 h</FONT>>,
+           fillcolor="#a9acb0", color="#55585c"];
+
+  // 3 · Adaptadores y concentradores
+  usbcan [pos="160,955!", label=<<B>Módulo USB-CAN</B> · ×2<BR/><FONT POINT-SIZE="11">del kit Piper · gs_usb</FONT>>];
+  hub    [pos="670,955!", label=<<B>Hub Hiksemi HS-HUB-DS11</B> · ×2<BR/><FONT POINT-SIZE="11">uno por lado · asignación propuesta<BR/>USB 3.0: Sense + Gripper · USB 2.0: receptor + USB-CAN</FONT>>,
+          style="rounded,filled,dashed"];
+  dongle [pos="1180,955!", label=<<B>Receptor USB del tracker</B> · ×2<BR/><FONT POINT-SIZE="11">HID · emparejado 1 a 1</FONT>>];
+
+  // 4 · Laptop y drivers
+  socketcan [pos="160,785!", label=<<B>SocketCAN</B><BR/><FONT POINT-SIZE="11">can_left · can_right (can0 con 1 brazo)<BR/>can_config.sh · por ruta USB física</FONT>>];
+  udev      [pos="670,785!", label=<<B>udev</B> (setup_device.py)<BR/><FONT POINT-SIZE="11">serie CH340 → /dev/ttyUSB50/51/60/61<BR/>UVC → /dev/video50/51/60/61</FONT>>];
+  hidraw    [pos="1180,785!", label=<<B>hidraw</B><BR/><FONT POINT-SIZE="11">81-vive.rules</FONT>>];
+  lrs       [pos="1520,785!", label=<<B>librealsense2</B><BR/><FONT POINT-SIZE="11">2.58 (ROS) · 2.55.1 en source/</FONT>>];
+
+  // 5 · Nodos ROS 2
+  n_piper  [pos="160,630!", label=<<B>piper_ctrl_single_node</B><BR/><FONT POINT-SIZE="11">piper_sdk · 200 Hz<BR/>← /joint_states_gripper_l/_r<BR/>→ /joint_states_single_l/_r</FONT>>];
+  n_serial [pos="500,630!", label=<<B>serial_gripper_imu</B><BR/><FONT POINT-SIZE="11">→ /gripper/data · /imu/data<BR/>→ /joint_states_gripper<BR/>Gripper: motor (MIT)<BR/>Sense: doble click → /teleop_trigger</FONT>>];
+  n_fish   [pos="840,630!", label=<<B>usb_camera.py</B><BR/><FONT POINT-SIZE="11">OpenCV<BR/>→ /camera_fisheye/color/image_raw</FONT>>];
+  n_loc    [pos="1180,630!", label=<<B>pika_locator</B><BR/><FONT POINT-SIZE="11">libsurvive (binario)<BR/>→ /pika_pose_l · /pika_pose_r</FONT>>];
+  n_rs     [pos="1520,630!", label=<<B>realsense2_camera</B><BR/><FONT POINT-SIZE="11">→ /camera/color<BR/>→ /camera/aligned_depth_to_color</FONT>>];
+  n_teleop [pos="330,440!", label=<<B>teleop · piper_FK · piper_IK</B><BR/><FONT POINT-SIZE="11">conda pika · IK 50 Hz</FONT>>, fillcolor="#fbe9eb", color="#c8323f"];
+  n_data   [pos="1010,440!", label=<<B>data_tools</B><BR/><FONT POINT-SIZE="11">captura ARIO → HDF5</FONT>>, fillcolor="#fbe9eb", color="#c8323f"];
+
+  leyenda [pos="1700,470!", style="rounded,filled", fillcolor="#fcfcfb", color="#d6d5ce", fontsize=12,
+           label=<<TABLE BORDER="0" CELLSPACING="2" CELLPADDING="1">
+    <TR><TD ALIGN="LEFT"><B>Leyenda</B></TD></TR>
+    <TR><TD ALIGN="LEFT"><FONT COLOR="#c8323f">━━━</FONT> alimentación</TD></TR>
+    <TR><TD ALIGN="LEFT"><FONT COLOR="#1d2124">━━━</FONT> CAN</TD></TR>
+    <TR><TD ALIGN="LEFT"><FONT COLOR="#55585c">━━━</FONT> USB 3.0</TD></TR>
+    <TR><TD ALIGN="LEFT"><FONT COLOR="#8a8d91">━━━</FONT> USB 2.0</TD></TR>
+    <TR><TD ALIGN="LEFT"><FONT COLOR="#8a8d91">┈┈┈</FONT> inalámbrico / óptico / mecánico</TD></TR>
+    <TR><TD ALIGN="LEFT">──── software (ROS 2)</TD></TR>
+    <TR><TD ALIGN="LEFT">punteado: por confirmar</TD></TR>
+    <TR><TD ALIGN="LEFT">o recomendado</TD></TR>
+  </TABLE>>];
+
+  // ───────── Alimentación (rojo) ─────────
+  edge [color="#c8323f", penwidth=2.4, fontcolor="#c8323f", style=solid];
+  red -> fte_piper; red -> fte_hub; red -> fte_st; red -> fte_pc;
+  fte_piper -> estop [label="  24 V"];
+  estop -> piper [label="  hoy: directo"];
+  fte_grip -> gripper [label="  24 V · XT30", style=dashed];
+  fte_hub -> hub [label="  PD"];
+  fte_st -> station [label="  12 V"];
+  fte_pc -> f_host [headport=ne, label="  20 V"];
+
+  // ───────── CAN (negro) ─────────
+  edge [color="#1d2124", penwidth=2.6, fontcolor="#1d2124"];
+  piper -> usbcan [label="  CAN-H / CAN-L · 1 Mbit/s", dir=both];
+
+  // ───────── USB 3.0 (grafito) ─────────
+  edge [color="#55585c", penwidth=2.6, fontcolor="#55585c"];
+  gripper -> hub [label="USB 3.0  ", dir=both];
+  sense   -> hub [label="  USB 3.0", dir=both];
+  hub -> udev    [dir=both];
+  hub -> lrs     [dir=both, label="USB 3.0 (D405)"];
+  d435 -> lrs    [label="  USB 3 directo al laptop", style=dashed, dir=both];
+
+  // ───────── USB 2.0 (gris) ─────────
+  edge [color="#8a8d91", penwidth=1.8, fontcolor="#6b6a63"];
+  usbcan -> hub  [label="USB 2.0", dir=both];
+  dongle -> hub  [label="USB 2.0", dir=both];
+  hub -> socketcan [dir=both];
+  hub -> hidraw;
+
+  // ───────── Inalámbrico / óptico / mecánico ─────────
+  edge [color="#8a8d91", penwidth=1.6, style=dotted, fontcolor="#6b6a63"];
+  station -> tracker [label="  barrido IR", color="#c8323f", fontcolor="#c8323f"];
+  tracker -> dongle  [label="  radio 2,4 GHz"];
+  sense -> tracker   [label="montaje", arrowhead=none, color="#a9acb0"];
+  piper -> gripper   [label="brida", arrowhead=none, color="#a9acb0"];
+
+  // ───────── Software (fino) ─────────
+  edge [color="#2b2b29", penwidth=1.1, style=solid, fontcolor="#4a4944"];
+  socketcan -> n_piper;
+  udev -> n_serial [label="ttyUSB  "];
+  udev -> n_fish   [label="  video"];
+  hidraw -> n_loc;
+  lrs -> n_rs;
+  n_serial -> n_teleop [label="trigger, apertura  "];
+  n_loc -> n_teleop    [label="/pika_pose"];
+  n_teleop -> n_piper  [label="/joint_states_gripper  "];
+  n_serial -> n_data; n_fish -> n_data; n_loc -> n_data; n_rs -> n_data;
+}
