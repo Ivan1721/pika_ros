@@ -11,6 +11,7 @@ install(
 install(PROGRAMS
   scripts/piper_sim_bridge.py
   scripts/fake_pika_sense.py
+  scripts/mit_emulador.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

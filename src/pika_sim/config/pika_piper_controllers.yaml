@@ -14,6 +14,11 @@ controller_manager:
     gripper_controller:
       type: position_controllers/JointGroupPositionController
 
+    # Solo en control:=mit: el t_ref (feedforward) del modo MIT, como esfuerzo.
+    # El resorte kp y el amortiguador kd los pone Gazebo en cada articulacion.
+    mit_ff_controller:
+      type: forward_command_controller/ForwardCommandController
+
 # use_local_topics: el estado sale por /joint_state_broadcaster/joint_states
 # y no por /joint_states, que en la cadena de teleop es la salida de piper_IK.py.
 joint_state_broadcaster:
@@ -35,3 +40,14 @@ gripper_controller:
     joints:
       - pika_jaw_left_joint
       - pika_jaw_right_joint
+
+mit_ff_controller:
+  ros__parameters:
+    joints:
+      - joint1
+      - joint2
+      - joint3
+      - joint4
+      - joint5
+      - joint6
+    interface_name: effort
