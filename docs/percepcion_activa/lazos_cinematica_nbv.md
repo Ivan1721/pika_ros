@@ -218,7 +218,23 @@ mueven más masa y tardan más.
   2. **Después del paso 2:** MoveIt con OctoMap, que planifica sin chocar.
   3. **Opcional:** acercamiento final en modo impedancia (sección 4).
 
-### 5.6 Medición
+### 5.6 Ejemplo en simulación
+
+![Escena de NBV en Gazebo](img/nbv_escena_panel.png)
+
+Escena de prueba en `pika_sim` (`ros2 run pika_sim escena_nbv_demo.py`, datos en
+[img/nbv_escena.json](img/nbv_escena.json)):
+- **La escena:** una fruta de 4 cm de radio en una rama, con tres hojas que la tapan de frente.
+- **Las candidatas:** 20 vistas en un casquete de 0,22 m (elevación −15° a 60°, azimut ±50°).
+- **La visibilidad** de cada vista se calcula trazando rayos contra las hojas, como en la política B con la geometría exacta.
+- **La alcanzabilidad,** con IK para la D405: error < 5 mm y < 3°, y |J5| > 10°.
+
+Resultados:
+- **Solo 7 de las 20 vistas son alcanzables.** Las muy laterales (±50°), las altas (60°) y las que miran hacia arriba exigen girar la muñeca más allá de su límite de ±70°. En el Piper, la cinemática restringe tanto como la oclusión.
+- **La vista frontal ve el 0 % de la fruta;** la mejor alcanzable (elevación 35°, azimut 25°) ve el 50 %.
+- Supuesto: la D405 mira a lo largo del eje de la herramienta. Las vistas (b) y (c) son cámaras virtuales con su campo visual, sin el brazo.
+
+### 5.7 Medición
 
 - **Visibilidad real:** en simulación se calcula por **trazado de rayos sobre la geometría conocida** (esferas de fruta, discos de hoja), porque Gazebo Classic no tiene cámara de segmentación. Se compara con `V̂` (lo que el planner creía) y con YOLO (lo que el detector vio).
 - **Registro por vista** (CSV): `q`, pose de la cámara, ganancia, `V̂`, visibilidad YOLO, visibilidad real, tiempo y distancia articular.

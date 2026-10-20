@@ -35,6 +35,24 @@
     <xacro:position_joint name="pika_jaw_right_joint"/>
   </ros2_control>
 
+  <!-- Colores AgileX en Gazebo (Gazebo Classic no usa los materiales del URDF): base y
+       articulaciones negras, brazo y antebrazo grafito, gripper Pika negro mate, cámaras plata -->
+  <xacro:macro name="color_gazebo" params="link material">
+    <gazebo reference="${link}"><material>${material}</material></gazebo>
+  </xacro:macro>
+  <xacro:color_gazebo link="base_link" material="Gazebo/FlatBlack"/>
+  <xacro:color_gazebo link="link1" material="Gazebo/FlatBlack"/>
+  <xacro:color_gazebo link="link2" material="Gazebo/DarkGrey"/>
+  <xacro:color_gazebo link="link3" material="Gazebo/DarkGrey"/>
+  <xacro:color_gazebo link="link4" material="Gazebo/FlatBlack"/>
+  <xacro:color_gazebo link="link5" material="Gazebo/FlatBlack"/>
+  <xacro:color_gazebo link="link6" material="Gazebo/FlatBlack"/>
+  <xacro:color_gazebo link="gripper_base" material="Gazebo/FlatBlack"/>
+  <xacro:color_gazebo link="pika_jaw_left" material="Gazebo/FlatBlack"/>
+  <xacro:color_gazebo link="pika_jaw_right" material="Gazebo/FlatBlack"/>
+  <xacro:color_gazebo link="pika_depth_link" material="Gazebo/Grey"/>
+  <xacro:color_gazebo link="pika_fisheye_link" material="Gazebo/Grey"/>
+
   <gazebo>
     <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
       <parameters>$(find pika_sim)/config/pika_piper_controllers.yaml</parameters>

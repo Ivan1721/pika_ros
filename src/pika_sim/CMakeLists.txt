@@ -12,6 +12,7 @@ install(PROGRAMS
   scripts/piper_sim_bridge.py
   scripts/fake_pika_sense.py
   scripts/mit_emulador.py
+  scripts/escena_nbv_demo.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

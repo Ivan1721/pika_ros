@@ -76,6 +76,27 @@ ros2 topic pub --once /fake_pika_sense/gripper_opening std_msgs/msg/Float64 "{da
 
 En modo MIT, el emulador reporta `q − q_d` en `/rosout` cada 2 s.
 
+## Escena de demostración de NBV
+
+Con la simulación en modo teleop corriendo (`gui:=false rviz:=false` sirve), el script hace lo siguiente:
+
+```bash
+ros2 run pika_sim escena_nbv_demo.py --salida ~/pika_ros/docs/percepcion_activa/img
+python3 ~/pika_ros/src/pika_sim/scripts/panel_nbv.py ~/pika_ros/docs/percepcion_activa/img
+```
+
+1. Arma una escena: rama, fruta y hojas que la ocluyen de frente.
+2. Genera 20 vistas candidatas en un casquete y calcula la visibilidad de cada una (trazando rayos contra las hojas) y si es alcanzable (IK para la D405, con |J5| > 10°).
+3. Lleva el brazo a la mejor vista.
+4. Guarda capturas de cámaras virtuales: la escena, la vista frontal y la elegida, más un JSON con los números.
+
+`panel_nbv.py` arma con todo eso la figura `nbv_escena_panel.png`.
+
+Las cámaras de Gazebo necesitan `DISPLAY`: en una sesión sin pantalla, usar un servidor X virtual. Es
+una demostración para documentación, no el planner del paso 4. Los colores AgileX del brazo en
+Gazebo se definen en `urdf/pika_piper_gazebo.urdf.xacro` (Gazebo Classic no usa los materiales
+del URDF).
+
 ## Pendiente
 
 - Cámaras D405 y fisheye simuladas en la pinza (topics `/gripper/camera/...` para `data_tools`).
