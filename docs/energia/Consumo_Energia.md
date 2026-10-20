@@ -107,13 +107,52 @@ El equipo de cómputo (laptop o mini PC que ejecuta ROS 2, `colcon`, y los nodos
 
 ---
 
-## 4. Limitaciones de este documento
+## 4. Plataforma del remolque (batería e inversor)
+
+Esquema eléctrico de la plataforma que tira el Scout 2.0 (montaje de un brazo, 20-10-2026). Diagrama en [docs/arquitectura](../arquitectura/README.md#versión-de-un-brazo-sobre-el-remolque-del-scout).
+
+| Elemento | Dato | Origen |
+| --- | --- | --- |
+| Batería LiFePO4 Ritar LFP12.8V200Ah G2 | 12,8 V · 200 Ah · **2,56 kWh** · BMS con protección de sobrecorriente · 3500 ciclos al 80 % DoD · 21 kg | ✅ ficha del vendedor ([solarstore.cl](https://www.solarstore.cl/producto/bateria-litio-ritar-12-8v-200ah-1-28kwh/)); el enlace dice "1,28 kWh", pero el título y la cuenta dan 2,56 kWh |
+| Corriente máxima de descarga de la batería | **no publicada** para la G2. Referencia de una batería comparable de 12,8 V / 200 Ah (RPower LFP122000): 150 A continuos, 245 A durante 10 s, corte del BMS sobre ~205 A a los 20 s | 🧮 referencia, no es la Ritar: confirmar con el fabricante |
+| Inversor-cargador Enertik IVMDPP-1.5K-12 | **1200 W solo con batería** (1500 W con FV) · pico 3000 VA · 230 V senoidal pura · 93 % de eficiencia · UPS 10–20 ms · cargador AC 80 A (100 A total con FV) | ✅ ficha del vendedor ([enertik.com](https://enertik.com/cl/tienda/inversores/inversores-cargadores/con-regulador-solar-mppt/inversor-cargador-mppt-hibrido-backup-12v-220v-1500w-premium/)); el consumo en vacío no está publicado |
+| Motor Hydronit (12 V DC, directo a batería) | ~119 A según placa (~1,4 kW de entrada); ciclo intermitente S2 (~4 min) | 🧮 fila del motor en el CSV |
+| Protecciones | 225 A en la rama del motor y 225 A en la del inversor; interruptores DIN en la entrada de red y en las 2 PDU | esquema eléctrico |
+
+### Corriente que sale de la batería
+
+| Situación | Corriente DC aproximada |
+| --- | --- |
+| Equipos en uso normal por el inversor (≈ 150–400 W AC: Piper ≤ 40 W continuo, Gripper, Pika, Station, hub, laptop) | ~15–40 A |
+| Inversor a su máximo con batería (1200 W ÷ 0,93 ÷ 12,8 V) | ~100 A; un pico de 3000 VA son ~250 A por instantes |
+| Motor | ~119 A |
+| **Motor + equipos en uso normal** | **~135–160 A** |
+| **Motor + inversor exigido** | **~220 A o más** |
+
+Cada rama está bien protegida por separado (225 A), pero **la suma puede superar la descarga continua de la batería.** Con un BMS de ~150 A, como la referencia, mover el motor con los equipos funcionando queda justo en el límite, y con el inversor exigido el BMS cortaría. Recomendaciones:
+- confirmar la corriente continua y de pico de la Ritar G2;
+- no accionar el motor con cargas pesadas en el inversor;
+- respetar el ciclo S2 del motor.
+
+Si el BMS corta, también se apaga el inversor, y con él el brazo y el laptop. La conmutación UPS solo actúa si la red está conectada.
+
+### Autonomía estimada (🧮)
+
+Supuestos: energía útil ≈ 2,56 kWh × 80 % DoD ≈ **2,0 kWh**; inversor al 93 %; transformadores de los equipos ≈ 88 %. El consumo en vacío del inversor no está publicado y resta autonomía con cargas bajas: conviene medirlo.
+
+| Escenario | Carga en la regleta | Desde la batería | Autonomía |
+| --- | --- | --- | --- |
+| Teleoperación típica: Piper ~40 W, Pika y Station ~20 W, hub ~5 W, laptop ~90 W | ~180 W | ~195 W | **~10 h** |
+| Carga alta: Piper 120 W, laptop exigido, todo encendido | ~450 W | ~480 W | **~4 h** |
+| Un ciclo del motor (~1,4 kW durante ~4 min) | — | ~95 Wh | ~5 % de la energía útil por ciclo |
+
+## 5. Limitaciones de este documento
 
 - La **Pika Station** y el **brazo Piper** (incluyendo sus accesorios opcionales de pinza/enseñanza) tienen cifras de consumo oficiales, tomadas de las hojas de datos de AgileX incluidas en este repositorio.
 - El resto de valores (cámaras D405/fisheye, IMU, consumo real del motor de la pinza Pika, periféricos USB) son estimaciones basadas en especificaciones típicas de fabricante o límites de firmware, **no mediciones directas de este hardware**.
 - Para cifras de precisión (dimensionar una batería portátil o fuente de alimentación, por ejemplo), se recomienda medir con un multímetro/medidor USB en línea durante la operación real de captura y teleoperación.
 
-## 5. Fuentes
+## 6. Fuentes
 
 - `[Externo] Hoja de datos del producto Pika beta (CN).md` (incluido en este repositorio) — Pika Sense, Pika Gripper, Pika Station.
 - `agilex-piper-user-manual.pdf` (incluido en este repositorio) — brazo Piper y sus accesorios opcionales.

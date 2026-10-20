@@ -8,7 +8,7 @@
 // Punteado: por confirmar o recomendado (no existe todavía).
 //
 // Columnas: A 110 (CAN / brazo) · B 280 · B' 440 (USB: Gripper, Sense, hub) · C 610 (tracker)
-// Filas:    Scout 1515 · batería 1400 · inversor 1310 · regleta 1225 · fuentes 1130 ·
+// Filas:    Scout 1515 · batería y motor 1400 · inversor y red 1305 · PDU 1220 · fuentes 1130 ·
 //           equipos 960 · tracker 870 · adaptadores 770 · drivers 650 · nodos 550 / 455 · 360
 
 digraph un_brazo {
@@ -28,7 +28,7 @@ digraph un_brazo {
   f_scout  [pos="360,1530!", width=9.6, height=1.3, color="#55585c",
             label=<<TABLE BORDER="0" WIDTH="680" CELLPADDING="2"><TR><TD ALIGN="LEFT"><B>0 · Base móvil (alimentación propia)</B></TD></TR></TABLE>>];
   f_energia [pos="360,1270!", width=9.6, height=5.2, color="#c8323f",
-            label=<<TABLE BORDER="0" WIDTH="680" CELLPADDING="2"><TR><TD ALIGN="LEFT"><FONT COLOR="#c8323f"><B>1 · Alimentación del remolque</B></FONT></TD></TR></TABLE>>];
+            label=<<TABLE BORDER="0" WIDTH="680" CELLPADDING="2"><TR><TD ALIGN="LEFT"><FONT COLOR="#c8323f"><B>1 · Alimentación del remolque (batería LiFePO4 + inversor-cargador)</B></FONT></TD></TR></TABLE>>];
   f_equipos [pos="360,920!", width=9.6, height=2.35, color="#55585c",
             label=<<TABLE BORDER="0" WIDTH="680" CELLPADDING="2"><TR><TD ALIGN="LEFT"><B>2 · Equipos</B></TD></TR></TABLE>>];
   f_adapt  [pos="360,765!", width=9.6, height=1.25, color="#55585c",
@@ -46,10 +46,11 @@ digraph un_brazo {
   jetson [pos="540,1515!", label=<<B>Kit Pro I+D</B> · Jetson Xavier<BR/><FONT POINT-SIZE="12">alimentado por el Scout<BR/>enlace con el laptop: por confirmar</FONT>>, style="rounded,filled"];
 
   // 1 · Alimentación del remolque
-  bateria  [pos="250,1400!", label=<<B>Batería del remolque</B><BR/><FONT POINT-SIZE="12">tensión y capacidad<BR/>por confirmar</FONT>>, fillcolor="#fbe9eb", color="#c8323f"];
-  motor    [pos="560,1400!", label=<<B>Motor trifásico</B><BR/><FONT POINT-SIZE="12">Hydronit · reubica<BR/>la base del brazo</FONT>>];
-  inversor [pos="250,1310!", label=<<B>Inversor DC → AC</B><BR/><FONT POINT-SIZE="12">220 V</FONT>>, fillcolor="#fbe9eb", color="#c8323f"];
-  regleta  [pos="360,1225!", label=<<B>Regleta 220 V</B><BR/><FONT POINT-SIZE="12">transformadores de fábrica</FONT>>, fillcolor="#fbe9eb", color="#c8323f"];
+  bateria  [pos="200,1400!", label=<<B>Batería LiFePO4</B><BR/><FONT POINT-SIZE="12">Ritar LFP12.8V200Ah G2<BR/>12,8 V · 200 Ah · 2,56 kWh · BMS</FONT>>, fillcolor="#fbe9eb", color="#c8323f"];
+  motor    [pos="560,1400!", label=<<B>Motor Hydronit</B><BR/><FONT POINT-SIZE="12">12 V DC · ~119 A (placa)<BR/>reubica la base · ciclo S2</FONT>>];
+  inversor [pos="200,1305!", label=<<B>Inversor-cargador</B><BR/><FONT POINT-SIZE="12">Enertik 1,2 kW · 230 V senoidal<BR/>UPS 10–20 ms · carga 80 A</FONT>>, fillcolor="#fbe9eb", color="#c8323f"];
+  red      [pos="560,1305!", label=<<B>Conexión a la red</B><BR/><FONT POINT-SIZE="12">220 V · opcional, para cargar</FONT>>, style="rounded,dashed", color="#c8323f", fillcolor="#fcfcfb"];
+  pdu      [pos="380,1220!", label=<<B>2 × PDU Diartek</B><BR/><FONT POINT-SIZE="12">12 enchufes con protección<BR/>transformadores de fábrica</FONT>>, fillcolor="#fbe9eb", color="#c8323f"];
   fte_piper [pos="110,1130!", label=<<B>Fuente Piper</B><BR/><FONT POINT-SIZE="12">24 V · ≤ 120 W</FONT>>];
   fte_hub   [pos="280,1130!", label=<<B>Fuente PD hub</B><BR/><FONT POINT-SIZE="12">USB-C ≤ 100 W</FONT>>];
   fte_pc    [pos="440,1130!", label=<<B>Cargador laptop</B><BR/><FONT POINT-SIZE="12">20 V · 280 W</FONT>>];
@@ -99,10 +100,11 @@ digraph un_brazo {
   // ───────── Potencia (rojo) ─────────
   edge [color="#c8323f", penwidth=2.2, fontcolor="#c8323f", style=solid];
   scout -> jetson [xlabel="24 V"];
-  bateria -> motor [xlabel="por confirmar", style=dashed];
-  bateria -> inversor;
-  inversor -> regleta;
-  regleta -> fte_piper; regleta -> fte_hub; regleta -> fte_pc; regleta -> fte_st;
+  bateria -> motor [xlabel="12 V DC · prot. 225 A"];
+  bateria -> inversor [xlabel="12 V · prot. 225 A"];
+  red -> inversor [xlabel="entrada de carga (DIN)", style=dashed];
+  inversor -> pdu [xlabel="230 V (DIN ×2)"];
+  pdu -> fte_piper; pdu -> fte_hub; pdu -> fte_pc; pdu -> fte_st;
   fte_piper -> estop [xlabel="24 V"];
   estop -> piper;
   fte_piper -> gripper [xlabel="24 V XT30 por confirmar", style=dashed];
