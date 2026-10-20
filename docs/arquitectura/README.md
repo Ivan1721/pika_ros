@@ -9,16 +9,16 @@ CAN, USB, receptores del tracker, cámaras y drivers. Estado al 20 de octubre de
 Versión vectorial: [arquitectura_comunicaciones.svg](arquitectura_comunicaciones.svg). La fuente
 editable es [arquitectura_comunicaciones.dot](arquitectura_comunicaciones.dot) (Graphviz). Cada
 bloque tiene posición fija en una grilla, con una columna por cadena (CAN, Gripper, Sense, tracker,
-cámaras) para que las flechas bajen rectas. Para regenerar las imágenes:
+cámaras), y las flechas son ortogonales (con codos). Para regenerar las imágenes:
 
 ```bash
-cd ~/pika_ros/docs/arquitectura
-neato -n2 -Tsvg arquitectura_comunicaciones.dot -o arquitectura_comunicaciones.svg
-neato -n2 -Tpng -Gdpi=100 arquitectura_comunicaciones.dot -o arquitectura_comunicaciones.png
+python3 ~/pika_ros/docs/arquitectura/generar_diagrama.py   # necesita Graphviz y Pillow
 ```
 
-Para mover un bloque, cambiar su `pos="x,y!"` (en puntos); la grilla está documentada al comienzo
-del `.dot`.
+El script dibuja en dos pasadas y las superpone: las franjas de fondo por un lado, y los bloques y
+las flechas por otro. Hace falta porque el enrutado ortogonal de Graphviz trata cualquier nodo como
+obstáculo. Para mover un bloque, cambiar su `pos="x,y!"` (en puntos); la grilla está documentada
+al comienzo del `.dot`. Las etiquetas de las flechas van en `xlabel`.
 
 Las líneas y bordes punteados marcan lo que está **por confirmar** o **recomendado y no instalado**.
 

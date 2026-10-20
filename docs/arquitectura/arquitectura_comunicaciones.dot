@@ -1,18 +1,21 @@
 // Arquitectura de alimentación y comunicaciones: Pika + Piper bimanual (Flujo A+).
-// Fuente editable. Cada bloque tiene posición fija (pos, en puntos); se dibuja con neato -n2.
-// Para regenerar las imágenes (desde docs/arquitectura/):
-//   neato -n2 -Tsvg arquitectura_comunicaciones.dot -o arquitectura_comunicaciones.svg
-//   neato -n2 -Tpng -Gdpi=100 arquitectura_comunicaciones.dot -o arquitectura_comunicaciones.png
+// Fuente editable. Cada bloque tiene posición fija (pos, en puntos) y las flechas son
+// ortogonales (con codos). Las imágenes se generan con generar_diagrama.py, que dibuja en dos
+// pasadas porque el enrutado ortogonal de Graphviz trata cualquier nodo como obstáculo:
+//   fondo  = las franjas de cada capa (sección FRANJAS)
+//   frente = bloques y flechas (todo lo demás), con fondo transparente
+//   python3 generar_diagrama.py        → arquitectura_comunicaciones.png / .svg
 // Colores AgileX (ver src/pika_description/scripts/figuras_piper_pika.py): negro #1d2124,
 // grafito #55585c, plata #a9acb0, rojo #c8323f.
 // Líneas y bordes punteados: por confirmar o recomendado (no existe todavía).
 //
 // Grilla: una franja por capa y una columna por cadena, para que las flechas bajen rectas.
 //   x:  A 160 (CAN) · B 500 (Gripper) · hub/udev 670 · C 840 (Sense) · D 1180 (Tracker) · E 1520 (cámaras)
-//   y:  alimentación 1440 · equipos 1220 · tracker 1090 · adaptadores 960 · laptop 800 · ROS 630 / 450
+//   y:  alimentación 1440 · equipos 1215 · tracker 1090 · adaptadores 955 · laptop 785 · ROS 630 / 440
+// Las etiquetas de las flechas van en xlabel (el enrutado ortogonal no admite label).
 
 digraph arquitectura {
-  graph [splines=false, outputorder=nodesfirst, bgcolor="#fcfcfb", pad=0.3,
+  graph [splines=ortho, outputorder=nodesfirst, bgcolor="#fcfcfb", pad=0.3,
          fontname="DejaVu Sans", fontsize=17,
          label=<<B>Pika + Piper bimanual: alimentación y comunicaciones</B><BR/><FONT POINT-SIZE="13" COLOR="#6b6a63">Lado izquierdo y derecho iguales (×2). Rutas fijas por udev: Sense L/R = ttyUSB50/51, video50/51 · Gripper L/R = ttyUSB60/61, video60/61 · CAN L/R = can_left/can_right</FONT>>,
          labelloc=t];
@@ -20,7 +23,11 @@ digraph arquitectura {
          color="#55585c", fillcolor="#f1f1ef", fontcolor="#2b2b29", penwidth=1.2, margin="0.15,0.07"];
   edge  [fontname="DejaVu Sans", fontsize=11, color="#55585c", fontcolor="#4a4944", arrowsize=0.8];
 
-  // ───────── Franjas de fondo (una por capa; se dibujan primero) ─────────
+  // Esquinas del marco: presentes en las dos pasadas para que ambas tengan el mismo tamaño.
+  esquina_inf [pos="23,375!", shape=point, width=0.01, style=invis];
+  esquina_sup [pos="1837,1621!", shape=point, width=0.01, style=invis];
+
+  // FRANJAS (fondo; una por capa)
   node [shape=box, style="rounded", fixedsize=true, penwidth=1.4, fontsize=14, labelloc=t, fillcolor="none"];
   f_energia [pos="930,1500!", width=25.2, height=3.35, color="#c8323f",
              label=<<TABLE BORDER="0" WIDTH="1790" CELLPADDING="2"><TR><TD ALIGN="LEFT"><FONT COLOR="#c8323f"><B>1 · Alimentación</B></FONT></TD></TR></TABLE>>];
@@ -32,6 +39,7 @@ digraph arquitectura {
              label=<<TABLE BORDER="0" WIDTH="1790" CELLPADDING="2"><TR><TD ALIGN="LEFT"><B>4 · Laptop MSI MS17E3 · Ubuntu 22.04 · ROS 2 Humble</B></TD></TR></TABLE>>];
   f_ros     [pos="930,535!", width=25.2, height=4.45, color="#c8323f",
              label=<<TABLE BORDER="0" WIDTH="1790" CELLPADDING="2"><TR><TD ALIGN="LEFT"><FONT COLOR="#c8323f"><B>5 · Nodos y topics ROS 2</B></FONT></TD></TR></TABLE>>];
+  // FIN FRANJAS
 
   // ───────── Bloques ─────────
   node [shape=box, style="rounded,filled", fixedsize=false, penwidth=1.2, fontsize=13, labelloc=c,
@@ -99,48 +107,48 @@ digraph arquitectura {
   // ───────── Alimentación (rojo) ─────────
   edge [color="#c8323f", penwidth=2.4, fontcolor="#c8323f", style=solid];
   red -> fte_piper; red -> fte_hub; red -> fte_st; red -> fte_pc;
-  fte_piper -> estop [label="  24 V"];
-  estop -> piper [label="  hoy: directo"];
-  fte_grip -> gripper [label="  24 V · XT30", style=dashed];
-  fte_hub -> hub [label="  PD"];
-  fte_st -> station [label="  12 V"];
-  fte_pc -> f_host [headport=ne, label="  20 V"];
+  fte_piper -> estop [xlabel="24 V"];
+  estop -> piper [xlabel="hoy: directo"];
+  fte_grip -> gripper [xlabel="24 V · XT30", style=dashed];
+  fte_hub -> hub [xlabel="PD"];
+  fte_st -> station [xlabel="12 V"];
+  fte_pc -> lrs [xlabel="20 V al laptop"];
 
   // ───────── CAN (negro) ─────────
   edge [color="#1d2124", penwidth=2.6, fontcolor="#1d2124"];
-  piper -> usbcan [label="  CAN-H / CAN-L · 1 Mbit/s", dir=both];
+  piper -> usbcan [xlabel="CAN-H / CAN-L · 1 Mbit/s", dir=both];
 
   // ───────── USB 3.0 (grafito) ─────────
   edge [color="#55585c", penwidth=2.6, fontcolor="#55585c"];
-  gripper -> hub [label="USB 3.0  ", dir=both];
-  sense   -> hub [label="  USB 3.0", dir=both];
+  gripper -> hub [xlabel="USB 3.0", dir=both];
+  sense   -> hub [xlabel="USB 3.0", dir=both];
   hub -> udev    [dir=both];
-  hub -> lrs     [dir=both, label="USB 3.0 (D405)"];
-  d435 -> lrs    [label="  USB 3 directo al laptop", style=dashed, dir=both];
+  hub -> lrs     [dir=both, xlabel="USB 3.0 (D405)"];
+  d435 -> lrs    [xlabel="USB 3 directo al laptop", style=dashed, dir=both];
 
   // ───────── USB 2.0 (gris) ─────────
   edge [color="#8a8d91", penwidth=1.8, fontcolor="#6b6a63"];
-  usbcan -> hub  [label="USB 2.0", dir=both];
-  dongle -> hub  [label="USB 2.0", dir=both];
+  usbcan -> hub  [xlabel="USB 2.0", dir=both];
+  dongle -> hub  [xlabel="USB 2.0", dir=both];
   hub -> socketcan [dir=both];
   hub -> hidraw;
 
   // ───────── Inalámbrico / óptico / mecánico ─────────
   edge [color="#8a8d91", penwidth=1.6, style=dotted, fontcolor="#6b6a63"];
-  station -> tracker [label="  barrido IR", color="#c8323f", fontcolor="#c8323f"];
-  tracker -> dongle  [label="  radio 2,4 GHz"];
-  sense -> tracker   [label="montaje", arrowhead=none, color="#a9acb0"];
-  piper -> gripper   [label="brida", arrowhead=none, color="#a9acb0"];
+  station -> tracker [xlabel="barrido IR", color="#c8323f", fontcolor="#c8323f"];
+  tracker -> dongle  [xlabel="radio 2,4 GHz"];
+  sense -> tracker   [xlabel="montaje", arrowhead=none, color="#a9acb0"];
+  piper -> gripper   [xlabel="brida", arrowhead=none, color="#a9acb0"];
 
   // ───────── Software (fino) ─────────
   edge [color="#2b2b29", penwidth=1.1, style=solid, fontcolor="#4a4944"];
   socketcan -> n_piper;
-  udev -> n_serial [label="ttyUSB  "];
-  udev -> n_fish   [label="  video"];
+  udev -> n_serial [xlabel="ttyUSB"];
+  udev -> n_fish   [xlabel="video"];
   hidraw -> n_loc;
   lrs -> n_rs;
-  n_serial -> n_teleop [label="trigger, apertura  "];
-  n_loc -> n_teleop    [label="/pika_pose"];
-  n_teleop -> n_piper  [label="/joint_states_gripper  "];
+  n_serial -> n_teleop [xlabel="trigger, apertura"];
+  n_loc -> n_teleop    [xlabel="/pika_pose"];
+  n_teleop -> n_piper  [xlabel="/joint_states_gripper"];
   n_serial -> n_data; n_fish -> n_data; n_loc -> n_data; n_rs -> n_data;
 }
