@@ -423,6 +423,49 @@ ros2 launch piper start_double_piper.launch.py
 
 En RViz se visualizarán ambos brazos (izquierdo y derecho).
 
+### B.3 — Prueba de impedancia (modo MIT)
+
+*Uso: sentir el brazo como un resorte. Se mantiene en una pose; al empujarlo cede y al soltarlo vuelve.* Usa `piper_sdk` directo, sin ROS: [`scripts/test_piper_mit_impedance.py`](../../scripts/test_piper_mit_impedance.py). Sigue la estructura del demo del SDK `V2_piper_ctrl_joint_mit.py`.
+
+En modo MIT cada motor aplica `τ = kp·(q_d − q) + kd·(0 − q̇) + t_ref`. El script define:
+
+| Variable | Qué es |
+|---|---|
+| `TARGETS` | Pose objetivo `q_d` [rad] |
+| `KP`, `KD` | Rigidez [N·m/rad] y amortiguamiento por articulación |
+| `T_FF` | Compensación de gravedad: el torque de gravedad en `TARGETS`, que se manda como `t_ref` |
+| `ESCALA_GRAVEDAD` | Fracción de `T_FF` aplicada (0 = demo original, sin compensación) |
+
+**Requisitos:** CAN activo (sección 11) y `piper_sdk` en `~/piper_sdk`, que debe tener la API MIT (0.6.x). El script verifica que el firmware sea ≥ V1.5-2.
+
+```bash
+conda deactivate
+python3 ~/pika_ros/scripts/test_piper_mit_impedance.py can0   # o can_left / can_right
+```
+
+**Precauciones:**
+- La primera vez, sostén el brazo con la mano y usa `ESCALA_GRAVEDAD = 0.5`. Así confirmas que `T_FF` levanta el brazo en vez de empujarlo hacia abajo; después sube a 1.0.
+- `Ctrl+C` corta el script de golpe, como en el demo, y el brazo puede perder la sujeción activa.
+- **No bajes `KP` de J2/J3 a menos de ~8 en esta pose.** La gravedad actúa como una rigidez negativa (hasta −5,2 N·m/rad). Con `KP` = 5, la pose es un equilibrio inestable aunque se compense la gravedad, y el brazo se aleja solo. Con `KP` J2 = 20, J3 = 15 es estable y cede ~4° por cada N·m de empuje en J2.
+
+**Si cambias `TARGETS`, `KP` o lo montado en la pinza**, recalcula `T_FF` y revisa la estabilidad. Esto requiere ROS y pinocchio (terminal de teleop):
+```bash
+source ~/pika_ros/install/setup.bash
+conda activate pika
+python3 ~/pika_ros/scripts/calcular_gravedad_mit.py            # muestra g(q_d), hundimiento y estabilidad
+python3 ~/pika_ros/scripts/calcular_gravedad_mit.py --escribir # actualiza T_FF en el script
+```
+Las masas salen del URDF y son aproximadas, sobre todo la del gripper Pika. En el brazo real puede quedar un hundimiento residual.
+
+**Probarlo antes en simulación** (lee los mismos valores del script; sin hardware):
+```bash
+ros2 launch pika_sim sim_piper_single.launch.py control:=mit
+# empujar J2 con 1 N·m (debería ceder ~4°) y soltar:
+ros2 topic pub --once /mit_emulador/perturbacion std_msgs/msg/Float64MultiArray "{data: [0, 1.0, 0, 0, 0, 0]}"
+ros2 topic pub --once /mit_emulador/perturbacion std_msgs/msg/Float64MultiArray "{data: [0, 0, 0, 0, 0, 0]}"
+```
+El nodo `mit_emulador` informa `q − q_d` cada 2 s. `escala_gravedad:=0` reproduce el demo sin compensación: el brazo cae a la pose plegada.
+
 ---
 
 ## Flujo C — Captura de cámaras y joints del robot
