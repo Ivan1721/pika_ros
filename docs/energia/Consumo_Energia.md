@@ -109,13 +109,13 @@ El equipo de cómputo (laptop o mini PC que ejecuta ROS 2, `colcon`, y los nodos
 
 ## 4. Plataforma del remolque (batería e inversor)
 
-Esquema eléctrico de la plataforma que tira el Scout 2.0 (montaje de un brazo, 20-10-2026). Diagrama en [docs/arquitectura](../arquitectura/README.md#versión-de-un-brazo-sobre-el-remolque-del-scout).
+Esquema eléctrico de la plataforma que tira el Scout 2.0 (montaje de un brazo, 20-10-2026). La batería y el inversor-cargador de esta tabla son **los equipos comprados y montados en la plataforma**; los datos salen de sus fichas de venta. Diagrama en [docs/arquitectura](../arquitectura/README.md#versión-de-un-brazo-sobre-el-remolque-del-scout).
 
 | Elemento | Dato | Origen |
 | --- | --- | --- |
-| Batería LiFePO4 Ritar LFP12.8V200Ah G2 | 12,8 V · 200 Ah · **2,56 kWh** · BMS con protección de sobrecorriente · 3500 ciclos al 80 % DoD · 21 kg | ✅ ficha del vendedor ([solarstore.cl](https://www.solarstore.cl/producto/bateria-litio-ritar-12-8v-200ah-1-28kwh/)); el enlace dice "1,28 kWh", pero el título y la cuenta dan 2,56 kWh |
+| Batería LiFePO4 Ritar LFP12.8V200Ah G2 | 12,8 V · 200 Ah · **2,56 kWh** · BMS con protección de sobrecorriente · 3500 ciclos al 80 % DoD · 21 kg | ✅ equipo instalado; ficha del vendedor ([solarstore.cl](https://www.solarstore.cl/producto/bateria-litio-ritar-12-8v-200ah-1-28kwh/)); el enlace dice "1,28 kWh", pero el título y la cuenta dan 2,56 kWh |
 | Corriente máxima de descarga de la batería | **no publicada** para la G2. Referencia de una batería comparable de 12,8 V / 200 Ah (RPower LFP122000): 150 A continuos, 245 A durante 10 s, corte del BMS sobre ~205 A a los 20 s | 🧮 referencia, no es la Ritar: confirmar con el fabricante |
-| Inversor-cargador Enertik IVMDPP-1.5K-12 | **1200 W solo con batería** (1500 W con FV) · pico 3000 VA · 230 V senoidal pura · 93 % de eficiencia · UPS 10–20 ms · cargador AC 80 A (100 A total con FV) | ✅ ficha del vendedor ([enertik.com](https://enertik.com/cl/tienda/inversores/inversores-cargadores/con-regulador-solar-mppt/inversor-cargador-mppt-hibrido-backup-12v-220v-1500w-premium/)); el consumo en vacío no está publicado |
+| Inversor-cargador Enertik IVMDPP-1.5K-12 | **1200 W solo con batería** (1500 W con FV) · pico 3000 VA · 230 V senoidal pura · 93 % de eficiencia · UPS 10–20 ms · cargador AC 80 A (100 A total con FV) | ✅ equipo instalado; ficha del vendedor ([enertik.com](https://enertik.com/cl/tienda/inversores/inversores-cargadores/con-regulador-solar-mppt/inversor-cargador-mppt-hibrido-backup-12v-220v-1500w-premium/)); el consumo en vacío no está publicado |
 | Motor Hydronit (12 V DC, directo a batería) | ~119 A según placa (~1,4 kW de entrada); ciclo intermitente S2 (~4 min) | 🧮 fila del motor en el CSV |
 | Protecciones | 225 A en la rama del motor y 225 A en la del inversor; interruptores DIN en la entrada de red y en las 2 PDU | esquema eléctrico |
 

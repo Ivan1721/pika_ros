@@ -35,7 +35,7 @@ títulos quedan en ~8 pt y los detalles en ~7 pt.
 
 Alimentación, según el esquema eléctrico de la plataforma (20-10-2026):
 - **Scout 2.0:** se alimenta con su propia batería de 24 V, junto con el kit Pro I+D (Jetson Xavier). No alimenta nada del remolque.
-- **Remolque:** una **batería LiFePO4 Ritar LFP12.8V200Ah G2** (12,8 V, 200 Ah, 2,56 kWh, BMS) con dos ramas, cada una protegida con 225 A:
+- **Remolque** (equipos comprados y montados en la plataforma): una **batería LiFePO4 Ritar LFP12.8V200Ah G2** (12,8 V, 200 Ah, 2,56 kWh, BMS) con dos ramas, cada una protegida con 225 A:
   - el **motor Hydronit**, conectado directo en 12 V DC (~119 A según placa, ciclo intermitente S2);
   - el **inversor-cargador Enertik IVMDPP-1.5K-12**: 1200 W solo con batería, 230 V senoidal, conmutación UPS de 10–20 ms, cargador AC de 80 A. La conexión a la red es opcional y solo para cargar.
 - **Equipos:** del inversor, por interruptores DIN, a **2 PDU Diartek** de 12 enchufes con protección, donde todo se conecta con su transformador de fábrica.
