@@ -24,6 +24,9 @@ ROJO, GRAFITO, GRIS = '#d91f2e', '#55595c', '#cccbc7'
 
 def main():
     d = json.load(open(os.path.join(CARPETA, f'{PREFIJO}_escena.json')))
+    HELIOS = d.get('modelo') == 'helios'
+    NO_ALCANZABLE = ('no alcanzable (|J5| > 70°, error de IK o choque con ramas)' if HELIOS
+                     else 'no alcanzable (|J5| > 70° o error de IK)')
     n = len(d['candidatas'])
     alc = sum(k['alcanzable'] for k in d['candidatas'])
     m, f = d['mejor'], d['frontal']
@@ -42,7 +45,7 @@ def main():
         Line2D([], [], marker='o', ls='-', color=ROJO, ms=11, lw=2.5, label=f'elegida (visibilidad {m["visibilidad"]:.0%})'),
         Line2D([], [], marker='o', ls='-', color=ROJO, ms=7, lw=1.5, alpha=0.75, label='alcanzable, mucha visibilidad'),
         Line2D([], [], marker='o', ls='-', color=GRAFITO, ms=7, lw=1.5, label='alcanzable, poca visibilidad'),
-        Line2D([], [], marker='o', ls='-', color=GRIS, ms=5, lw=1, label='no alcanzable (|J5| > 70° o error de IK)')],
+        Line2D([], [], marker='o', ls='-', color=GRIS, ms=5, lw=1, label=NO_ALCANZABLE)],
         loc='lower right', fontsize=10, framealpha=0.92)
 
     for fila, (archivo, titulo) in enumerate([
@@ -57,9 +60,15 @@ def main():
         ax.axis('off')
 
     fig.canvas.draw()  # aplica el aspecto de las imágenes para conocer el borde real de (a)
-    fig.text(ax_escena.get_position().x0, 0.015, 'Piper + Pika en pika_sim. Visibilidad: fracción de la cara de la fruta hacia la cámara '
-             'sin hojas ni otras frutas en el camino\n(trazado de rayos sobre la geometría; ramas y tronco no se cuentan). Vistas (b) y (c): cámara virtual con el '
-             'campo visual de la D405 (87°), sin el brazo.', fontsize=9, color=MUTED)
+    if HELIOS:
+        nota = ('Piper + Pika en pika_sim, manzano de Helios (muro frutal). Visibilidad: fracción de la cara de la fruta '
+                'hacia la cámara sin hojas, ramas ni otras frutas en el camino\n(trazado de rayos sobre los triángulos del '
+                'árbol). Vistas (b) y (c): cámara virtual con el campo visual de la D405 (87°), sin el brazo.')
+    else:
+        nota = ('Piper + Pika en pika_sim. Visibilidad: fracción de la cara de la fruta hacia la cámara '
+                'sin hojas ni otras frutas en el camino\n(trazado de rayos sobre la geometría; ramas y tronco no se cuentan). '
+                'Vistas (b) y (c): cámara virtual con el campo visual de la D405 (87°), sin el brazo.')
+    fig.text(ax_escena.get_position().x0, 0.015, nota, fontsize=9, color=MUTED)
     salida = os.path.join(CARPETA, f'{PREFIJO}_escena_panel.png')
     fig.savefig(salida, dpi=130, bbox_inches='tight')
     print(f'Listo: {salida}')

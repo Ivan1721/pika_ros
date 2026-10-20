@@ -58,6 +58,8 @@ ros2 topic pub --once /mit_emulador/perturbacion std_msgs/msg/Float64MultiArray 
 | `sense` | `fake` | `real`: no arranca el Sense falso; correr aparte `bash scripts/start_single_sensor.bash` con el Sense y las base stations conectados |
 | `escena` | `ninguna` | `manzano`: carga el manzano de percepción activa (ver más abajo) |
 | `semilla` | `7` | semilla del follaje del manzano; 7 es la de la documentación |
+| `arbol` | `primitivas` | `helios`: manzano realista generado con Helios (ver más abajo) |
+| `ruta_helios` | `~/.cache/pika_sim/manzanos/apple_fruitingwall_e640_s7` | carpeta del árbol de Helios que se carga |
 | `camaras` | `true` | `false`: sin la D405 ni la fisheye del gripper (Gazebo más liviano, p. ej. en modo MIT) |
 | `gui` | `true` | `false`: Gazebo sin ventana (solo `gzserver`) |
 | `rviz` | `true` | `false`: sin RViz |
@@ -123,6 +125,53 @@ semilla; los demás se cambian corriendo el nodo aparte:
 ros2 run pika_sim escena_manzano.py --ros-args -p semilla:=3 -p n_manzanas:=6 -p densidad_hojas:=24
 ```
 
+### Manzano realista (Helios)
+
+![Manzano de Helios con el Piper](../../docs/percepcion_activa/img/nbv_helios_escena_panel.png)
+
+`arbol:=helios` reemplaza los discos y cilindros por un manzano completo de
+[Helios](https://github.com/PlantSimulationLab/PyHelios) (UC Davis), un simulador de plantas
+procedural. El árbol trae tronco, ramas con sus horquetas, pecíolos, hojas, pedúnculos y manzanas,
+con texturas fotográficas de corteza, hoja y fruto. Por defecto se usa `apple_fruitingwall`, un muro
+frutal en espaldera, que es el sistema de los huertos pensados para cosecha robótica.
+
+**1. Generar el árbol una vez** (unos 20 s). PyHelios va en un entorno virtual aparte, sin ROS:
+
+```bash
+python3 -m venv ~/.venvs/helios && ~/.venvs/helios/bin/pip install pyhelios3d pillow
+env -u PYTHONPATH ~/.venvs/helios/bin/python -I ~/pika_ros/src/pika_sim/scripts/generar_manzano_helios.py \
+    [--modelo apple_fruitingwall|apple] [--edad 640] [--semilla 7]
+```
+
+El script escribe en `~/.cache/pika_sim/manzanos/<modelo>_e<edad>_s<semilla>/`:
+- las mallas `madera.obj`, `hojas.obj` y `frutas.obj`, con sus texturas;
+- `verdad.json`, con el centro y el radio de cada manzana;
+- `triangulos.npz`, con los triángulos de hojas y madera para la visibilidad, y solo los de tronco y ramas para los choques.
+
+Cada hoja se recorta a la silueta de la foto de hoja de manzano. Helios la dibuja como un
+rectángulo curvo con transparencia, y la cámara de profundidad de Gazebo no respeta la
+transparencia: vería rectángulos. La misma semilla da el mismo árbol. La edad fija la fenología:
+hacia los 450 días el árbol está en reposo invernal, sin hojas.
+
+**2. Lanzar:**
+
+```bash
+ros2 launch pika_sim sim_piper_single.launch.py escena:=manzano arbol:=helios
+```
+
+El nodo elige como objetivo la manzana cuya vista de frente se acerque más a 30 % de visibilidad
+(parámetro `visibilidad_frontal`). Ubica el árbol para que esa manzana quede en (0,55; 0; 0,30) m.
+Las manzanas candidatas son las que dejan la plataforma entre 0,4 y 1,4 m de altura.
+- **Plataforma:** el robot queda sobre una plataforma. El suelo de Gazebo se reemplaza por uno de huerto a la altura que resulta, 0,77 m con el árbol por defecto.
+- **Hilera:** se agrega un árbol vecino a cada lado (parámetro `vecinos`).
+- **Verdad del terreno:** `/escena/verdad` trae las manzanas en `world`, la ruta de `triangulos.npz` y la transformación del árbol a `world`.
+
+Con 117 manzanas y unos 140 000 triángulos por árbol, Gazebo sigue en tiempo real (factor 1,0) y
+las cámaras del gripper a 30 Hz.
+
+**Licencias:** PyHelios es MIT, y el núcleo de Helios y sus texturas son LGPL-2.1. Por eso el repo
+guarda el generador y no las mallas: cada máquina las genera.
+
 ## Escena de demostración de NBV
 
 Con la simulación en modo teleop corriendo (`gui:=false rviz:=false` sirve), el script hace lo siguiente:
@@ -137,11 +186,15 @@ python3 ~/pika_ros/src/pika_sim/scripts/panel_nbv.py ~/pika_ros/docs/percepcion_
    - `manzano` (por defecto): si la simulación se lanzó con `escena:=manzano`, usa ese árbol (lo lee de `/escena/verdad`); si no, lo genera y spawnea con `--semilla`;
    - `prueba`: una fruta y tres hojas.
 2. Genera 20 vistas candidatas en un casquete y calcula la visibilidad de cada una (trazando rayos contra las hojas y las otras frutas) y si es alcanzable (IK para la D405, con |J5| > 10°).
+   - Con el manzano de Helios, los rayos se trazan contra los triángulos reales de hojas y madera.
+   - Además, se descartan las vistas en que la cámara o las puntas de las garras, unos 15 cm por delante de la D405, pasarían a menos de 3 cm de tronco o ramas (`--despeje`). Pecíolos y pedúnculos no cuentan, porque ceden.
+   - El casquete es de 0,22 m con primitivas y de 0,30 m con Helios (`--radio`). Con 0,22 m, las garras quedan a unos 3 cm de la piel de la manzana, entre las ramas: con el árbol de Helios, 18 de las 20 vistas chocaban.
 3. Lleva el brazo a la mejor vista.
 4. Guarda lo que ven la D405 (`_d405_color.png`, `_d405_profundidad.png`) y la fisheye (`_fisheye.png`) del gripper en esa vista.
 5. Guarda capturas de cámaras virtuales: la escena, la vista frontal y la elegida, más un JSON con los números.
 
-`panel_nbv.py` arma con todo eso la figura `<prefijo>_escena_panel.png`. El prefijo es `nbv_manzano` o, para la escena de prueba, `nbv`.
+`panel_nbv.py` arma con todo eso la figura `<prefijo>_escena_panel.png`. El prefijo es `nbv_manzano`, `nbv_helios` (árbol de Helios) o, para la escena de prueba, `nbv`.
+La demo se puede repetir sobre la misma simulación: borra sus marcadores y cámaras auxiliares.
 
 Las cámaras de Gazebo necesitan `DISPLAY`: en una sesión sin pantalla, usar un servidor X virtual. Es
 una demostración para documentación, no el planner del paso 4. Los colores AgileX del brazo en
@@ -152,5 +205,6 @@ del URDF).
 
 - Confirmar hacia dónde miran la D405 y la fisheye reales (con el gripper o el CAD de AgileX).
 - Probar una captura completa con `data_tools`: el config `single_pika_teleop` pide además topics del Sense y del brazo.
-- Niveles de oclusión controlados (25–100 %) y mallas de hojas más realistas ([recursos públicos](../../docs/percepcion_activa/recursos_publicos.md)).
+- Niveles de oclusión controlados (25–100 %): con Helios, elegir la manzana objetivo por nivel de visibilidad y variar la edad y la semilla ([recursos públicos](../../docs/percepcion_activa/recursos_publicos.md)).
+- Choques del brazo completo con las ramas: la demo solo revisa la cámara y las garras. Hace falta MoveIt (paso 2 de la hoja de ruta).
 - Versión para dos brazos (`teleop_rand_multi_piper.launch.py`).

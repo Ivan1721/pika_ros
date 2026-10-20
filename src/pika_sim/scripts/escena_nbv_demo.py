@@ -16,12 +16,15 @@
 #   manzano (por defecto)  tronco, ramas, follaje aleatorio con semilla fija y varias manzanas; la
 #                          manzana objetivo queda detrás de un racimo de hojas
 #   prueba                 una fruta, tres hojas en disco y un tallo (la primera escena de prueba)
-# En la visibilidad cuentan las hojas y las otras frutas; ramas y tronco no.
+# En la visibilidad cuentan las hojas y las otras frutas; ramas y tronco no. Con el manzano de Helios
+# (lanzado con escena:=manzano arbol:=helios) se trazan rayos contra los triángulos reales de hojas
+# y madera, y los archivos salen con el prefijo nbv_helios.
 #
 # Uso, con la simulación corriendo (sin conda); con escena:=manzano la demo usa ese árbol
 # (/escena/verdad) en vez de spawnear el suyo, y guarda lo que ven la D405 y la fisheye del gripper:
 #   ros2 launch pika_sim sim_piper_single.launch.py gui:=false rviz:=false escena:=manzano
-#   ros2 run pika_sim escena_nbv_demo.py [--escena manzano|prueba] [--semilla N] --salida ~/pika_ros/docs/percepcion_activa/img
+#   ros2 run pika_sim escena_nbv_demo.py [--escena manzano|prueba] [--semilla N] [--radio R] [--despeje D] \
+#       --salida ~/pika_ros/docs/percepcion_activa/img
 import argparse
 import json
 import math
@@ -31,7 +34,7 @@ import xml.etree.ElementTree as ET
 
 import numpy as np
 import rclpy
-from gazebo_msgs.srv import SpawnEntity
+from gazebo_msgs.srv import DeleteEntity, SpawnEntity
 from PIL import Image as PILImage
 from rcl_interfaces.srv import GetParameters
 from rclpy.node import Node
@@ -54,6 +57,10 @@ HOJAS = [((0.485, 0.020, 0.315), (1.0, 0.15, 0.25), 0.050),
 RAMA = ((0.62, 0.0, 0.0), (0.62, 0.0, 0.42), 0.012)          # tallo vertical detrás de la fruta
 RAMAS = [RAMA, ((0.62, 0.0, 0.36), tuple(FRUTA + [0.0, 0.0, R_FRUTA * 0.8]), 0.004)]   # + pedúnculo
 OTRAS = []                                                    # otras frutas: (centro, radio)
+TRIS = None                                                   # manzano de Helios: triángulos de hojas y madera
+MADERA = None                                                 # manzano de Helios: vértices de tronco y ramas
+DESPEJE = 0.03                                                # distancia mínima de cámara y garras a la madera
+MODELO = 'primitivas'
 COLOR_FRUTA, COLOR_HOJA, COLOR_MADERA = '0.80 0.12 0.10 1', '0.20 0.55 0.18 1', '0.42 0.30 0.20 1'
 # Candidatas: casquete de radio R alrededor de la fruta, del lado del robot
 R_VISTA = 0.22
@@ -63,7 +70,7 @@ AZIMUTS = [-50, -25, 0, 25, 50]                                # respecto de la 
 
 def usar_escena(verdad):
     """Toma la escena del manzano (dict de /escena/verdad o de escena_manzano.generar)."""
-    global FRUTA, R_FRUTA, HOJAS, RAMAS, OTRAS, COLOR_FRUTA, COLOR_HOJA
+    global FRUTA, R_FRUTA, HOJAS, RAMAS, OTRAS, COLOR_FRUTA, COLOR_HOJA, TRIS, MODELO, MADERA
     manzanas = verdad['manzanas']
     objetivo = next(m for m in manzanas if m['objetivo'])
     FRUTA, R_FRUTA = np.array(objetivo['centro']), objetivo['radio']
@@ -71,6 +78,20 @@ def usar_escena(verdad):
     HOJAS = [(tuple(h['centro']), tuple(h['normal']), h['radio']) for h in verdad['hojas']]
     RAMAS = [(tuple(r['p0']), tuple(r['p1']), r['radio']) for r in verdad['ramas']]
     COLOR_FRUTA, COLOR_HOJA = escena_manzano.COLOR_FRUTA, escena_manzano.COLOR_HOJA
+    MODELO = verdad.get('modelo', 'primitivas')
+    if MODELO == 'helios':                                    # hojas y ramas reales: triángulos
+        datos = np.load(verdad['triangulos'])
+        tris = np.concatenate([datos['hojas'], datos['madera']]).astype(float)
+        R, t = np.array(verdad['arbol_a_world']['R']), np.array(verdad['arbol_a_world']['t'])
+        TRIS = tris @ R.T + t
+        # choques solo contra tronco y ramas: pecíolos y pedúnculos ceden
+        madera = datos['ramas' if 'ramas' in datos else 'madera'].astype(float) @ R.T + t   # (N, 3, 3)
+        madera = madera[np.linalg.norm(madera.mean(1) - FRUTA, axis=1) < 0.6]
+        # puntos sobre cada triángulo (malla baricéntrica de paso 1/4): los tubos de las ramas
+        # tienen triángulos largos y sus vértices solos no bastan para medir la distancia
+        w = np.array([(i, j, 4 - i - j) for i in range(5) for j in range(5 - i)], float) / 4
+        MADERA = np.einsum('kb,nbd->nkd', w, madera).reshape(-1, 3)
+        OTRAS = [(c, r) for c, r in OTRAS if np.linalg.norm(c - FRUTA) < 1.0]   # las cercanas bastan
 
 
 # ── Cinemática directa sobre el URDF ──
@@ -146,6 +167,8 @@ class Cinematica:
 
 # ── Visibilidad por trazado de rayos contra las hojas ──
 def visibilidad(c, n=600, seed=0):
+    if TRIS is not None:
+        return escena_manzano.fraccion_visible(FRUTA, R_FRUTA, c, TRIS, OTRAS, n=n, seed=seed)
     rng = np.random.default_rng(seed)
     v = rng.normal(size=(n, 3))
     v /= np.linalg.norm(v, axis=1, keepdims=True)
@@ -225,6 +248,7 @@ class Demo(Node):
     def __init__(self):
         super().__init__('escena_nbv_demo')
         self.spawn = self.create_client(SpawnEntity, '/spawn_entity')
+        self.borrar = self.create_client(DeleteEntity, '/delete_entity')
         self.arm = self.create_publisher(Float64MultiArray, '/arm_controller/commands', 1)
         self.grip = self.create_publisher(Float64MultiArray, '/gripper_controller/commands', 1)
 
@@ -235,8 +259,14 @@ class Demo(Node):
         rclpy.spin_until_future_complete(self, fut, timeout_sec=10)
         return fut.result().values[0].string_value
 
+    def quitar(self, nombre):
+        if self.borrar.wait_for_service(timeout_sec=2):
+            fut = self.borrar.call_async(DeleteEntity.Request(name=nombre))
+            rclpy.spin_until_future_complete(self, fut, timeout_sec=10)
+
     def spawnear(self, nombre, xml):
         self.spawn.wait_for_service(timeout_sec=10)
+        self.quitar(nombre)                                       # de una corrida anterior
         fut = self.spawn.call_async(SpawnEntity.Request(name=nombre, xml=xml))
         rclpy.spin_until_future_complete(self, fut, timeout_sec=20)
         self.get_logger().info(f'{nombre}: {fut.result().status_message}')
@@ -302,13 +332,19 @@ class Demo(Node):
 
 
 def main():
+    global R_VISTA, DESPEJE, MADERA
     ap = argparse.ArgumentParser()
     ap.add_argument('--salida', default=os.path.expanduser('~/pika_ros/docs/percepcion_activa/img'))
     ap.add_argument('--escena', choices=['manzano', 'prueba'], default='manzano')
     ap.add_argument('--semilla', type=int, default=7)
+    ap.add_argument('--radio', type=float, default=None,
+                    help='radio del casquete de vistas (m); 0,22 con primitivas y 0,30 con Helios')
+    ap.add_argument('--despeje', type=float, default=DESPEJE,
+                    help='distancia mínima de cámara y garras a tronco y ramas (m), solo con Helios')
     args, _ = ap.parse_known_args()
     os.makedirs(args.salida, exist_ok=True)
     prefijo = 'nbv' if args.escena == 'prueba' else f'nbv_{args.escena}'
+    corrida = os.getpid()             # cámaras con nombre propio: así la demo se puede repetir
 
     rclpy.init()
     node = Demo()
@@ -324,7 +360,17 @@ def main():
         else:
             verdad = json.loads(escena_manzano.verdad_json(escena_manzano.generar(args.semilla)))
         usar_escena(verdad)
+        if MODELO == 'helios':
+            prefijo = 'nbv_helios'
+    # las garras de la Pika llegan ~15 cm por delante de la D405: en un árbol real, con 0,22 m casi
+    # todas las vistas meten las garras entre las ramas, junto al dardo de la manzana
+    R_VISTA = args.radio or (0.30 if MODELO == 'helios' else 0.22)
+    DESPEJE = args.despeje
+    if MADERA is not None:                                    # madera cerca del nuevo casquete
+        MADERA = MADERA[np.linalg.norm(MADERA - FRUTA, axis=1) < R_VISTA + 0.2]
     kin = Cinematica(node.urdf())
+    for viejo in ('vistas_candidatas', 'escena_fruta'):          # marcadores de una corrida anterior
+        node.quitar(viejo)
 
     # 1. Candidatas: visibilidad y alcanzabilidad
     semillas = [np.array([0, 1.4, -1.25, 0, 0.6, 0]), np.array([0, 1.0, -1.6, 0, 0.9, 0]),
@@ -337,7 +383,15 @@ def main():
         q, ep, ea = kin.ik_camara(k['c'], k['d'], [s + np.r_[j1, 0, 0, 0, 0, 0] for s in semillas])
         k.update(q=q, error_pos_mm=ep * 1000, error_ang_deg=ea)
         k['alcanzable'] = bool(ep < 0.005 and ea < 3.0 and abs(q[4]) > math.radians(10))
+        if MADERA is not None:
+            # la cámara y las garras (sus puntas, ~15 cm por delante) no pueden atravesar tronco ni ramas
+            tramo = k['c'] + np.linspace(0, 0.15, 8)[:, None] * k['d']
+            k['despeje_mm'] = float(np.min(np.linalg.norm(MADERA[None] - tramo[:, None], axis=2))) * 1000
+            k['choca_madera'] = k['despeje_mm'] < DESPEJE * 1000
+            k['alcanzable'] = k['alcanzable'] and not k['choca_madera']
     alcanzables = [k for k in cands if k['alcanzable']]
+    if MADERA is not None:
+        node.get_logger().info(f"{sum(k.get('choca_madera', False) for k in cands)} candidatas descartadas por chocar con la madera")
     mejor = max(alcanzables, key=lambda k: k['visibilidad'])
     frontal = min(cands, key=lambda k: abs(k['elevacion'] - 10) + abs(k['azimut']))
     node.get_logger().info(f'{len(alcanzables)}/{len(cands)} alcanzables; mejor: elev {mejor["elevacion"]}°, '
@@ -359,11 +413,11 @@ def main():
         node.arm.publish(Float64MultiArray(data=[0.0] * 6))
         rclpy.spin_once(node, timeout_sec=0.1)
     time.sleep(3.0)
-    node.spawnear('cam_frontal', sdf_camara('cam_frontal', pose_mirando(frontal['c'], FRUTA), 1.52, 848, 480))
-    node.spawnear('cam_elegida', sdf_camara('cam_elegida', pose_mirando(mejor['c'], FRUTA), 1.52, 848, 480))
+    node.spawnear(f'cam_frontal_{corrida}', sdf_camara(f'cam_frontal_{corrida}', pose_mirando(frontal['c'], FRUTA), 1.52, 848, 480))
+    node.spawnear(f'cam_elegida_{corrida}', sdf_camara(f'cam_elegida_{corrida}', pose_mirando(mejor['c'], FRUTA), 1.52, 848, 480))
     time.sleep(2.0)
-    node.foto('cam_frontal', os.path.join(args.salida, f'{prefijo}_vista_frontal.png'))
-    node.foto('cam_elegida', os.path.join(args.salida, f'{prefijo}_vista_elegida.png'))
+    node.foto(f'cam_frontal_{corrida}', os.path.join(args.salida, f'{prefijo}_vista_frontal.png'))
+    node.foto(f'cam_elegida_{corrida}', os.path.join(args.salida, f'{prefijo}_vista_elegida.png'))
 
     # 4. Brazo en la mejor vista (pinza abierta): lo que ven las cámaras del gripper, antes de
     #    poner los marcadores de las candidatas
@@ -384,22 +438,27 @@ def main():
         vis += cilindro_entre(f'r{i}', k['c'], k['c'] + (R_VISTA - 0.06) * k['d'], grosor, col, sombra=False)
     node.spawnear('vistas_candidatas', sdf_modelo('vistas_candidatas', vis))
     time.sleep(1.0)
-    node.spawnear('cam_escena', sdf_camara('cam_escena', pose_mirando((0.18, -1.05, 0.78), (0.38, 0.0, 0.26)), 0.85, 1600, 1000))
+    node.spawnear(f'cam_escena_{corrida}', sdf_camara(f'cam_escena_{corrida}', pose_mirando((0.18, -1.05, 0.78), (0.38, 0.0, 0.26)), 0.85, 1600, 1000))
     time.sleep(2.0)
-    node.foto('cam_escena', os.path.join(args.salida, f'{prefijo}_escena.png'))
+    node.foto(f'cam_escena_{corrida}', os.path.join(args.salida, f'{prefijo}_escena.png'))
 
-    resumen = {'escena': args.escena, 'semilla': args.semilla, 'hojas': len(HOJAS), 'fruta': FRUTA.tolist(), 'radio_fruta': R_FRUTA, 'radio_casquete': R_VISTA,
+    resumen = {'escena': args.escena, 'modelo': MODELO, 'semilla': args.semilla,
+               'hojas': len(HOJAS) if TRIS is None else 'triángulos de Helios', 'fruta': FRUTA.tolist(), 'radio_fruta': R_FRUTA, 'radio_casquete': R_VISTA,
                'candidatas': [{'elevacion': k['elevacion'], 'azimut': k['azimut'],
                                'visibilidad': round(k['visibilidad'], 3), 'alcanzable': k['alcanzable'],
                                'error_pos_mm': round(k['error_pos_mm'], 2),
                                'error_ang_deg': round(k['error_ang_deg'], 2),
-                               'q': [round(float(v), 4) for v in k['q']]} for k in cands],
+                               'q': [round(float(v), 4) for v in k['q']],
+                               **({'despeje_mm': round(k['despeje_mm'], 1), 'choca_madera': bool(k['choca_madera'])}
+                                  if 'despeje_mm' in k else {})} for k in cands],
                'mejor': {'elevacion': mejor['elevacion'], 'azimut': mejor['azimut'],
                          'visibilidad': round(mejor['visibilidad'], 3)},
                'frontal': {'elevacion': frontal['elevacion'], 'azimut': frontal['azimut'],
                            'visibilidad': round(frontal['visibilidad'], 3)}}
     with open(os.path.join(args.salida, f'{prefijo}_escena.json'), 'w') as f:
         json.dump(resumen, f, indent=1, ensure_ascii=False)
+    for n in ('cam_frontal', 'cam_elegida', 'cam_escena'):        # las cámaras auxiliares no quedan
+        node.quitar(f'{n}_{corrida}')
     node.destroy_node()
     rclpy.shutdown()
 

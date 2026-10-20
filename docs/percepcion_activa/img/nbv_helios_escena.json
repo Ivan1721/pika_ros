@@ -1,0 +1,385 @@
+{
+ "escena": "manzano",
+ "modelo": "helios",
+ "semilla": 7,
+ "hojas": "triángulos de Helios",
+ "fruta": [
+  0.55,
+  0.0,
+  0.3
+ ],
+ "radio_fruta": 0.0489,
+ "radio_casquete": 0.3,
+ "candidatas": [
+  {
+   "elevacion": -15,
+   "azimut": -50,
+   "visibilidad": 0.478,
+   "alcanzable": false,
+   "error_pos_mm": 71.22,
+   "error_ang_deg": 23.58,
+   "q": [
+    0.63,
+    1.9327,
+    -1.405,
+    -1.745,
+    1.22,
+    -0.5958
+   ],
+   "despeje_mm": 23.8,
+   "choca_madera": true
+  },
+  {
+   "elevacion": -15,
+   "azimut": -25,
+   "visibilidad": 0.493,
+   "alcanzable": false,
+   "error_pos_mm": 39.84,
+   "error_ang_deg": 9.15,
+   "q": [
+    0.4858,
+    1.4967,
+    -0.56,
+    0.8816,
+    -1.22,
+    -2.0944
+   ],
+   "despeje_mm": 57.8,
+   "choca_madera": false
+  },
+  {
+   "elevacion": -15,
+   "azimut": 0,
+   "visibilidad": 0.472,
+   "alcanzable": true,
+   "error_pos_mm": 0.2,
+   "error_ang_deg": 0.03,
+   "q": [
+    0.2622,
+    1.3581,
+    -0.333,
+    0.2699,
+    -1.22,
+    2.0276
+   ],
+   "despeje_mm": 69.9,
+   "choca_madera": false
+  },
+  {
+   "elevacion": -15,
+   "azimut": 25,
+   "visibilidad": 0.281,
+   "alcanzable": false,
+   "error_pos_mm": 39.84,
+   "error_ang_deg": 9.16,
+   "q": [
+    -0.4858,
+    1.4967,
+    -0.56,
+    -0.8816,
+    -1.22,
+    2.0944
+   ],
+   "despeje_mm": 44.7,
+   "choca_madera": false
+  },
+  {
+   "elevacion": -15,
+   "azimut": 50,
+   "visibilidad": 0.008,
+   "alcanzable": false,
+   "error_pos_mm": 71.22,
+   "error_ang_deg": 23.58,
+   "q": [
+    -0.63,
+    1.9327,
+    -1.405,
+    1.745,
+    1.22,
+    0.5957
+   ],
+   "despeje_mm": 19.0,
+   "choca_madera": true
+  },
+  {
+   "elevacion": 10,
+   "azimut": -50,
+   "visibilidad": 0.377,
+   "alcanzable": false,
+   "error_pos_mm": 56.83,
+   "error_ang_deg": 15.69,
+   "q": [
+    0.6547,
+    1.7548,
+    -1.4645,
+    -1.4169,
+    1.22,
+    0.161
+   ],
+   "despeje_mm": 45.3,
+   "choca_madera": false
+  },
+  {
+   "elevacion": 10,
+   "azimut": -25,
+   "visibilidad": 0.32,
+   "alcanzable": true,
+   "error_pos_mm": 0.04,
+   "error_ang_deg": 0.01,
+   "q": [
+    0.6957,
+    1.28,
+    -0.9952,
+    -1.4722,
+    1.1103,
+    0.039
+   ],
+   "despeje_mm": 72.9,
+   "choca_madera": false
+  },
+  {
+   "elevacion": 10,
+   "azimut": 0,
+   "visibilidad": 0.0,
+   "alcanzable": false,
+   "error_pos_mm": 0.02,
+   "error_ang_deg": 0.0,
+   "q": [
+    0.0,
+    1.0198,
+    -0.6189,
+    0.0,
+    -0.1391,
+    0.0
+   ],
+   "despeje_mm": 44.5,
+   "choca_madera": false
+  },
+  {
+   "elevacion": 10,
+   "azimut": 25,
+   "visibilidad": 0.053,
+   "alcanzable": true,
+   "error_pos_mm": 0.04,
+   "error_ang_deg": 0.01,
+   "q": [
+    -0.6957,
+    1.28,
+    -0.9952,
+    1.4722,
+    1.1103,
+    -0.039
+   ],
+   "despeje_mm": 42.3,
+   "choca_madera": false
+  },
+  {
+   "elevacion": 10,
+   "azimut": 50,
+   "visibilidad": 0.016,
+   "alcanzable": false,
+   "error_pos_mm": 56.83,
+   "error_ang_deg": 15.69,
+   "q": [
+    -0.6547,
+    1.7548,
+    -1.4645,
+    1.4169,
+    1.22,
+    -0.1608
+   ],
+   "despeje_mm": 33.7,
+   "choca_madera": false
+  },
+  {
+   "elevacion": 35,
+   "azimut": -50,
+   "visibilidad": 0.0,
+   "alcanzable": false,
+   "error_pos_mm": 70.39,
+   "error_ang_deg": 17.52,
+   "q": [
+    0.5321,
+    1.7377,
+    -1.8047,
+    -0.9624,
+    1.22,
+    0.2372
+   ],
+   "despeje_mm": 60.4,
+   "choca_madera": false
+  },
+  {
+   "elevacion": 35,
+   "azimut": -25,
+   "visibilidad": 0.0,
+   "alcanzable": false,
+   "error_pos_mm": 10.93,
+   "error_ang_deg": 2.38,
+   "q": [
+    0.4781,
+    1.4529,
+    -1.6711,
+    -0.7497,
+    1.22,
+    0.0212
+   ],
+   "despeje_mm": 52.9,
+   "choca_madera": false
+  },
+  {
+   "elevacion": 35,
+   "azimut": 0,
+   "visibilidad": 0.0,
+   "alcanzable": false,
+   "error_pos_mm": 0.06,
+   "error_ang_deg": 0.01,
+   "q": [
+    -0.0,
+    1.2572,
+    -1.4847,
+    0.0001,
+    0.9255,
+    -0.0002
+   ],
+   "despeje_mm": 14.8,
+   "choca_madera": true
+  },
+  {
+   "elevacion": 35,
+   "azimut": 25,
+   "visibilidad": 0.0,
+   "alcanzable": false,
+   "error_pos_mm": 10.93,
+   "error_ang_deg": 2.38,
+   "q": [
+    -0.4781,
+    1.4529,
+    -1.6711,
+    0.7497,
+    1.22,
+    -0.0212
+   ],
+   "despeje_mm": 21.9,
+   "choca_madera": true
+  },
+  {
+   "elevacion": 35,
+   "azimut": 50,
+   "visibilidad": 0.0,
+   "alcanzable": false,
+   "error_pos_mm": 70.39,
+   "error_ang_deg": 17.52,
+   "q": [
+    -0.5321,
+    1.7377,
+    -1.8047,
+    0.9624,
+    1.22,
+    -0.2372
+   ],
+   "despeje_mm": 33.5,
+   "choca_madera": false
+  },
+  {
+   "elevacion": 60,
+   "azimut": -50,
+   "visibilidad": 0.433,
+   "alcanzable": false,
+   "error_pos_mm": 122.34,
+   "error_ang_deg": 25.95,
+   "q": [
+    0.285,
+    1.7723,
+    -2.0273,
+    -0.5015,
+    1.22,
+    0.1366
+   ],
+   "despeje_mm": 27.3,
+   "choca_madera": true
+  },
+  {
+   "elevacion": 60,
+   "azimut": -25,
+   "visibilidad": 0.151,
+   "alcanzable": false,
+   "error_pos_mm": 91.15,
+   "error_ang_deg": 18.7,
+   "q": [
+    0.187,
+    1.6643,
+    -1.9898,
+    -0.3051,
+    1.22,
+    0.0706
+   ],
+   "despeje_mm": 6.1,
+   "choca_madera": true
+  },
+  {
+   "elevacion": 60,
+   "azimut": 0,
+   "visibilidad": 0.0,
+   "alcanzable": false,
+   "error_pos_mm": 78.6,
+   "error_ang_deg": 15.84,
+   "q": [
+    -0.0,
+    1.6202,
+    -1.9822,
+    0.0,
+    1.22,
+    -0.0002
+   ],
+   "despeje_mm": 10.6,
+   "choca_madera": true
+  },
+  {
+   "elevacion": 60,
+   "azimut": 25,
+   "visibilidad": 0.038,
+   "alcanzable": false,
+   "error_pos_mm": 91.15,
+   "error_ang_deg": 18.7,
+   "q": [
+    -0.187,
+    1.6643,
+    -1.9897,
+    0.3051,
+    1.22,
+    -0.0706
+   ],
+   "despeje_mm": 3.8,
+   "choca_madera": true
+  },
+  {
+   "elevacion": 60,
+   "azimut": 50,
+   "visibilidad": 0.187,
+   "alcanzable": false,
+   "error_pos_mm": 122.34,
+   "error_ang_deg": 25.95,
+   "q": [
+    -0.285,
+    1.7723,
+    -2.0273,
+    0.5015,
+    1.22,
+    -0.1367
+   ],
+   "despeje_mm": 18.6,
+   "choca_madera": true
+  }
+ ],
+ "mejor": {
+  "elevacion": -15,
+  "azimut": 0,
+  "visibilidad": 0.472
+ },
+ "frontal": {
+  "elevacion": 10,
+  "azimut": 0,
+  "visibilidad": 0.0
+ }
+}

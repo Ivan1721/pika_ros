@@ -250,6 +250,30 @@ La manzana objetivo queda al centro de la D405, tapada en parte por el racimo, y
 garras de la pinza. El 70 % de los píxeles tiene profundidad dentro del rango de la D405, con
 mediana de 0,20 m. Es coherente con el casquete de 0,22 m, medido desde la fruta.
 
+#### Con el manzano realista de Helios
+
+![NBV en un muro frutal de Helios](img/nbv_helios_escena_panel.png)
+
+Misma demo, con `arbol:=helios`: un muro frutal de manzano de Helios, de 640 días, semilla 7, con un
+árbol vecino a cada lado (datos en [img/nbv_helios_escena.json](img/nbv_helios_escena.json)). La
+visibilidad se calcula trazando rayos contra los triángulos reales de hojas y madera, y se
+descartan las vistas en que la cámara o las garras pasarían a menos de 3 cm de tronco o ramas.
+
+| | Primitivas | Helios |
+|---|---|---|
+| Casquete | 0,22 m | 0,30 m |
+| Vistas alcanzables | 7 de 20 | 3 de 20 (9 descartadas por chocar con ramas) |
+| Visibilidad de frente | 0 % | 0 % (además, de frente J5 queda en la singularidad) |
+| Mejor vista alcanzable | 42 % (elev. 35°, azim. −25°) | 47 % (elev. −15°, azim. 0°) |
+
+- **Con 0,22 m, 18 de las 20 vistas chocaban con las ramas.** Las garras de la Pika llegan unos 15 cm por delante de la D405, así que quedan a ~3 cm de la piel de la manzana, junto al dardo del que cuelga. Con 0,30 m quedan a ~10 cm; la D405 sigue en su mejor rango (15–35 cm).
+- **En un árbol real, la madera limita tanto como la cinemática.** En el muro, el tronco y los brazos de la espaldera cruzan casi todas las líneas de aproximación.
+- Las ramas también tapan: la vista frontal ve 0 %, por un cruce de ramas delante de la manzana (vista (b) del panel).
+
+| D405 color | D405 profundidad | Fisheye |
+|---|---|---|
+| ![D405 color](img/nbv_helios_d405_color.png) | ![D405 profundidad](img/nbv_helios_d405_profundidad.png) | ![Fisheye](img/nbv_helios_fisheye.png) |
+
 La primera escena de prueba, con una fruta y tres hojas en disco (`--escena prueba`), dio 0 % de
 frente y 50 % en la mejor vista: [img/nbv_escena_panel.png](img/nbv_escena_panel.png).
 

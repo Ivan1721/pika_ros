@@ -16,6 +16,8 @@
 #   escala_gravedad:=X  pisa ESCALA_GRAVEDAD del script (0 = sin compensacion)
 #   escena:=manzano     manzano de percepción activa (escena_manzano.py); escena:=ninguna, vacío
 #   semilla:=N          semilla del follaje del manzano (por defecto 7, la de la documentación)
+#   arbol:=helios       manzano realista de Helios en vez de primitivas (generar antes con
+#                       scripts/generar_manzano_helios.py); ruta_helios:=<carpeta> elige cuál
 #   camaras:=false      sin la D405 ni la fisheye del gripper (Gazebo más liviano)
 #   gui:=false          Gazebo sin ventana (solo gzserver)
 #   rviz:=false         sin RViz
@@ -117,7 +119,9 @@ def launch_setup(context):
         nodos_modo.append(Node(
             package='pika_sim',
             executable='escena_manzano.py',
-            parameters=[{'semilla': int(LaunchConfiguration('semilla').perform(context))}],
+            parameters=[{'semilla': int(LaunchConfiguration('semilla').perform(context)),
+                         'modelo': LaunchConfiguration('arbol').perform(context),
+                         'ruta_helios': LaunchConfiguration('ruta_helios').perform(context)}],
             output='screen',
         ))
 
@@ -177,6 +181,8 @@ def generate_launch_description():
         DeclareLaunchArgument('escala_gravedad', default_value=''),
         DeclareLaunchArgument('escena', default_value='ninguna', choices=['ninguna', 'manzano']),
         DeclareLaunchArgument('semilla', default_value='7'),
+        DeclareLaunchArgument('arbol', default_value='primitivas', choices=['primitivas', 'helios']),
+        DeclareLaunchArgument('ruta_helios', default_value='~/.cache/pika_sim/manzanos/apple_fruitingwall_e640_s7'),
         DeclareLaunchArgument('camaras', default_value='true', choices=['true', 'false']),
         DeclareLaunchArgument('gui', default_value='true'),
         DeclareLaunchArgument('rviz', default_value='true'),

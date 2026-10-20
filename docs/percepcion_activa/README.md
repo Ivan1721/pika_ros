@@ -74,7 +74,7 @@ Para NBV de fruta con brazo, Gazebo es el estándar en los trabajos comparables.
 | `pika_sim` fase 1: teleop de Piper + gripper Pika en Gazebo sin hardware | ✅ Probada headless contra los nodos reales de FK/IK/teleop. Uso: [src/pika_sim/README.md](../../src/pika_sim/README.md) y Flujo D+ del [Manual](../manuales/Manual.md) |
 | Cámaras simuladas en la pinza Pika | ✅ paso 1: D405 (color, profundidad en 16UC1 mm, nube) y fisheye con los topics `/gripper/camera/...` del hardware, a 30 Hz. Falta confirmar hacia dónde miran las reales |
 | MoveIt para Piper + Pika | ⏳ paso 2. Existe una config para la pinza original del Piper en `piper_ros` (fuera de este repo) |
-| Escena de fruta | ✅ paso 3, primera versión: manzano reproducible por semilla (`escena:=manzano`) con la verdad del terreno en `/escena/verdad` y `/escena/frutas`. Falta controlar el nivel de oclusión y usar mallas de hojas realistas |
+| Escena de fruta | ✅ paso 3, primera versión: manzano reproducible por semilla (`escena:=manzano`) con la verdad del terreno en `/escena/verdad` y `/escena/frutas`. Con `arbol:=helios`, manzano realista de Helios (muro frutal con hojas, horquetas y texturas reales), con choques de cámara y garras contra las ramas. Falta barrer niveles de oclusión |
 | Planner, experimentos | ⏳ pasos 4–5. La demo de NBV ([lazos_cinematica_nbv.md §5.6](lazos_cinematica_nbv.md#56-ejemplo-en-simulación-manzano)) ya calcula visibilidad y alcanzabilidad, pero no es el planner |
 | Captura teleop con `data_tools` | ⚠️ las configs `*_pika_teleop` esperan topics que este fork no publica; ver [problemas conocidos](../manuales/Manual.md#problemas-conocidos-del-software) |
 | Milo: `nbv_planner` | Diseñado en su documentación, no implementado |

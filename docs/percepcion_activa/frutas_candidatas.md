@@ -35,6 +35,12 @@ disponible.
 Los tamaños son rangos típicos de la fruta comercial, como orientación; no son mediciones de este
 proyecto.
 
+**Modelos 3D:** la biblioteca de plantas de Helios, ya integrada para la manzana (`arbol:=helios`
+en `pika_sim`), trae también tomate, tomate cherry, vid (VSP y Wye), pimentón, frutilla, olivo,
+almendro, nogal y pistacho. Pasar a otra fruta es, en principio, cambiar el modelo en
+`generar_manzano_helios.py`, que hoy acepta solo los dos de manzano
+([recursos_publicos.md §1b](recursos_publicos.md#1b-árboles-completos-hojas-ramas-y-frutos-en-3d-revisión-del-20-10-2026-segunda-parte)).
+
 ## 3. Recomendación
 
 1. **Manzana: la demo actual.** Hay buena base en el corpus (sobre todo NBV de huerto) y Fuji-SfM para validar con datos reales. Para cosechar, la apertura de 70 mm queda justa con manzanas grandes; para la **percepción**, que es el foco del survey, no hay problema.
