@@ -28,6 +28,8 @@ argumento `arm_root`:
 Si el que queda en el path es el de `~/piper_ros` y no pasas el argumento, el URDF falla con
 *Two root links found*.
 
+Medidas, grados de libertad, alcance y figuras del Piper + Pika (generadas del URDF): [docs/PIPER_PIKA.md](docs/PIPER_PIKA.md).
+
 ## Estructura del modelo
 
 ```

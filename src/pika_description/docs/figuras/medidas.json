@@ -1,0 +1,161 @@
+{
+ "modelo": "pika_description/urdf/pika_piper_standalone.urdf.xacro",
+ "tcp": "pika_tcp",
+ "nota": "generado por scripts/figuras_piper_pika.py",
+ "pose_L": {
+  "joint2": 1.43,
+  "joint3": -1.253,
+  "joint5": -0.09
+ },
+ "tramos_m": {
+  "base_a_hombro_z": 0.123,
+  "brazo_J2_J3": 0.285,
+  "antebrazo_J3_J5": 0.2517,
+  "muneca_J5_J6": 0.091,
+  "J6_a_TCP_pika": 0.185
+ },
+ "tcp_en_pose_L_m": [
+  0.5263,
+  -0.0,
+  0.4074
+ ],
+ "anchos_m": {
+  "base": 0.08,
+  "gripper_pika": 0.145
+ },
+ "desplazamientos_pose_L_m": {
+  "base->joint1": [
+   0.0,
+   0.0,
+   0.123
+  ],
+  "joint1->joint2": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "joint2->joint3": [
+   -0.0014,
+   0.0,
+   0.285
+  ],
+  "joint3->joint4": [
+   0.2517,
+   -0.0,
+   -0.0006
+  ],
+  "joint4->joint5": [
+   0.0,
+   0.0,
+   0.0
+  ],
+  "joint5->joint6": [
+   0.091,
+   -0.0,
+   -0.0001
+  ],
+  "joint6->TCP": [
+   0.185,
+   -0.0,
+   0.0
+  ]
+ },
+ "libertades": {
+  "joint1": {
+   "tipo": "rotacional",
+   "funcion": "giro de la base",
+   "rango_rad": [
+    -2.618,
+    2.168
+   ],
+   "rango_grados": [
+    -150.0,
+    124.2
+   ],
+   "eje_en_pose_L": "+Z"
+  },
+  "joint2": {
+   "tipo": "rotacional",
+   "funcion": "hombro",
+   "rango_rad": [
+    0.0,
+    3.14
+   ],
+   "rango_grados": [
+    0.0,
+    179.9
+   ],
+   "eje_en_pose_L": "+Y"
+  },
+  "joint3": {
+   "tipo": "rotacional",
+   "funcion": "codo",
+   "rango_rad": [
+    -2.967,
+    0.0
+   ],
+   "rango_grados": [
+    -170.0,
+    0.0
+   ],
+   "eje_en_pose_L": "+Y"
+  },
+  "joint4": {
+   "tipo": "rotacional",
+   "funcion": "giro del antebrazo",
+   "rango_rad": [
+    -1.745,
+    1.745
+   ],
+   "rango_grados": [
+    -100.0,
+    100.0
+   ],
+   "eje_en_pose_L": "+X"
+  },
+  "joint5": {
+   "tipo": "rotacional",
+   "funcion": "flexión de la muñeca",
+   "rango_rad": [
+    -1.22,
+    1.22
+   ],
+   "rango_grados": [
+    -69.9,
+    69.9
+   ],
+   "eje_en_pose_L": "+Y"
+  },
+  "joint6": {
+   "tipo": "rotacional",
+   "funcion": "giro de la muñeca",
+   "rango_rad": [
+    -2.0944,
+    2.0944
+   ],
+   "rango_grados": [
+    -120.0,
+    120.0
+   ],
+   "eje_en_pose_L": "+X"
+  },
+  "gripper": {
+   "tipo": "2 prismáticas (en espejo)",
+   "por_garra_m": [
+    0.0,
+    0.035
+   ],
+   "apertura_total_m": [
+    0.0,
+    0.07
+   ]
+  }
+ },
+ "alcance_tcp_m": {
+  "max_desde_hombro": 0.8127,
+  "max_horizontal_desde_eje_base": 0.812,
+  "z_min": -0.4387,
+  "z_max": 0.9356,
+  "muestras": 40000
+ }
+}
