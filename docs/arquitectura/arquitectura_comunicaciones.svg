@@ -64,16 +64,8 @@
 <text text-anchor="start" x="89.86" y="-1062.06" font-family="DejaVu Sans" font-size="11.00" fill="#2b2b29">24 V DC (≤ 26 V)</text>
 <text text-anchor="start" x="48.36" y="-1051.06" font-family="DejaVu Sans" font-size="11.00" fill="#2b2b29">≤ 40 W continuo · ≤ 120 W pico</text>
 </g>
-<!-- fte_grip -->
-<g id="frente_node5" class="node">
-<title>fte_grip</title>
-<path fill="none" stroke="#c8323f" stroke-width="1.2" stroke-dasharray="5,2" d="M456.36,-1087.86C456.36,-1087.86 338.36,-1087.86 338.36,-1087.86 332.36,-1087.86 326.36,-1081.86 326.36,-1075.86 326.36,-1075.86 326.36,-1054.86 326.36,-1054.86 326.36,-1048.86 332.36,-1042.86 338.36,-1042.86 338.36,-1042.86 456.36,-1042.86 456.36,-1042.86 462.36,-1042.86 468.36,-1048.86 468.36,-1054.86 468.36,-1054.86 468.36,-1075.86 468.36,-1075.86 468.36,-1081.86 462.36,-1087.86 456.36,-1087.86"/>
-<text text-anchor="start" x="337.36" y="-1073.46" font-family="DejaVu Sans" font-weight="bold" font-size="13.00" fill="#2b2b29">24 V del Gripper</text>
-<text text-anchor="start" x="341.36" y="-1062.06" font-family="DejaVu Sans" font-size="11.00" fill="#2b2b29">XT30 · ≤ 24 W (1 A)</text>
-<text text-anchor="start" x="340.36" y="-1051.06" font-family="DejaVu Sans" font-size="11.00" fill="#2b2b29">fuente por confirmar</text>
-</g>
 <!-- fte_hub -->
-<g id="frente_node6" class="node">
+<g id="frente_node5" class="node">
 <title>fte_hub</title>
 <path fill="#f1f1ef" stroke="#55585c" stroke-width="1.2" d="M716.86,-1083.36C716.86,-1083.36 577.86,-1083.36 577.86,-1083.36 571.86,-1083.36 565.86,-1077.36 565.86,-1071.36 565.86,-1071.36 565.86,-1059.36 565.86,-1059.36 565.86,-1053.36 571.86,-1047.36 577.86,-1047.36 577.86,-1047.36 716.86,-1047.36 716.86,-1047.36 722.86,-1047.36 728.86,-1053.36 728.86,-1059.36 728.86,-1059.36 728.86,-1071.36 728.86,-1071.36 728.86,-1077.36 722.86,-1083.36 716.86,-1083.36"/>
 <text text-anchor="start" x="576.86" y="-1067.96" font-family="DejaVu Sans" font-weight="bold" font-size="13.00" fill="#2b2b29">Fuente PD hub</text>
@@ -81,7 +73,7 @@
 <text text-anchor="start" x="594.86" y="-1056.56" font-family="DejaVu Sans" font-size="11.00" fill="#2b2b29">USB&#45;C PD ≤ 100 W</text>
 </g>
 <!-- fte_st -->
-<g id="frente_node7" class="node">
+<g id="frente_node6" class="node">
 <title>fte_st</title>
 <path fill="#f1f1ef" stroke="#55585c" stroke-width="1.2" d="M1251.36,-1083.36C1251.36,-1083.36 1063.36,-1083.36 1063.36,-1083.36 1057.36,-1083.36 1051.36,-1077.36 1051.36,-1071.36 1051.36,-1071.36 1051.36,-1059.36 1051.36,-1059.36 1051.36,-1053.36 1057.36,-1047.36 1063.36,-1047.36 1063.36,-1047.36 1251.36,-1047.36 1251.36,-1047.36 1257.36,-1047.36 1263.36,-1053.36 1263.36,-1059.36 1263.36,-1059.36 1263.36,-1071.36 1263.36,-1071.36 1263.36,-1077.36 1257.36,-1083.36 1251.36,-1083.36"/>
 <text text-anchor="start" x="1067.86" y="-1067.96" font-family="DejaVu Sans" font-weight="bold" font-size="13.00" fill="#2b2b29">Fuente Pika Station</text>
@@ -89,29 +81,29 @@
 <text text-anchor="start" x="1062.36" y="-1056.56" font-family="DejaVu Sans" font-size="11.00" fill="#2b2b29">12 V, o batería 12 V / 10 Ah (30 h)</text>
 </g>
 <!-- fte_pc -->
-<g id="frente_node8" class="node">
+<g id="frente_node7" class="node">
 <title>fte_pc</title>
 <path fill="#f1f1ef" stroke="#55585c" stroke-width="1.2" d="M1736.36,-1083.36C1736.36,-1083.36 1618.36,-1083.36 1618.36,-1083.36 1612.36,-1083.36 1606.36,-1077.36 1606.36,-1071.36 1606.36,-1071.36 1606.36,-1059.36 1606.36,-1059.36 1606.36,-1053.36 1612.36,-1047.36 1618.36,-1047.36 1618.36,-1047.36 1736.36,-1047.36 1736.36,-1047.36 1742.36,-1047.36 1748.36,-1053.36 1748.36,-1059.36 1748.36,-1059.36 1748.36,-1071.36 1748.36,-1071.36 1748.36,-1077.36 1742.36,-1083.36 1736.36,-1083.36"/>
 <text text-anchor="start" x="1617.36" y="-1067.96" font-family="DejaVu Sans" font-weight="bold" font-size="13.00" fill="#2b2b29">Cargador laptop</text>
 <text text-anchor="start" x="1641.36" y="-1056.56" font-family="DejaVu Sans" font-size="11.00" fill="#2b2b29">20 V · 280 W</text>
 </g>
 <!-- estop -->
-<g id="frente_node9" class="node">
+<g id="frente_node8" class="node">
 <title>estop</title>
 <path fill="none" stroke="#c8323f" stroke-width="1.2" stroke-dasharray="5,2" d="M219.36,-978.36C219.36,-978.36 55.36,-978.36 55.36,-978.36 49.36,-978.36 43.36,-972.36 43.36,-966.36 43.36,-966.36 43.36,-954.36 43.36,-954.36 43.36,-948.36 49.36,-942.36 55.36,-942.36 55.36,-942.36 219.36,-942.36 219.36,-942.36 225.36,-942.36 231.36,-948.36 231.36,-954.36 231.36,-954.36 231.36,-966.36 231.36,-966.36 231.36,-972.36 225.36,-978.36 219.36,-978.36"/>
 <text text-anchor="start" x="54.36" y="-962.96" font-family="DejaVu Sans" font-weight="bold" font-size="13.00" fill="#c8323f">Parada de emergencia</text>
 <text text-anchor="start" x="61.86" y="-951.56" font-family="DejaVu Sans" font-size="11.00" fill="#c8323f">recomendada, no instalada</text>
 </g>
 <!-- piper -->
-<g id="frente_node10" class="node">
+<g id="frente_node9" class="node">
 <title>piper</title>
-<path fill="#1d2124" stroke="#1d2124" stroke-width="1.2" d="M221.36,-862.86C221.36,-862.86 53.36,-862.86 53.36,-862.86 47.36,-862.86 41.36,-856.86 41.36,-850.86 41.36,-850.86 41.36,-829.86 41.36,-829.86 41.36,-823.86 47.36,-817.86 53.36,-817.86 53.36,-817.86 221.36,-817.86 221.36,-817.86 227.36,-817.86 233.36,-823.86 233.36,-829.86 233.36,-829.86 233.36,-850.86 233.36,-850.86 233.36,-856.86 227.36,-862.86 221.36,-862.86"/>
+<path fill="#1d2124" stroke="#1d2124" stroke-width="1.2" d="M250.36,-862.86C250.36,-862.86 24.36,-862.86 24.36,-862.86 18.36,-862.86 12.36,-856.86 12.36,-850.86 12.36,-850.86 12.36,-829.86 12.36,-829.86 12.36,-823.86 18.36,-817.86 24.36,-817.86 24.36,-817.86 250.36,-817.86 250.36,-817.86 256.36,-817.86 262.36,-823.86 262.36,-829.86 262.36,-829.86 262.36,-850.86 262.36,-850.86 262.36,-856.86 256.36,-862.86 250.36,-862.86"/>
 <text text-anchor="start" x="68.86" y="-848.46" font-family="DejaVu Sans" font-weight="bold" font-size="13.00" fill="white">Brazo AgileX Piper</text>
-<text text-anchor="start" x="57.86" y="-837.06" font-family="DejaVu Sans" font-size="11.00" fill="white">conector aviación en la base</text>
-<text text-anchor="start" x="52.36" y="-826.06" font-family="DejaVu Sans" font-size="11.00" fill="white">24 V+ · 24 V− · CAN&#45;H · CAN&#45;L</text>
+<text text-anchor="start" x="23.36" y="-837.06" font-family="DejaVu Sans" font-size="11.00" fill="white">6 motores en serie hasta la base (driver)</text>
+<text text-anchor="start" x="25.86" y="-826.06" font-family="DejaVu Sans" font-size="11.00" fill="white">aviación: 24 V+ · 24 V− · CAN&#45;H · CAN&#45;L</text>
 </g>
 <!-- gripper -->
-<g id="frente_node11" class="node">
+<g id="frente_node10" class="node">
 <title>gripper</title>
 <path fill="#2b2c2e" stroke="#2b2c2e" stroke-width="1.2" d="M566.36,-862.86C566.36,-862.86 388.36,-862.86 388.36,-862.86 382.36,-862.86 376.36,-856.86 376.36,-850.86 376.36,-850.86 376.36,-829.86 376.36,-829.86 376.36,-823.86 382.36,-817.86 388.36,-817.86 388.36,-817.86 566.36,-817.86 566.36,-817.86 572.36,-817.86 578.36,-823.86 578.36,-829.86 578.36,-829.86 578.36,-850.86 578.36,-850.86 578.36,-856.86 572.36,-862.86 566.36,-862.86"/>
 <text text-anchor="start" x="430.86" y="-848.46" font-family="DejaVu Sans" font-weight="bold" font-size="13.00" fill="white">Pika Gripper</text>
@@ -119,7 +111,7 @@
 <text text-anchor="start" x="387.36" y="-826.06" font-family="DejaVu Sans" font-size="11.00" fill="white">D405 · fisheye · encoder · motor</text>
 </g>
 <!-- sense -->
-<g id="frente_node12" class="node">
+<g id="frente_node11" class="node">
 <title>sense</title>
 <path fill="#2b2c2e" stroke="#2b2c2e" stroke-width="1.2" d="M896.36,-862.86C896.36,-862.86 738.36,-862.86 738.36,-862.86 732.36,-862.86 726.36,-856.86 726.36,-850.86 726.36,-850.86 726.36,-829.86 726.36,-829.86 726.36,-823.86 732.36,-817.86 738.36,-817.86 738.36,-817.86 896.36,-817.86 896.36,-817.86 902.36,-817.86 908.36,-823.86 908.36,-829.86 908.36,-829.86 908.36,-850.86 908.36,-850.86 908.36,-856.86 902.36,-862.86 896.36,-862.86"/>
 <text text-anchor="start" x="776.86" y="-848.46" font-family="DejaVu Sans" font-weight="bold" font-size="13.00" fill="white">Pika Sense</text>
@@ -127,7 +119,7 @@
 <text text-anchor="start" x="737.36" y="-826.06" font-family="DejaVu Sans" font-size="11.00" fill="white">D405 · fisheye · encoder/IMU</text>
 </g>
 <!-- station -->
-<g id="frente_node13" class="node">
+<g id="frente_node12" class="node">
 <title>station</title>
 <path fill="#a9acb0" stroke="#55585c" stroke-width="1.2" d="M1212.36,-862.86C1212.36,-862.86 1102.36,-862.86 1102.36,-862.86 1096.36,-862.86 1090.36,-856.86 1090.36,-850.86 1090.36,-850.86 1090.36,-829.86 1090.36,-829.86 1090.36,-823.86 1096.36,-817.86 1102.36,-817.86 1102.36,-817.86 1212.36,-817.86 1212.36,-817.86 1218.36,-817.86 1224.36,-823.86 1224.36,-829.86 1224.36,-829.86 1224.36,-850.86 1224.36,-850.86 1224.36,-856.86 1218.36,-862.86 1212.36,-862.86"/>
 <text text-anchor="start" x="1112.36" y="-848.46" font-family="DejaVu Sans" font-weight="bold" font-size="13.00" fill="#2b2b29">Pika Station</text>
@@ -135,7 +127,7 @@
 <text text-anchor="start" x="1116.36" y="-826.06" font-family="DejaVu Sans" font-size="11.00" fill="#2b2b29">sin datos al PC</text>
 </g>
 <!-- d435 -->
-<g id="frente_node14" class="node">
+<g id="frente_node13" class="node">
 <title>d435</title>
 <path fill="#f1f1ef" stroke="#55585c" stroke-width="1.2" stroke-dasharray="5,2" d="M1574.86,-862.86C1574.86,-862.86 1419.86,-862.86 1419.86,-862.86 1413.86,-862.86 1407.86,-856.86 1407.86,-850.86 1407.86,-850.86 1407.86,-829.86 1407.86,-829.86 1407.86,-823.86 1413.86,-817.86 1419.86,-817.86 1419.86,-817.86 1574.86,-817.86 1574.86,-817.86 1580.86,-817.86 1586.86,-823.86 1586.86,-829.86 1586.86,-829.86 1586.86,-850.86 1586.86,-850.86 1586.86,-856.86 1580.86,-862.86 1574.86,-862.86"/>
 <text text-anchor="start" x="1418.86" y="-848.46" font-family="DejaVu Sans" font-weight="bold" font-size="13.00" fill="#2b2b29">RealSense D435i</text>
@@ -144,14 +136,14 @@
 <text text-anchor="start" x="1435.36" y="-826.06" font-family="DejaVu Sans" font-size="11.00" fill="#2b2b29">fuera del kit · opcional</text>
 </g>
 <!-- tracker -->
-<g id="frente_node15" class="node">
+<g id="frente_node14" class="node">
 <title>tracker</title>
 <path fill="#a9acb0" stroke="#55585c" stroke-width="1.2" d="M1232.86,-733.36C1232.86,-733.36 1081.86,-733.36 1081.86,-733.36 1075.86,-733.36 1069.86,-727.36 1069.86,-721.36 1069.86,-721.36 1069.86,-709.36 1069.86,-709.36 1069.86,-703.36 1075.86,-697.36 1081.86,-697.36 1081.86,-697.36 1232.86,-697.36 1232.86,-697.36 1238.86,-697.36 1244.86,-703.36 1244.86,-709.36 1244.86,-709.36 1244.86,-721.36 1244.86,-721.36 1244.86,-727.36 1238.86,-733.36 1232.86,-733.36"/>
 <text text-anchor="start" x="1090.86" y="-717.96" font-family="DejaVu Sans" font-weight="bold" font-size="13.00" fill="#2b2b29">Tracker (etiqueta)</text>
 <text text-anchor="start" x="1080.86" y="-706.56" font-family="DejaVu Sans" font-size="11.00" fill="#2b2b29">sobre el Sense · batería 9 h</text>
 </g>
 <!-- usbcan -->
-<g id="frente_node16" class="node">
+<g id="frente_node15" class="node">
 <title>usbcan</title>
 <path fill="#f1f1ef" stroke="#55585c" stroke-width="1.2" d="M215.36,-598.36C215.36,-598.36 59.36,-598.36 59.36,-598.36 53.36,-598.36 47.36,-592.36 47.36,-586.36 47.36,-586.36 47.36,-574.36 47.36,-574.36 47.36,-568.36 53.36,-562.36 59.36,-562.36 59.36,-562.36 215.36,-562.36 215.36,-562.36 221.36,-562.36 227.36,-568.36 227.36,-574.36 227.36,-574.36 227.36,-586.36 227.36,-586.36 227.36,-592.36 221.36,-598.36 215.36,-598.36"/>
 <text text-anchor="start" x="58.36" y="-582.96" font-family="DejaVu Sans" font-weight="bold" font-size="13.00" fill="#2b2b29">Módulo USB&#45;CAN</text>
@@ -159,7 +151,7 @@
 <text text-anchor="start" x="79.86" y="-571.56" font-family="DejaVu Sans" font-size="11.00" fill="#2b2b29">del kit Piper · gs_usb</text>
 </g>
 <!-- hub -->
-<g id="frente_node17" class="node">
+<g id="frente_node16" class="node">
 <title>hub</title>
 <path fill="#f1f1ef" stroke="#55585c" stroke-width="1.2" stroke-dasharray="5,2" d="M804.36,-602.86C804.36,-602.86 490.36,-602.86 490.36,-602.86 484.36,-602.86 478.36,-596.86 478.36,-590.86 478.36,-590.86 478.36,-569.86 478.36,-569.86 478.36,-563.86 484.36,-557.86 490.36,-557.86 490.36,-557.86 804.36,-557.86 804.36,-557.86 810.36,-557.86 816.36,-563.86 816.36,-569.86 816.36,-569.86 816.36,-590.86 816.36,-590.86 816.36,-596.86 810.36,-602.86 804.36,-602.86"/>
 <text text-anchor="start" x="531.36" y="-588.46" font-family="DejaVu Sans" font-weight="bold" font-size="13.00" fill="#2b2b29">Hub Hiksemi HS&#45;HUB&#45;DS11</text>
@@ -168,7 +160,7 @@
 <text text-anchor="start" x="489.36" y="-566.06" font-family="DejaVu Sans" font-size="11.00" fill="#2b2b29">USB 3.0: Sense + Gripper · USB 2.0: receptor + USB&#45;CAN</text>
 </g>
 <!-- dongle -->
-<g id="frente_node18" class="node">
+<g id="frente_node17" class="node">
 <title>dongle</title>
 <path fill="#f1f1ef" stroke="#55585c" stroke-width="1.2" d="M1265.86,-598.36C1265.86,-598.36 1048.86,-598.36 1048.86,-598.36 1042.86,-598.36 1036.86,-592.36 1036.86,-586.36 1036.86,-586.36 1036.86,-574.36 1036.86,-574.36 1036.86,-568.36 1042.86,-562.36 1048.86,-562.36 1048.86,-562.36 1265.86,-562.36 1265.86,-562.36 1271.86,-562.36 1277.86,-568.36 1277.86,-574.36 1277.86,-574.36 1277.86,-586.36 1277.86,-586.36 1277.86,-592.36 1271.86,-598.36 1265.86,-598.36"/>
 <text text-anchor="start" x="1047.86" y="-582.96" font-family="DejaVu Sans" font-weight="bold" font-size="13.00" fill="#2b2b29">Receptor USB del tracker</text>
@@ -176,7 +168,7 @@
 <text text-anchor="start" x="1093.36" y="-571.56" font-family="DejaVu Sans" font-size="11.00" fill="#2b2b29">HID · emparejado 1 a 1</text>
 </g>
 <!-- socketcan -->
-<g id="frente_node19" class="node">
+<g id="frente_node18" class="node">
 <title>socketcan</title>
 <path fill="#f1f1ef" stroke="#55585c" stroke-width="1.2" d="M242.36,-432.86C242.36,-432.86 32.36,-432.86 32.36,-432.86 26.36,-432.86 20.36,-426.86 20.36,-420.86 20.36,-420.86 20.36,-399.86 20.36,-399.86 20.36,-393.86 26.36,-387.86 32.36,-387.86 32.36,-387.86 242.36,-387.86 242.36,-387.86 248.36,-387.86 254.36,-393.86 254.36,-399.86 254.36,-399.86 254.36,-420.86 254.36,-420.86 254.36,-426.86 248.36,-432.86 242.36,-432.86"/>
 <text text-anchor="start" x="97.36" y="-418.46" font-family="DejaVu Sans" font-weight="bold" font-size="13.00" fill="#2b2b29">SocketCAN</text>
@@ -184,7 +176,7 @@
 <text text-anchor="start" x="42.86" y="-396.06" font-family="DejaVu Sans" font-size="11.00" fill="#2b2b29">can_config.sh · por ruta USB física</text>
 </g>
 <!-- udev -->
-<g id="frente_node20" class="node">
+<g id="frente_node19" class="node">
 <title>udev</title>
 <path fill="#f1f1ef" stroke="#55585c" stroke-width="1.2" d="M753.86,-432.86C753.86,-432.86 540.86,-432.86 540.86,-432.86 534.86,-432.86 528.86,-426.86 528.86,-420.86 528.86,-420.86 528.86,-399.86 528.86,-399.86 528.86,-393.86 534.86,-387.86 540.86,-387.86 540.86,-387.86 753.86,-387.86 753.86,-387.86 759.86,-387.86 765.86,-393.86 765.86,-399.86 765.86,-399.86 765.86,-420.86 765.86,-420.86 765.86,-426.86 759.86,-432.86 753.86,-432.86"/>
 <text text-anchor="start" x="567.86" y="-418.46" font-family="DejaVu Sans" font-weight="bold" font-size="13.00" fill="#2b2b29">udev</text>
@@ -193,21 +185,21 @@
 <text text-anchor="start" x="565.86" y="-396.06" font-family="DejaVu Sans" font-size="11.00" fill="#2b2b29">UVC → /dev/video50/51/60/61</text>
 </g>
 <!-- hidraw -->
-<g id="frente_node21" class="node">
+<g id="frente_node20" class="node">
 <title>hidraw</title>
 <path fill="#f1f1ef" stroke="#55585c" stroke-width="1.2" d="M1192.36,-428.36C1192.36,-428.36 1122.36,-428.36 1122.36,-428.36 1116.36,-428.36 1110.36,-422.36 1110.36,-416.36 1110.36,-416.36 1110.36,-404.36 1110.36,-404.36 1110.36,-398.36 1116.36,-392.36 1122.36,-392.36 1122.36,-392.36 1192.36,-392.36 1192.36,-392.36 1198.36,-392.36 1204.36,-398.36 1204.36,-404.36 1204.36,-404.36 1204.36,-416.36 1204.36,-416.36 1204.36,-422.36 1198.36,-428.36 1192.36,-428.36"/>
 <text text-anchor="start" x="1131.86" y="-412.96" font-family="DejaVu Sans" font-weight="bold" font-size="13.00" fill="#2b2b29">hidraw</text>
 <text text-anchor="start" x="1121.36" y="-401.56" font-family="DejaVu Sans" font-size="11.00" fill="#2b2b29">81&#45;vive.rules</text>
 </g>
 <!-- lrs -->
-<g id="frente_node22" class="node">
+<g id="frente_node21" class="node">
 <title>lrs</title>
 <path fill="#f1f1ef" stroke="#55585c" stroke-width="1.2" d="M1580.36,-428.36C1580.36,-428.36 1414.36,-428.36 1414.36,-428.36 1408.36,-428.36 1402.36,-422.36 1402.36,-416.36 1402.36,-416.36 1402.36,-404.36 1402.36,-404.36 1402.36,-398.36 1408.36,-392.36 1414.36,-392.36 1414.36,-392.36 1580.36,-392.36 1580.36,-392.36 1586.36,-392.36 1592.36,-398.36 1592.36,-404.36 1592.36,-404.36 1592.36,-416.36 1592.36,-416.36 1592.36,-422.36 1586.36,-428.36 1580.36,-428.36"/>
 <text text-anchor="start" x="1447.86" y="-412.96" font-family="DejaVu Sans" font-weight="bold" font-size="13.00" fill="#2b2b29">librealsense2</text>
 <text text-anchor="start" x="1413.36" y="-401.56" font-family="DejaVu Sans" font-size="11.00" fill="#2b2b29">2.58 (ROS) · 2.55.1 en source/</text>
 </g>
 <!-- n_piper -->
-<g id="frente_node23" class="node">
+<g id="frente_node22" class="node">
 <title>n_piper</title>
 <path fill="#f1f1ef" stroke="#55585c" stroke-width="1.2" d="M217.86,-283.36C217.86,-283.36 56.86,-283.36 56.86,-283.36 50.86,-283.36 44.86,-277.36 44.86,-271.36 44.86,-271.36 44.86,-239.36 44.86,-239.36 44.86,-233.36 50.86,-227.36 56.86,-227.36 56.86,-227.36 217.86,-227.36 217.86,-227.36 223.86,-227.36 229.86,-233.36 229.86,-239.36 229.86,-239.36 229.86,-271.36 229.86,-271.36 229.86,-277.36 223.86,-283.36 217.86,-283.36"/>
 <text text-anchor="start" x="55.86" y="-268.96" font-family="DejaVu Sans" font-weight="bold" font-size="13.00" fill="#2b2b29">piper_ctrl_single_node</text>
@@ -216,7 +208,7 @@
 <text text-anchor="start" x="67.36" y="-235.56" font-family="DejaVu Sans" font-size="11.00" fill="#2b2b29">→ /joint_states_single_l/_r</text>
 </g>
 <!-- n_serial -->
-<g id="frente_node24" class="node">
+<g id="frente_node23" class="node">
 <title>n_serial</title>
 <path fill="#f1f1ef" stroke="#55585c" stroke-width="1.2" d="M574.36,-288.86C574.36,-288.86 380.36,-288.86 380.36,-288.86 374.36,-288.86 368.36,-282.86 368.36,-276.86 368.36,-276.86 368.36,-233.86 368.36,-233.86 368.36,-227.86 374.36,-221.86 380.36,-221.86 380.36,-221.86 574.36,-221.86 574.36,-221.86 580.36,-221.86 586.36,-227.86 586.36,-233.86 586.36,-233.86 586.36,-276.86 586.36,-276.86 586.36,-282.86 580.36,-288.86 574.36,-288.86"/>
 <text text-anchor="start" x="409.36" y="-274.46" font-family="DejaVu Sans" font-weight="bold" font-size="13.00" fill="#2b2b29">serial_gripper_imu</text>
@@ -226,7 +218,7 @@
 <text text-anchor="start" x="379.36" y="-230.06" font-family="DejaVu Sans" font-size="11.00" fill="#2b2b29">Sense: doble click → /teleop_trigger</text>
 </g>
 <!-- n_fish -->
-<g id="frente_node25" class="node">
+<g id="frente_node24" class="node">
 <title>n_fish</title>
 <path fill="#f1f1ef" stroke="#55585c" stroke-width="1.2" d="M914.86,-277.86C914.86,-277.86 719.86,-277.86 719.86,-277.86 713.86,-277.86 707.86,-271.86 707.86,-265.86 707.86,-265.86 707.86,-244.86 707.86,-244.86 707.86,-238.86 713.86,-232.86 719.86,-232.86 719.86,-232.86 914.86,-232.86 914.86,-232.86 920.86,-232.86 926.86,-238.86 926.86,-244.86 926.86,-244.86 926.86,-265.86 926.86,-265.86 926.86,-271.86 920.86,-277.86 914.86,-277.86"/>
 <text text-anchor="start" x="762.36" y="-263.46" font-family="DejaVu Sans" font-weight="bold" font-size="13.00" fill="#2b2b29">usb_camera.py</text>
@@ -234,7 +226,7 @@
 <text text-anchor="start" x="718.86" y="-241.06" font-family="DejaVu Sans" font-size="11.00" fill="#2b2b29">→ /camera_fisheye/color/image_raw</text>
 </g>
 <!-- n_loc -->
-<g id="frente_node26" class="node">
+<g id="frente_node25" class="node">
 <title>n_loc</title>
 <path fill="#f1f1ef" stroke="#55585c" stroke-width="1.2" d="M1235.36,-277.86C1235.36,-277.86 1079.36,-277.86 1079.36,-277.86 1073.36,-277.86 1067.36,-271.86 1067.36,-265.86 1067.36,-265.86 1067.36,-244.86 1067.36,-244.86 1067.36,-238.86 1073.36,-232.86 1079.36,-232.86 1079.36,-232.86 1235.36,-232.86 1235.36,-232.86 1241.36,-232.86 1247.36,-238.86 1247.36,-244.86 1247.36,-244.86 1247.36,-265.86 1247.36,-265.86 1247.36,-271.86 1241.36,-277.86 1235.36,-277.86"/>
 <text text-anchor="start" x="1111.86" y="-263.46" font-family="DejaVu Sans" font-weight="bold" font-size="13.00" fill="#2b2b29">pika_locator</text>
@@ -242,7 +234,7 @@
 <text text-anchor="start" x="1078.36" y="-241.06" font-family="DejaVu Sans" font-size="11.00" fill="#2b2b29">→ /pika_pose_l · /pika_pose_r</text>
 </g>
 <!-- n_rs -->
-<g id="frente_node27" class="node">
+<g id="frente_node26" class="node">
 <title>n_rs</title>
 <path fill="#f1f1ef" stroke="#55585c" stroke-width="1.2" d="M1589.86,-277.86C1589.86,-277.86 1404.86,-277.86 1404.86,-277.86 1398.86,-277.86 1392.86,-271.86 1392.86,-265.86 1392.86,-265.86 1392.86,-244.86 1392.86,-244.86 1392.86,-238.86 1398.86,-232.86 1404.86,-232.86 1404.86,-232.86 1589.86,-232.86 1589.86,-232.86 1595.86,-232.86 1601.86,-238.86 1601.86,-244.86 1601.86,-244.86 1601.86,-265.86 1601.86,-265.86 1601.86,-271.86 1595.86,-277.86 1589.86,-277.86"/>
 <text text-anchor="start" x="1426.36" y="-263.46" font-family="DejaVu Sans" font-weight="bold" font-size="13.00" fill="#2b2b29">realsense2_camera</text>
@@ -250,21 +242,21 @@
 <text text-anchor="start" x="1403.86" y="-241.06" font-family="DejaVu Sans" font-size="11.00" fill="#2b2b29">→ /camera/aligned_depth_to_color</text>
 </g>
 <!-- n_teleop -->
-<g id="frente_node28" class="node">
+<g id="frente_node27" class="node">
 <title>n_teleop</title>
 <path fill="#fbe9eb" stroke="#c8323f" stroke-width="1.2" d="M405.86,-83.36C405.86,-83.36 208.86,-83.36 208.86,-83.36 202.86,-83.36 196.86,-77.36 196.86,-71.36 196.86,-71.36 196.86,-59.36 196.86,-59.36 196.86,-53.36 202.86,-47.36 208.86,-47.36 208.86,-47.36 405.86,-47.36 405.86,-47.36 411.86,-47.36 417.86,-53.36 417.86,-59.36 417.86,-59.36 417.86,-71.36 417.86,-71.36 417.86,-77.36 411.86,-83.36 405.86,-83.36"/>
 <text text-anchor="start" x="207.86" y="-67.96" font-family="DejaVu Sans" font-weight="bold" font-size="13.00" fill="#2b2b29">teleop · piper_FK · piper_IK</text>
 <text text-anchor="start" x="248.86" y="-56.56" font-family="DejaVu Sans" font-size="11.00" fill="#2b2b29">conda pika · IK 50 Hz</text>
 </g>
 <!-- n_data -->
-<g id="frente_node29" class="node">
+<g id="frente_node28" class="node">
 <title>n_data</title>
 <path fill="#fbe9eb" stroke="#c8323f" stroke-width="1.2" d="M1045.86,-83.36C1045.86,-83.36 928.86,-83.36 928.86,-83.36 922.86,-83.36 916.86,-77.36 916.86,-71.36 916.86,-71.36 916.86,-59.36 916.86,-59.36 916.86,-53.36 922.86,-47.36 928.86,-47.36 928.86,-47.36 1045.86,-47.36 1045.86,-47.36 1051.86,-47.36 1057.86,-53.36 1057.86,-59.36 1057.86,-59.36 1057.86,-71.36 1057.86,-71.36 1057.86,-77.36 1051.86,-83.36 1045.86,-83.36"/>
 <text text-anchor="start" x="949.36" y="-67.96" font-family="DejaVu Sans" font-weight="bold" font-size="13.00" fill="#2b2b29">data_tools</text>
 <text text-anchor="start" x="927.86" y="-56.56" font-family="DejaVu Sans" font-size="11.00" fill="#2b2b29">captura ARIO → HDF5</text>
 </g>
 <!-- leyenda -->
-<g id="frente_node30" class="node">
+<g id="frente_node29" class="node">
 <title>leyenda</title>
 <path fill="#fcfcfb" stroke="#d6d5ce" stroke-width="1.2" d="M1787.36,-177.86C1787.36,-177.86 1567.36,-177.86 1567.36,-177.86 1561.36,-177.86 1555.36,-171.86 1555.36,-165.86 1555.36,-165.86 1555.36,-24.86 1555.36,-24.86 1555.36,-18.86 1561.36,-12.86 1567.36,-12.86 1567.36,-12.86 1787.36,-12.86 1787.36,-12.86 1793.36,-12.86 1799.36,-18.86 1799.36,-24.86 1799.36,-24.86 1799.36,-165.86 1799.36,-165.86 1799.36,-171.86 1793.36,-177.86 1787.36,-177.86"/>
 <text text-anchor="start" x="1569.36" y="-160.76" font-family="DejaVu Sans" font-weight="bold" font-size="12.00" fill="#2b2b29">Leyenda</text>
@@ -313,22 +305,15 @@
 <polygon fill="#c8323f" stroke="#c8323f" stroke-width="2.4" points="140.16,-986.66 137.36,-978.66 134.56,-986.66 140.16,-986.66"/>
 <text text-anchor="middle" x="124.86" y="-1017.95" font-family="DejaVu Sans" font-size="11.00" fill="#c8323f">24 V</text>
 </g>
-<!-- fte_grip&#45;&gt;gripper -->
-<g id="frente_edge7" class="edge">
-<title>fte_grip&#45;&gt;gripper</title>
-<path fill="none" stroke="#c8323f" stroke-width="2.4" stroke-dasharray="5,2" d="M422.36,-1042.55C422.36,-1042.55 422.36,-870.9 422.36,-870.9"/>
-<polygon fill="#c8323f" stroke="#c8323f" stroke-width="2.4" points="425.16,-870.9 422.36,-862.9 419.56,-870.9 425.16,-870.9"/>
-<text text-anchor="middle" x="390.36" y="-959.92" font-family="DejaVu Sans" font-size="11.00" fill="#c8323f">24 V · XT30</text>
-</g>
 <!-- fte_hub&#45;&gt;hub -->
-<g id="frente_edge8" class="edge">
+<g id="frente_edge7" class="edge">
 <title>fte_hub&#45;&gt;hub</title>
 <path fill="none" stroke="#c8323f" stroke-width="2.4" d="M652.36,-1047.23C652.36,-1047.23 652.36,-610.93 652.36,-610.93"/>
 <polygon fill="#c8323f" stroke="#c8323f" stroke-width="2.4" points="655.16,-610.93 652.36,-602.93 649.56,-610.93 655.16,-610.93"/>
 <text text-anchor="middle" x="644.36" y="-832.28" font-family="DejaVu Sans" font-size="11.00" fill="#c8323f">PD</text>
 </g>
 <!-- fte_st&#45;&gt;station -->
-<g id="frente_edge9" class="edge">
+<g id="frente_edge8" class="edge">
 <title>fte_st&#45;&gt;station</title>
 <path fill="none" stroke="#c8323f" stroke-width="2.4" d="M1157.36,-1047.33C1157.36,-1047.33 1157.36,-871.09 1157.36,-871.09"/>
 <polygon fill="#c8323f" stroke="#c8323f" stroke-width="2.4" points="1160.16,-871.09 1157.36,-863.09 1154.56,-871.09 1160.16,-871.09"/>
@@ -349,10 +334,12 @@
 <text text-anchor="middle" x="104.36" y="-909.91" font-family="DejaVu Sans" font-size="11.00" fill="#c8323f">hoy: directo</text>
 </g>
 <!-- piper&#45;&gt;gripper -->
-<g id="frente_edge24" class="edge">
+<g id="frente_edge9" class="edge">
 <title>piper&#45;&gt;gripper</title>
-<path fill="none" stroke="#a9acb0" stroke-width="1.6" stroke-dasharray="1,5" d="M233.43,-840C278,-840 331,-840 376.19,-840"/>
-<text text-anchor="middle" x="290.81" y="-843.2" font-family="DejaVu Sans" font-size="11.00" fill="#6b6a63">brida</text>
+<path fill="none" stroke="#c8323f" stroke-width="2.4" d="M262.51,-840C262.51,-840 368.36,-840 368.36,-840"/>
+<polygon fill="#c8323f" stroke="#c8323f" stroke-width="2.4" points="368.36,-842.8 376.36,-840 368.36,-837.2 368.36,-842.8"/>
+<text text-anchor="middle" x="294.94" y="-855.2" font-family="DejaVu Sans" font-size="11.00" fill="#c8323f">24 V</text>
+<text text-anchor="middle" x="294.94" y="-843.2" font-family="DejaVu Sans" font-size="11.00" fill="#c8323f">serie J6</text>
 </g>
 <!-- piper&#45;&gt;usbcan -->
 <g id="frente_edge11" class="edge">
@@ -417,9 +404,9 @@
 <!-- hub&#45;&gt;socketcan -->
 <g id="frente_edge19" class="edge">
 <title>hub&#45;&gt;socketcan</title>
-<path fill="none" stroke="#8a8d91" stroke-width="1.8" d="M470.25,-574C470.25,-574 245.86,-574 245.86,-574 245.86,-574 245.86,-441.11 245.86,-441.11"/>
-<polygon fill="#8a8d91" stroke="#8a8d91" stroke-width="1.8" points="470.25,-576.8 478.25,-574 470.25,-571.2 470.25,-576.8"/>
-<polygon fill="#8a8d91" stroke="#8a8d91" stroke-width="1.8" points="248.66,-441.11 245.86,-433.11 243.06,-441.11 248.66,-441.11"/>
+<path fill="none" stroke="#8a8d91" stroke-width="1.8" d="M470.2,-574C470.2,-574 240.86,-574 240.86,-574 240.86,-574 240.86,-441.11 240.86,-441.11"/>
+<polygon fill="#8a8d91" stroke="#8a8d91" stroke-width="1.8" points="470.2,-576.8 478.2,-574 470.2,-571.2 470.2,-576.8"/>
+<polygon fill="#8a8d91" stroke="#8a8d91" stroke-width="1.8" points="243.66,-441.11 240.86,-433.11 238.06,-441.11 243.66,-441.11"/>
 </g>
 <!-- hub&#45;&gt;udev -->
 <g id="frente_edge14" class="edge">
@@ -451,77 +438,77 @@
 <text text-anchor="middle" x="904.79" y="-583.2" font-family="DejaVu Sans" font-size="11.00" fill="#6b6a63">USB 2.0</text>
 </g>
 <!-- socketcan&#45;&gt;n_piper -->
-<g id="frente_edge25" class="edge">
+<g id="frente_edge24" class="edge">
 <title>socketcan&#45;&gt;n_piper</title>
 <path fill="none" stroke="#2b2b29" stroke-width="1.1" d="M137.36,-387.82C137.36,-387.82 137.36,-291.44 137.36,-291.44"/>
 <polygon fill="#2b2b29" stroke="#2b2b29" stroke-width="1.1" points="140.16,-291.44 137.36,-283.44 134.56,-291.44 140.16,-291.44"/>
 </g>
 <!-- udev&#45;&gt;n_serial -->
-<g id="frente_edge26" class="edge">
+<g id="frente_edge25" class="edge">
 <title>udev&#45;&gt;n_serial</title>
 <path fill="none" stroke="#2b2b29" stroke-width="1.1" d="M557.61,-387.82C557.61,-387.82 557.61,-297.08 557.61,-297.08"/>
 <polygon fill="#2b2b29" stroke="#2b2b29" stroke-width="1.1" points="560.41,-297.08 557.61,-289.08 554.81,-297.08 560.41,-297.08"/>
 <text text-anchor="middle" x="538.11" y="-345.65" font-family="DejaVu Sans" font-size="11.00" fill="#4a4944">ttyUSB</text>
 </g>
 <!-- udev&#45;&gt;n_fish -->
-<g id="frente_edge27" class="edge">
+<g id="frente_edge26" class="edge">
 <title>udev&#45;&gt;n_fish</title>
 <path fill="none" stroke="#2b2b29" stroke-width="1.1" d="M736.86,-387.82C736.86,-387.82 736.86,-285.93 736.86,-285.93"/>
 <polygon fill="#2b2b29" stroke="#2b2b29" stroke-width="1.1" points="739.66,-285.93 736.86,-277.93 734.06,-285.93 739.66,-285.93"/>
 <text text-anchor="middle" x="721.36" y="-340.07" font-family="DejaVu Sans" font-size="11.00" fill="#4a4944">video</text>
 </g>
 <!-- hidraw&#45;&gt;n_loc -->
-<g id="frente_edge28" class="edge">
+<g id="frente_edge27" class="edge">
 <title>hidraw&#45;&gt;n_loc</title>
 <path fill="none" stroke="#2b2b29" stroke-width="1.1" d="M1157.36,-392.28C1157.36,-392.28 1157.36,-286.09 1157.36,-286.09"/>
 <polygon fill="#2b2b29" stroke="#2b2b29" stroke-width="1.1" points="1160.16,-286.09 1157.36,-278.09 1154.56,-286.09 1160.16,-286.09"/>
 </g>
 <!-- lrs&#45;&gt;n_rs -->
-<g id="frente_edge29" class="edge">
+<g id="frente_edge28" class="edge">
 <title>lrs&#45;&gt;n_rs</title>
 <path fill="none" stroke="#2b2b29" stroke-width="1.1" d="M1497.36,-392.28C1497.36,-392.28 1497.36,-286.09 1497.36,-286.09"/>
 <polygon fill="#2b2b29" stroke="#2b2b29" stroke-width="1.1" points="1500.16,-286.09 1497.36,-278.09 1494.56,-286.09 1500.16,-286.09"/>
 </g>
 <!-- n_serial&#45;&gt;n_teleop -->
-<g id="frente_edge30" class="edge">
+<g id="frente_edge29" class="edge">
 <title>n_serial&#45;&gt;n_teleop</title>
 <path fill="none" stroke="#2b2b29" stroke-width="1.1" d="M384.86,-221.83C384.86,-221.83 384.86,-91.38 384.86,-91.38"/>
 <polygon fill="#2b2b29" stroke="#2b2b29" stroke-width="1.1" points="387.66,-91.38 384.86,-83.38 382.06,-91.38 387.66,-91.38"/>
 <text text-anchor="middle" x="338.86" y="-159.8" font-family="DejaVu Sans" font-size="11.00" fill="#4a4944">trigger, apertura</text>
 </g>
 <!-- n_serial&#45;&gt;n_data -->
-<g id="frente_edge33" class="edge">
+<g id="frente_edge32" class="edge">
 <title>n_serial&#45;&gt;n_data</title>
 <path fill="none" stroke="#2b2b29" stroke-width="1.1" d="M586.54,-227C717.67,-227 920.19,-227 920.19,-227 920.19,-227 920.19,-91.59 920.19,-91.59"/>
 <polygon fill="#2b2b29" stroke="#2b2b29" stroke-width="1.1" points="922.99,-91.59 920.19,-83.59 917.39,-91.59 922.99,-91.59"/>
 </g>
 <!-- n_fish&#45;&gt;n_data -->
-<g id="frente_edge34" class="edge">
+<g id="frente_edge33" class="edge">
 <title>n_fish&#45;&gt;n_data</title>
 <path fill="none" stroke="#2b2b29" stroke-width="1.1" d="M923.53,-232.82C923.53,-232.82 923.53,-91.63 923.53,-91.63"/>
 <polygon fill="#2b2b29" stroke="#2b2b29" stroke-width="1.1" points="926.33,-91.63 923.53,-83.63 920.73,-91.63 926.33,-91.63"/>
 </g>
 <!-- n_loc&#45;&gt;n_teleop -->
-<g id="frente_edge31" class="edge">
+<g id="frente_edge30" class="edge">
 <title>n_loc&#45;&gt;n_teleop</title>
 <path fill="none" stroke="#2b2b29" stroke-width="1.1" d="M1157.36,-232.76C1157.36,-217.08 1157.36,-199 1157.36,-199 1157.36,-199 401.36,-199 401.36,-199 401.36,-199 401.36,-91.38 401.36,-91.38"/>
 <polygon fill="#2b2b29" stroke="#2b2b29" stroke-width="1.1" points="404.16,-91.38 401.36,-83.38 398.56,-91.38 404.16,-91.38"/>
 <text text-anchor="middle" x="713.43" y="-202.2" font-family="DejaVu Sans" font-size="11.00" fill="#4a4944">/pika_pose</text>
 </g>
 <!-- n_loc&#45;&gt;n_data -->
-<g id="frente_edge35" class="edge">
+<g id="frente_edge34" class="edge">
 <title>n_loc&#45;&gt;n_data</title>
 <path fill="none" stroke="#2b2b29" stroke-width="1.1" d="M1067.28,-255C1055.47,-255 1047.36,-255 1047.36,-255 1047.36,-255 1047.36,-91.54 1047.36,-91.54"/>
 <polygon fill="#2b2b29" stroke="#2b2b29" stroke-width="1.1" points="1050.16,-91.54 1047.36,-83.54 1044.56,-91.54 1050.16,-91.54"/>
 </g>
 <!-- n_rs&#45;&gt;n_data -->
-<g id="frente_edge36" class="edge">
+<g id="frente_edge35" class="edge">
 <title>n_rs&#45;&gt;n_data</title>
 <path fill="none" stroke="#2b2b29" stroke-width="1.1" d="M1474.11,-232.78C1474.11,-182.35 1474.11,-65 1474.11,-65 1474.11,-65 1065.88,-65 1065.88,-65"/>
 <polygon fill="#2b2b29" stroke="#2b2b29" stroke-width="1.1" points="1065.88,-62.2 1057.88,-65 1065.88,-67.8 1065.88,-62.2"/>
 </g>
 <!-- n_teleop&#45;&gt;n_piper -->
-<g id="frente_edge32" class="edge">
+<g id="frente_edge31" class="edge">
 <title>n_teleop&#45;&gt;n_piper</title>
 <path fill="none" stroke="#2b2b29" stroke-width="1.1" d="M213.36,-83.58C213.36,-83.58 213.36,-219.11 213.36,-219.11"/>
 <polygon fill="#2b2b29" stroke="#2b2b29" stroke-width="1.1" points="210.56,-219.11 213.36,-227.11 216.16,-219.11 210.56,-219.11"/>

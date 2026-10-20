@@ -47,16 +47,27 @@ Alimentación de la plataforma, según su esquema eléctrico (20-10-2026), con l
 
 Balance de corrientes y autonomía: [Consumo_Energia.md, sección 4](../energia/Consumo_Energia.md#4-plataforma-del-remolque-batería-e-inversor).
 
-Por confirmar:
-- la corriente máxima de descarga de la Ritar G2 (su ficha no la publica; ver el aviso en el documento de energía);
-- la fuente de 24 V del Pika Gripper (ver la sección 4).
+Cableado de los equipos de la plataforma:
+- **Piper:**
+  - **Potencia y CAN:** sus 6 motores van **en serie**, con potencia y CAN por la misma cadena, hasta la base, donde está su driver interno.
+  - **Alimentación:** la base va a su transformador de 24 V, que se enchufa en una PDU.
+  - **Datos:** el CAN de la base va al USB-CAN, y este al laptop.
+- **Pika Gripper:**
+  - **Motor:** se alimenta **en serie desde el último joint del Piper**, con 24 V por XT30.
+  - **Datos:** la posición de la pinza (encoder) viaja por **USB**, en el mismo cable que la señal y la alimentación de sus cámaras (D405 y fisheye), **directo al laptop**.
+- **Pika Sense:** igual que el Gripper, un USB directo al laptop.
+- **Receptor del tracker y USB-CAN:** directo a los puertos USB del laptop. En esta plataforma **no hay hub**.
+- **Laptop:** va a su transformador, que se enchufa en una PDU.
+
+Las corrientes de la batería (motor e inversor) fueron revisadas y resueltas por Catalina González en el
+diseño eléctrico de la plataforma.
 
 ## 1. Alimentación
 
 | Equipo | Entrada | Consumo | Fuente del dato |
 |---|---|---|---|
 | Brazo Piper (×2) | 24 V DC (24–26 V) por el conector aviación de la base, desde su adaptador | ≤ 40 W continuo, ≤ 120 W pico | manual del Piper |
-| Pika Gripper, motor (×2) | 24 V DC por XT30(PB) | ≤ 24 W (firmware limita a 1 A); ~2–7 W sujetando | hoja de datos Pika + `sensor_tools` |
+| Pika Gripper, motor (×2) | 24 V DC por XT30(PB), en serie desde el último joint del Piper | ≤ 24 W (firmware limita a 1 A); ~2–7 W sujetando | hoja de datos Pika + `sensor_tools` |
 | Pika Sense / Gripper, sensores | 5 V por el mismo cable USB Type-C de datos | ~4–5 W por unidad (estimado) | [Consumo_Energia.md](../energia/Consumo_Energia.md) |
 | Tracker (×2) | batería propia, 9 h; recarga por su puerto | ~0,5 W (estimado) | hoja de datos Pika |
 | Pika Station (×2) | 12 V por adaptador, o batería 12 V / 10 Ah (30 h) | 3 W | hoja de datos Pika |
@@ -82,7 +93,9 @@ Las rutas fijas (`/dev/ttyUSB5x`/`6x`, `/dev/video5x`/`6x`) las crean las reglas
 `scripts/setup_device.py`. **Cada unidad debe quedar siempre en el mismo puerto USB**, porque las
 reglas dependen de él, igual que la ruta USB física que usa `can_config.sh`.
 
-## 3. Topología USB propuesta
+## 3. Topología USB propuesta (montaje bimanual)
+
+En la plataforma de un brazo no hay hub: todo va directo a los puertos USB del laptop (ver arriba).
 
 Cada unidad Pika usa un solo cable USB 3.0, así que su D405, su fisheye y su puerto serie van
 siempre juntos. Con dos hubs Hiksemi HS-HUB-DS11 (2 × USB 3.0 + 2 × USB 2.0 cada uno), la
@@ -107,8 +120,9 @@ asignación natural es **un hub por lado**:
 - **Rutas de dispositivo, nodos y topics:** reglas udev de `setup_device.py`, launch files de `sensor_tools` y `pika_remote_piper`.
 - **Pika Station:** 12 V y 3 W, sin cable de datos al PC.
 
+**Confirmado por el equipo (20-10-2026):** el Pika Gripper se alimenta en serie desde el último joint del Piper (24 V por XT30). El manual del Piper solo lista "Power Interface ×1, CAN Interface ×1" en la base, porque la alimentación de la pinza viaja por dentro del brazo. Los motores del Piper van en serie hasta la base, donde está su driver.
+
 **Por confirmar en el montaje:**
-1. **De dónde sale el 24 V del Pika Gripper.** El presupuesto CSV dice que del bus de 24 V del Piper, por XT30. El manual del Piper, en cambio, solo lista "Power Interface ×1, CAN Interface ×1" en la base y no menciona una salida de potencia en la brida. El kit Pika trae un cable XT30 de 0,35 m.
-2. **La asignación de puertos de los hubs** (sección 3). El inventario `.docx` propone un hub "dedicado a las dos D405" y otro para fisheye/serie/CAN, pero eso **no es posible**: la D405, la fisheye y el puerto serie de cada unidad Pika salen por el mismo cable.
-3. **Parada de emergencia:** recomendada en el inventario, en la línea de 24 V de los brazos; hoy no existe.
-4. **Cantidad de D435i:** el `.docx` dice 2 cámaras de escena, aparte del kit Pika. El CSV `presupuesto_energetico_equipos.csv` cuenta 4 "una por unidad Pika", confundiéndolas con las D405 que traen el Sense y el Gripper.
+1. **La asignación de puertos de los hubs** (sección 3). El inventario `.docx` propone un hub "dedicado a las dos D405" y otro para fisheye/serie/CAN, pero eso **no es posible**: la D405, la fisheye y el puerto serie de cada unidad Pika salen por el mismo cable.
+2. **Parada de emergencia:** recomendada en el inventario, en la línea de 24 V de los brazos; hoy no existe.
+3. **Cantidad de D435i:** el `.docx` dice 2 cámaras de escena, aparte del kit Pika. El CSV `presupuesto_energetico_equipos.csv` cuenta 4 "una por unidad Pika", confundiéndolas con las D405 que traen el Sense y el Gripper.

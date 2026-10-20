@@ -48,8 +48,6 @@ digraph arquitectura {
   // 1 · Alimentación
   red       [pos="930,1560!", label=<<B>Red 220 V AC</B>>, fillcolor="#fbe9eb", color="#c8323f"];
   fte_piper [pos="160,1440!", label=<<B>Fuente Piper</B> · ×2<BR/><FONT POINT-SIZE="11">24 V DC (≤ 26 V)<BR/>≤ 40 W continuo · ≤ 120 W pico</FONT>>];
-  fte_grip  [pos="420,1440!", label=<<B>24 V del Gripper</B><BR/><FONT POINT-SIZE="11">XT30 · ≤ 24 W (1 A)<BR/>fuente por confirmar</FONT>>,
-             style="rounded,dashed", color="#c8323f", fillcolor="#fcfcfb"];
   fte_hub   [pos="670,1440!", label=<<B>Fuente PD hub</B> · ×2<BR/><FONT POINT-SIZE="11">USB-C PD ≤ 100 W</FONT>>];
   fte_st    [pos="1180,1440!", label=<<B>Fuente Pika Station</B> · ×2<BR/><FONT POINT-SIZE="11">12 V, o batería 12 V / 10 Ah (30 h)</FONT>>];
   fte_pc    [pos="1700,1440!", label=<<B>Cargador laptop</B><BR/><FONT POINT-SIZE="11">20 V · 280 W</FONT>>];
@@ -57,7 +55,7 @@ digraph arquitectura {
              style="rounded,dashed", color="#c8323f", fontcolor="#c8323f", fillcolor="#fcfcfb"];
 
   // 2 · Equipos
-  piper   [pos="160,1215!", label=<<B>Brazo AgileX Piper</B><BR/><FONT POINT-SIZE="11">conector aviación en la base<BR/>24 V+ · 24 V− · CAN-H · CAN-L</FONT>>,
+  piper   [pos="160,1215!", label=<<B>Brazo AgileX Piper</B><BR/><FONT POINT-SIZE="11">6 motores en serie hasta la base (driver)<BR/>aviación: 24 V+ · 24 V− · CAN-H · CAN-L</FONT>>,
            fillcolor="#1d2124", fontcolor="white", color="#1d2124"];
   gripper [pos="500,1215!", label=<<B>Pika Gripper</B><BR/><FONT POINT-SIZE="11">en la brida del Piper<BR/>D405 · fisheye · encoder · motor</FONT>>,
            fillcolor="#2b2c2e", fontcolor="white", color="#2b2c2e"];
@@ -109,9 +107,9 @@ digraph arquitectura {
   red -> fte_piper; red -> fte_hub; red -> fte_st; red -> fte_pc;
   fte_piper -> estop [xlabel="24 V"];
   estop -> piper [xlabel="hoy: directo"];
-  fte_grip -> gripper [xlabel="24 V · XT30", style=dashed];
   fte_hub -> hub [xlabel="PD"];
   fte_st -> station [xlabel="12 V"];
+  piper -> gripper [xlabel="24 V\nserie J6", color="#c8323f", fontcolor="#c8323f", style=solid, penwidth=2.4];
   fte_pc -> lrs [xlabel="20 V al laptop"];
 
   // ───────── CAN (negro) ─────────
@@ -138,7 +136,6 @@ digraph arquitectura {
   station -> tracker [xlabel="barrido IR", color="#c8323f", fontcolor="#c8323f"];
   tracker -> dongle  [xlabel="radio 2,4 GHz"];
   sense -> tracker   [xlabel="montaje", arrowhead=none, color="#a9acb0"];
-  piper -> gripper   [xlabel="brida", arrowhead=none, color="#a9acb0"];
 
   // ───────── Software (fino) ─────────
   edge [color="#2b2b29", penwidth=1.1, style=solid, fontcolor="#4a4944"];

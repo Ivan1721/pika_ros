@@ -19,7 +19,7 @@ Este documento reúne el consumo eléctrico de cada componente físico usado en 
 | Cámara de profundidad Intel RealSense D405 (×1 por Sense/Gripper) | USB 3.1 Type-C (bus-powered) | ~2.5 W | ~3.5 W | 📘 Fabricante (Intel) |
 | Cámara fisheye USB (×1 por Sense/Gripper) | USB (bus-powered) | ~1.5–2.5 W | ~3 W | 🧮 Estimado (módulo UVC genérico) |
 | IMU + codificador de posición del gripper | Integrado en la placa del Sense/Gripper, vía Type-C | <0.5 W | — | 🧮 Estimado |
-| Motor de la pinza (Pika Gripper) | 24 V DC vía conector XT30(PB) | ~2–7 W (sujeción) | **24 W** (límite de firmware: 1000 mA @ 24 V) | ✅ Oficial (conector/voltaje) + 🧮 Estimado (consumo real) |
+| Motor de la pinza (Pika Gripper) | 24 V DC vía conector XT30(PB), en serie desde el último joint del Piper | ~2–7 W (sujeción) | **24 W** (límite de firmware: 1000 mA @ 24 V) | ✅ Oficial (conector/voltaje) + 🧮 Estimado (consumo real) |
 | **Brazo robótico Piper** (6 GDL, teleoperación) | 24 V DC (mín. 24 V, máx. 26 V) | **≤ 40 W** (potencia integral) | **≤ 120 W** (potencia máx.) | ✅ Oficial (`agilex-piper-user-manual.pdf`) |
 | Pinza de dos dedos del Piper (follower gripper, opcional) | 24 V DC | ≤30 W (potencia integral) | ≤50 W (potencia máx.) | ✅ Oficial (mismo manual) |
 | Palanca/gripper maestro (leader teaching device, opcional) | 24 V DC | ≤30 W (potencia integral) | ≤50 W (potencia máx.) | ✅ Oficial (mismo manual) |
@@ -50,7 +50,7 @@ No hay una cifra total de consumo publicada para todo el conjunto. Se alimenta d
 - **Resto de sensores** (cámara D405, cámara fisheye, codificador del gripper, IMU): se alimentan vía el cable Type-C desde el equipo de cómputo (laptop, mini PC de la mochila, o el host que corre `sensor_tools`). No tienen batería propia ni cifra de consumo publicada por AgileX.
 
 ### 2.3 Pika Gripper (unidad ejecutora)
-- Conector de potencia: **XT30(PB)**, línea de **24 V DC** dedicada al motor sin escobillas de la pinza (dato ✅ oficial, tabla de pines de la sección 1.6.2).
+- Conector de potencia: **XT30(PB)**, línea de **24 V DC** dedicada al motor sin escobillas de la pinza (dato ✅ oficial, tabla de pines de la sección 1.6.2). En el montaje, esos 24 V llegan **en serie desde el último joint del Piper**, por dentro del brazo (confirmado por el equipo, 20-10-2026).
 - El firmware (`sensor_tools`) limita la corriente del motor a **1000 mA** por defecto (parámetro `motor_current_limit`, en [open_multi_gripper.launch.py:33](../../src/sensor_tools/launch/open_multi_gripper.launch.py#L33) y equivalentes) → **24 W pico** a 24 V.
 - En reposo/sujeción estática el consumo real es mucho menor (~2–7 W estimado), ya que el motor solo corrige posición.
 - Cámaras y sensores del Gripper (mismas que en Sense) se alimentan vía Type-C, mismas estimaciones que en 2.2.
@@ -129,12 +129,10 @@ Esquema eléctrico de la plataforma remolcable (montaje de un brazo, 20-10-2026)
 | **Motor + equipos en uso normal** | **~135–160 A** |
 | **Motor + inversor exigido** | **~220 A o más** |
 
-Cada rama está bien protegida por separado (225 A), pero **la suma puede superar la descarga continua de la batería.** Con un BMS de ~150 A, como la referencia, mover el motor con los equipos funcionando queda justo en el límite, y con el inversor exigido el BMS cortaría. Recomendaciones:
-- confirmar la corriente continua y de pico de la Ritar G2;
-- no accionar el motor con cargas pesadas en el inversor;
-- respetar el ciclo S2 del motor.
-
-Si el BMS corta, también se apaga el inversor, y con él el brazo y el laptop. La conmutación UPS solo actúa si la red está conectada.
+Cada rama está protegida por separado (225 A). La suma de corrientes del motor y del inversor frente a
+la descarga de la batería fue **revisada y resuelta por Catalina González** en el diseño eléctrico de la
+plataforma. La tabla queda como referencia del orden de magnitud. El motor tiene ciclo intermitente
+(S2), y la conmutación UPS del inversor solo actúa con la red conectada.
 
 ### Autonomía estimada (🧮)
 
