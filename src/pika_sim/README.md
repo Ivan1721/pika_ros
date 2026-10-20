@@ -207,4 +207,5 @@ del URDF).
 - Probar una captura completa con `data_tools`: el config `single_pika_teleop` pide además topics del Sense y del brazo.
 - Niveles de oclusión controlados (25–100 %): con Helios, elegir la manzana objetivo por nivel de visibilidad y variar la edad y la semilla ([recursos públicos](../../docs/percepcion_activa/recursos_publicos.md)).
 - Choques del brazo completo con las ramas: la demo solo revisa la cámara y las garras. Hace falta MoveIt (paso 2 de la hoja de ruta).
+- Árbol libre (`--modelo apple`): parte de la copa (~2 % de los triángulos) cae sobre la plataforma y el brazo la atraviesa. Habría que podar en el generador lo que quede del lado del robot; el muro frutal no tiene el problema.
 - Versión para dos brazos (`teleop_rand_multi_piper.launch.py`).
