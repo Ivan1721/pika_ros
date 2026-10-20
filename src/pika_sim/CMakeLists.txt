@@ -13,6 +13,9 @@ install(PROGRAMS
   scripts/fake_pika_sense.py
   scripts/mit_emulador.py
   scripts/escena_nbv_demo.py
+  scripts/escena_manzano.py
+  scripts/profundidad_mm.py
+  scripts/panel_nbv.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

@@ -14,6 +14,9 @@
 #   sense:=real         sin Sense falso; correr aparte bash scripts/start_single_sensor.bash
 #   mit_script:=<ruta>  de donde se leen KP, KD, TARGETS, T_FF, ESCALA_GRAVEDAD
 #   escala_gravedad:=X  pisa ESCALA_GRAVEDAD del script (0 = sin compensacion)
+#   escena:=manzano     manzano de percepción activa (escena_manzano.py); escena:=ninguna, vacío
+#   semilla:=N          semilla del follaje del manzano (por defecto 7, la de la documentación)
+#   camaras:=false      sin la D405 ni la fisheye del gripper (Gazebo más liviano)
 #   gui:=false          Gazebo sin ventana (solo gzserver)
 #   rviz:=false         sin RViz
 import ast
@@ -35,9 +38,10 @@ from launch_ros.actions import Node
 ARM_JOINTS = ['joint1', 'joint2', 'joint3', 'joint4', 'joint5', 'joint6']
 
 
-def robot_description():
+def robot_description(camaras='true'):
     share_dir = get_package_share_directory('pika_sim')
-    doc = xacro.process_file(os.path.join(share_dir, 'urdf', 'pika_piper_gazebo.urdf.xacro'))
+    doc = xacro.process_file(os.path.join(share_dir, 'urdf', 'pika_piper_gazebo.urdf.xacro'),
+                             mappings={'camaras': camaras})
     urdf = re.sub(r'<!--(.*?)-->', '', doc.toxml(), flags=re.DOTALL)
     # Gazebo Classic no resuelve package://; se reemplaza por la ruta instalada
     return re.sub(r'package://([^/]+)/',
@@ -82,7 +86,7 @@ def launch_setup(context):
     gazebo_launch_dir = os.path.join(get_package_share_directory('gazebo_ros'), 'launch')
     modo = LaunchConfiguration('control').perform(context)
 
-    urdf = robot_description()
+    urdf = robot_description(LaunchConfiguration('camaras').perform(context))
     nodos_modo = []
     if modo == 'mit':
         mit = leer_mit(os.path.expanduser(LaunchConfiguration('mit_script').perform(context)))
@@ -104,6 +108,18 @@ def launch_setup(context):
         nodos_modo.append(Node(package='pika_sim', executable='piper_sim_bridge.py', output='screen'))
         if LaunchConfiguration('sense').perform(context) == 'fake':
             nodos_modo.append(Node(package='pika_sim', executable='fake_pika_sense.py', output='screen'))
+
+    if LaunchConfiguration('camaras').perform(context) == 'true':
+        # profundidad en 16UC1 mm, como el driver real de la D405
+        nodos_modo.append(Node(package='pika_sim', executable='profundidad_mm.py', output='screen'))
+
+    if LaunchConfiguration('escena').perform(context) == 'manzano':
+        nodos_modo.append(Node(
+            package='pika_sim',
+            executable='escena_manzano.py',
+            parameters=[{'semilla': int(LaunchConfiguration('semilla').perform(context))}],
+            output='screen',
+        ))
 
     description = {'robot_description': urdf}
 
@@ -159,6 +175,9 @@ def generate_launch_description():
         DeclareLaunchArgument('sense', default_value='fake', choices=['fake', 'real']),
         DeclareLaunchArgument('mit_script', default_value='~/pika_ros/scripts/test_piper_mit_impedance.py'),
         DeclareLaunchArgument('escala_gravedad', default_value=''),
+        DeclareLaunchArgument('escena', default_value='ninguna', choices=['ninguna', 'manzano']),
+        DeclareLaunchArgument('semilla', default_value='7'),
+        DeclareLaunchArgument('camaras', default_value='true', choices=['true', 'false']),
         DeclareLaunchArgument('gui', default_value='true'),
         DeclareLaunchArgument('rviz', default_value='true'),
         OpaqueFunction(function=launch_setup),

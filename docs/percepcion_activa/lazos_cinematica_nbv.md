@@ -223,7 +223,8 @@ mueven más masa y tardan más.
 ![NBV en un manzano simulado](img/nbv_manzano_escena_panel.png)
 
 Demo con **manzanas**, el primer cultivo elegido para probar
-(`ros2 run pika_sim escena_nbv_demo.py --escena manzano`, datos en
+(`ros2 launch pika_sim sim_piper_single.launch.py escena:=manzano` y luego
+`ros2 run pika_sim escena_nbv_demo.py`, datos en
 [img/nbv_manzano_escena.json](img/nbv_manzano_escena.json)):
 - **El manzano:** un tronco, cinco ramas, 83 hojas al azar con semilla fija (la escena es reproducible) y cuatro manzanas de ~7,5 cm.
 - **La manzana objetivo** cuelga detrás de un racimo de hojas.
@@ -236,6 +237,18 @@ Resultados:
 - **La mejor vista alcanzable** (elevación 35°, azimut −25°) la ve en un 42 %.
 - **Solo 7 de las 20 vistas son alcanzables,** igual que en la escena de prueba. Las vistas laterales (±50°), las altas (60°) y las que miran hacia arriba exigen girar la muñeca más allá de su límite de ±70°: en el Piper, la cinemática restringe tanto como la oclusión.
 - Supuesto: la D405 mira a lo largo del eje de la herramienta. Las vistas (b) y (c) son cámaras virtuales con su campo visual, sin el brazo.
+
+Con la simulación lanzada con `escena:=manzano`, la demo también guarda lo que ven las cámaras
+simuladas del gripper con el brazo en la mejor vista. Son los mismos topics que publica el
+hardware ([src/pika_sim/README.md](../../src/pika_sim/README.md#cámaras-del-gripper)):
+
+| D405 color | D405 profundidad (amarillo cerca, morado lejos; negro fuera de 7–50 cm) | Fisheye |
+|---|---|---|
+| ![D405 color](img/nbv_manzano_d405_color.png) | ![D405 profundidad](img/nbv_manzano_d405_profundidad.png) | ![Fisheye](img/nbv_manzano_fisheye.png) |
+
+La manzana objetivo queda al centro de la D405, tapada en parte por el racimo, y abajo se ven las
+garras de la pinza. El 70 % de los píxeles tiene profundidad dentro del rango de la D405, con
+mediana de 0,20 m. Es coherente con el casquete de 0,22 m, medido desde la fruta.
 
 La primera escena de prueba, con una fruta y tres hojas en disco (`--escena prueba`), dio 0 % de
 frente y 50 % en la mejor vista: [img/nbv_escena_panel.png](img/nbv_escena_panel.png).

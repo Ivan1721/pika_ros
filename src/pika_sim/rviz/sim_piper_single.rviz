@@ -69,6 +69,58 @@ Visualization Manager:
       Show Descriptions: true
       Show Visual Aids: false
       Value: true
+    - Class: rviz_default_plugins/PointCloud2
+      Enabled: true
+      Name: D405 nube (gripper)
+      Color Transformer: RGB8
+      Decay Time: 0
+      Position Transformer: XYZ
+      Size (m): 0.002
+      Style: Points
+      Size (Pixels): 2
+      Alpha: 1
+      Topic:
+        Depth: 1
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Best Effort
+        Value: /gripper/camera/depth/color/points
+      Use Fixed Frame: true
+      Value: true
+    - Class: rviz_default_plugins/MarkerArray
+      Enabled: true
+      Name: Manzanas (verdad del terreno)
+      Namespaces:
+        manzanas: true
+      Topic:
+        Depth: 1
+        Durability Policy: Transient Local
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /escena/frutas
+      Value: true
+    - Class: rviz_default_plugins/Image
+      Enabled: true
+      Name: D405 color
+      Normalize Range: true
+      Topic:
+        Depth: 1
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Best Effort
+        Value: /gripper/camera/color/image_raw
+      Value: true
+    - Class: rviz_default_plugins/Image
+      Enabled: true
+      Name: Fisheye
+      Normalize Range: true
+      Topic:
+        Depth: 1
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Best Effort
+        Value: /gripper/camera_fisheye/color/image_raw
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48

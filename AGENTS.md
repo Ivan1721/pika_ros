@@ -48,6 +48,8 @@ ros2 launch pika_remote_piper teleop_rand_single_piper.launch.py sim:=true   # t
 
 `pika_sim` replaces the Piper CAN driver with `piper_sim_bridge.py`. The bridge keeps the driver's topic contract: it reads `/joint_states_gripper` (6 joints in rad, plus the total gripper opening in m) and publishes `/joint_states_single` with names `joint0..joint6` at 200 Hz. `fake_pika_sense.py` optionally replaces the Pika Sense and Vive tracker with an RViz interactive marker. Keep this contract when you extend the simulation, so that simulators stay swappable and the teleop and capture code stays untouched. The details and pitfalls (joint reordering, `/joint_states` name clash, `package://` meshes in Gazebo Classic) are in `src/pika_sim/README.md`.
 
+The simulated D405 and fisheye on the Pika gripper publish the same `/gripper/camera/...` topics as the hardware, with depth in 16UC1 mm like the real driver. `escena:=manzano` loads a seed-reproducible apple tree and publishes its ground truth on `/escena/verdad` and `/escena/frutas` for the active-perception code.
+
 `control:=mit` emulates the Piper's MIT (impedance) mode with the values in `scripts/test_piper_mit_impedance.py`. Gazebo applies `kp` and `kd` as implicit joint springs and dampers, and `mit_emulador.py` sends `t_ref` as effort. Before changing MIT gains or targets, run `scripts/calcular_gravedad_mit.py`: it recomputes the gravity feedforward and checks stability. Gravity adds negative stiffness, so `kp` that is too low makes the target pose unstable even with feedforward.
 
 ## Active Perception Research

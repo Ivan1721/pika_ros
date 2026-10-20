@@ -56,6 +56,9 @@ ros2 topic pub --once /mit_emulador/perturbacion std_msgs/msg/Float64MultiArray 
 |---|---|---|
 | `control` | `teleop` | `mit`: emulación del modo MIT, sin puente ni Sense falso |
 | `sense` | `fake` | `real`: no arranca el Sense falso; correr aparte `bash scripts/start_single_sensor.bash` con el Sense y las base stations conectados |
+| `escena` | `ninguna` | `manzano`: carga el manzano de percepción activa (ver más abajo) |
+| `semilla` | `7` | semilla del follaje del manzano; 7 es la de la documentación |
+| `camaras` | `true` | `false`: sin la D405 ni la fisheye del gripper (Gazebo más liviano, p. ej. en modo MIT) |
 | `gui` | `true` | `false`: Gazebo sin ventana (solo `gzserver`) |
 | `rviz` | `true` | `false`: sin RViz |
 
@@ -76,21 +79,67 @@ ros2 topic pub --once /fake_pika_sense/gripper_opening std_msgs/msg/Float64 "{da
 
 En modo MIT, el emulador reporta `q − q_d` en `/rosout` cada 2 s.
 
+## Cámaras del gripper
+
+La D405 y la fisheye del gripper Pika están simuladas con los topics del hardware real (los de
+`single_pika_teleop_data_params.yaml` en `data_tools`), a 640 × 480 y 30 Hz:
+
+| Topic | Contenido |
+|---|---|
+| `/gripper/camera/color/image_raw` y `camera_info` | D405 color, 87° de campo horizontal |
+| `/gripper/camera/aligned_depth_to_color/image_raw` y `camera_info` | D405 profundidad en **16UC1 mm**, como el driver real; 0 fuera de 7–50 cm |
+| `/gripper/camera/depth/color/points` | D405 nube de puntos, en `pika_d405_optical_frame` |
+| `/gripper/camera_fisheye/color/image_raw` y `camera_info` | fisheye equidistante de 180° en horizontal (la real tiene 200° en diagonal) |
+
+- **Profundidad:** Gazebo la publica en 32FC1 metros por `/gripper/camera/depth_sim/image_raw`, y `profundidad_mm.py` la convierte. Sin esa conversión, `dataCapture.cpp` guardaría 0 y 1, porque convierte con cv_bridge a 16UC1 sin reescalar.
+- **Orientación (supuesto):** las dos cámaras miran a lo largo de +Z de `gripper_base`, el eje de la herramienta, igual que en la demo de NBV. En la imagen, las garras quedan abajo. Hay que confirmarlo con el gripper real o con el CAD de AgileX.
+- **Verificado:** con el brazo en la mejor vista del manzano, miles de puntos de la nube caen a menos de 3 mm de la superficie de cada manzana y ninguno dentro, así que el marco óptico y el TF son correctos.
+- Gazebo avisa `Error advertising topic [.../pika_fisheye/image]`. Es su transporte interno y no afecta a los topics de ROS.
+
+## Escenario agrícola: manzano
+
+```bash
+ros2 launch pika_sim sim_piper_single.launch.py escena:=manzano [semilla:=7]
+```
+
+`escena_manzano.py` genera un manzano reproducible: la misma semilla da siempre el mismo árbol. Tiene
+tronco, cinco ramas, follaje al azar a lo largo de las ramas y cuatro manzanas. La manzana objetivo
+queda en (0,55; 0; 0,30) m, detrás de un racimo de hojas. Los objetos son solo visuales, sin
+colisión, así que el brazo atraviesa las hojas.
+
+El nodo spawnea el árbol y publica la verdad del terreno, con QoS *transient local* para que la
+reciba quien se conecte después:
+
+| Topic | Tipo | Contenido |
+|---|---|---|
+| `/escena/frutas` | `visualization_msgs/MarkerArray` | manzanas en el marco `world`; la objetivo en amarillo (RViz la muestra) |
+| `/escena/verdad` | `std_msgs/String` (JSON) | semilla; manzanas (centro, radio, objetivo); hojas (centro, normal, radio); ramas |
+
+Parámetros del nodo: `semilla` (7), `n_manzanas` (4, hasta 6), `densidad_hojas` (16 intentos por
+rama) y `objetivo_ocluida` (`true`: racimo delante de la objetivo). El launch solo expone la
+semilla; los demás se cambian corriendo el nodo aparte:
+
+```bash
+ros2 run pika_sim escena_manzano.py --ros-args -p semilla:=3 -p n_manzanas:=6 -p densidad_hojas:=24
+```
+
 ## Escena de demostración de NBV
 
 Con la simulación en modo teleop corriendo (`gui:=false rviz:=false` sirve), el script hace lo siguiente:
 
 ```bash
-ros2 run pika_sim escena_nbv_demo.py --escena manzano --salida ~/pika_ros/docs/percepcion_activa/img
+ros2 launch pika_sim sim_piper_single.launch.py gui:=false rviz:=false escena:=manzano
+ros2 run pika_sim escena_nbv_demo.py --salida ~/pika_ros/docs/percepcion_activa/img
 python3 ~/pika_ros/src/pika_sim/scripts/panel_nbv.py ~/pika_ros/docs/percepcion_activa/img nbv_manzano
 ```
 
 1. Arma una escena:
-   - `manzano` (por defecto): tronco, ramas, follaje al azar con semilla fija (`--semilla`) y varias manzanas, con la objetivo detrás de un racimo de hojas;
+   - `manzano` (por defecto): si la simulación se lanzó con `escena:=manzano`, usa ese árbol (lo lee de `/escena/verdad`); si no, lo genera y spawnea con `--semilla`;
    - `prueba`: una fruta y tres hojas.
 2. Genera 20 vistas candidatas en un casquete y calcula la visibilidad de cada una (trazando rayos contra las hojas y las otras frutas) y si es alcanzable (IK para la D405, con |J5| > 10°).
 3. Lleva el brazo a la mejor vista.
-4. Guarda capturas de cámaras virtuales: la escena, la vista frontal y la elegida, más un JSON con los números.
+4. Guarda lo que ven la D405 (`_d405_color.png`, `_d405_profundidad.png`) y la fisheye (`_fisheye.png`) del gripper en esa vista.
+5. Guarda capturas de cámaras virtuales: la escena, la vista frontal y la elegida, más un JSON con los números.
 
 `panel_nbv.py` arma con todo eso la figura `<prefijo>_escena_panel.png`. El prefijo es `nbv_manzano` o, para la escena de prueba, `nbv`.
 
@@ -101,6 +150,7 @@ del URDF).
 
 ## Pendiente
 
-- Cámaras D405 y fisheye simuladas en la pinza (topics `/gripper/camera/...` para `data_tools`).
-- Escena con frutas y oclusión controlada.
+- Confirmar hacia dónde miran la D405 y la fisheye reales (con el gripper o el CAD de AgileX).
+- Probar una captura completa con `data_tools`: el config `single_pika_teleop` pide además topics del Sense y del brazo.
+- Niveles de oclusión controlados (25–100 %) y mallas de hojas más realistas ([recursos públicos](../../docs/percepcion_activa/recursos_publicos.md)).
 - Versión para dos brazos (`teleop_rand_multi_piper.launch.py`).

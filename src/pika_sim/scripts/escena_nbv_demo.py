@@ -18,8 +18,9 @@
 #   prueba                 una fruta, tres hojas en disco y un tallo (la primera escena de prueba)
 # En la visibilidad cuentan las hojas y las otras frutas; ramas y tronco no.
 #
-# Uso, con la simulación corriendo (sin conda):
-#   ros2 launch pika_sim sim_piper_single.launch.py gui:=false rviz:=false
+# Uso, con la simulación corriendo (sin conda); con escena:=manzano la demo usa ese árbol
+# (/escena/verdad) en vez de spawnear el suyo, y guarda lo que ven la D405 y la fisheye del gripper:
+#   ros2 launch pika_sim sim_piper_single.launch.py gui:=false rviz:=false escena:=manzano
 #   ros2 run pika_sim escena_nbv_demo.py [--escena manzano|prueba] [--semilla N] --salida ~/pika_ros/docs/percepcion_activa/img
 import argparse
 import json
@@ -34,9 +35,12 @@ from gazebo_msgs.srv import SpawnEntity
 from PIL import Image as PILImage
 from rcl_interfaces.srv import GetParameters
 from rclpy.node import Node
+from rclpy.qos import DurabilityPolicy, QoSProfile
 from scipy.optimize import least_squares
 from sensor_msgs.msg import Image
-from std_msgs.msg import Float64MultiArray
+from std_msgs.msg import Float64MultiArray, String
+
+import escena_manzano
 
 ARM = ['joint1', 'joint2', 'joint3', 'joint4', 'joint5', 'joint6']
 
@@ -57,40 +61,16 @@ ELEVACIONES = [-15, 10, 35, 60]
 AZIMUTS = [-50, -25, 0, 25, 50]                                # respecto de la dirección fruta → robot
 
 
-def escena_manzano(semilla=7):
-    """Manzano simplificado con follaje aleatorio reproducible (misma semilla, misma escena)."""
+def usar_escena(verdad):
+    """Toma la escena del manzano (dict de /escena/verdad o de escena_manzano.generar)."""
     global FRUTA, R_FRUTA, HOJAS, RAMAS, OTRAS, COLOR_FRUTA, COLOR_HOJA
-    rng = np.random.default_rng(semilla)
-    FRUTA = np.array([0.55, 0.0, 0.30])
-    R_FRUTA = 0.038                                            # manzana de ~7,5 cm
-    COLOR_FRUTA, COLOR_HOJA = '0.70 0.09 0.09 1', '0.15 0.42 0.13 1'
-    tronco = ((0.74, 0.0, 0.0), (0.74, 0.0, 0.46), 0.035)
-    ramas = [((0.74, 0.0, 0.33), (0.565, 0.0, 0.36), 0.010),   # rama de la manzana objetivo
-             ((0.74, 0.0, 0.30), (0.58, 0.13, 0.36), 0.012),
-             ((0.74, 0.0, 0.36), (0.60, -0.14, 0.42), 0.012),
-             ((0.74, 0.0, 0.22), (0.58, 0.07, 0.22), 0.010),
-             ((0.74, 0.0, 0.42), (0.64, 0.03, 0.52), 0.010)]
-    pedunculo = ((0.565, 0.0, 0.36), tuple(FRUTA + [0.0, 0.0, R_FRUTA * 0.85]), 0.004)
-    RAMAS = [tronco] + ramas + [pedunculo]
-    OTRAS = [(np.array([0.585, 0.135, 0.32]), 0.036), (np.array([0.605, -0.14, 0.38]), 0.037),
-             (np.array([0.585, 0.075, 0.185]), 0.035)]
-
-    def libre(p):
-        # sin hojas metidas dentro de una manzana
-        return all(np.linalg.norm(p - c) > r + 0.012 for c, r in [(FRUTA, R_FRUTA)] + OTRAS)
-
-    hojas = []
-    for a, b, _ in ramas:                                      # follaje a lo largo de las ramas
-        a, b = np.array(a), np.array(b)
-        for _ in range(16):
-            p = a + rng.uniform(0.25, 1.0) * (b - a) + rng.normal(0, 0.03, 3)
-            if libre(p):
-                hojas.append((tuple(p), tuple(rng.normal(size=3)), rng.uniform(0.024, 0.032)))
-    for _ in range(10):                                        # racimo delante de la manzana objetivo
-        p = FRUTA + np.r_[-rng.uniform(0.055, 0.085), rng.uniform(-0.045, 0.045), rng.uniform(-0.04, 0.025)]
-        if libre(p):
-            hojas.append((tuple(p), (1.0, rng.normal(0, 0.35), rng.normal(0, 0.35)), rng.uniform(0.026, 0.032)))
-    HOJAS = hojas
+    manzanas = verdad['manzanas']
+    objetivo = next(m for m in manzanas if m['objetivo'])
+    FRUTA, R_FRUTA = np.array(objetivo['centro']), objetivo['radio']
+    OTRAS = [(np.array(m['centro']), m['radio']) for m in manzanas if not m['objetivo']]
+    HOJAS = [(tuple(h['centro']), tuple(h['normal']), h['radio']) for h in verdad['hojas']]
+    RAMAS = [(tuple(r['p0']), tuple(r['p1']), r['radio']) for r in verdad['ramas']]
+    COLOR_FRUTA, COLOR_HOJA = escena_manzano.COLOR_FRUTA, escena_manzano.COLOR_HOJA
 
 
 # ── Cinemática directa sobre el URDF ──
@@ -218,40 +198,9 @@ def pose_mirando(origen, objetivo):
     return f'{origen[0]} {origen[1]} {origen[2]} 0 {pitch} {yaw}'
 
 
-def material(rgba):
-    return f'<material><ambient>{rgba}</ambient><diffuse>{rgba}</diffuse></material>'
-
-
-def cilindro_entre(nombre, p0, p1, radio, rgba, sombra=True):
-    p0, p1 = np.array(p0), np.array(p1)
-    d = p1 - p0
-    largo = np.linalg.norm(d)
-    z = d / largo
-    pitch = math.acos(np.clip(z[2], -1, 1))
-    yaw = math.atan2(z[1], z[0])
-    m = (p0 + p1) / 2
-    return (f'<link name="{nombre}"><pose>{m[0]} {m[1]} {m[2]} 0 {pitch} {yaw}</pose><visual name="v">'
-            f'<cast_shadows>{str(sombra).lower()}</cast_shadows><geometry><cylinder><radius>{radio}</radius><length>{largo}</length></cylinder></geometry>'
-            f'{material(rgba)}</visual></link>')
-
-
-def disco(nombre, centro, normal, radio, rgba):
-    n = np.array(normal) / np.linalg.norm(normal)
-    pitch = math.acos(np.clip(n[2], -1, 1))
-    yaw = math.atan2(n[1], n[0])
-    return (f'<link name="{nombre}"><pose>{centro[0]} {centro[1]} {centro[2]} 0 {pitch} {yaw}</pose>'
-            f'<visual name="v"><geometry><cylinder><radius>{radio}</radius><length>0.004</length></cylinder>'
-            f'</geometry>{material(rgba)}</visual></link>')
-
-
-def esfera(nombre, c, radio, rgba, sombra=True):
-    return (f'<link name="{nombre}"><pose>{c[0]} {c[1]} {c[2]} 0 0 0</pose><visual name="v">'
-            f'<cast_shadows>{str(sombra).lower()}</cast_shadows>'
-            f'<geometry><sphere><radius>{radio}</radius></sphere></geometry>{material(rgba)}</visual></link>')
-
-
-def sdf_modelo(nombre, links):
-    return f'<?xml version="1.0"?><sdf version="1.6"><model name="{nombre}"><static>true</static>{links}</model></sdf>'
+material = escena_manzano._material
+cilindro_entre, disco, esfera = escena_manzano.cilindro_entre, escena_manzano.disco, escena_manzano.esfera
+sdf_modelo = escena_manzano.sdf_modelo
 
 
 def sdf_camara(nombre, pose, hfov, ancho, alto):
@@ -292,6 +241,50 @@ class Demo(Node):
         rclpy.spin_until_future_complete(self, fut, timeout_sec=20)
         self.get_logger().info(f'{nombre}: {fut.result().status_message}')
 
+    def esperar(self, tipo, topic, timeout, qos=1):
+        llegada = {}
+        sub = self.create_subscription(tipo, topic, lambda m: llegada.setdefault('m', m), qos)
+        t0 = time.time()
+        while 'm' not in llegada and time.time() - t0 < timeout:
+            rclpy.spin_once(self, timeout_sec=0.2)
+        self.destroy_subscription(sub)
+        return llegada.get('m')
+
+    def verdad(self):
+        qos = QoSProfile(depth=1, durability=DurabilityPolicy.TRANSIENT_LOCAL)
+        m = self.esperar(String, '/escena/verdad', 3.0, qos)
+        return json.loads(m.data) if m else None
+
+    def camara_gripper(self, base):
+        """Color y profundidad de la D405 simulada del gripper (si la simulación tiene cámaras)."""
+        color = self.esperar(Image, '/gripper/camera/color/image_raw', 10.0)
+        prof = self.esperar(Image, '/gripper/camera/aligned_depth_to_color/image_raw', 10.0)
+        if color is None or prof is None:
+            self.get_logger().warn('sin imagen de la D405 del gripper (¿camaras:=false?)')
+            return
+        PILImage.frombytes('RGB', (color.width, color.height), bytes(color.data)).save(base + '_color.png')
+        ojo = self.esperar(Image, '/gripper/camera_fisheye/color/image_raw', 10.0)
+        if ojo is not None:
+            PILImage.frombytes('RGB', (ojo.width, ojo.height), bytes(ojo.data)).save(
+                base.replace('_d405', '_fisheye') + '.png')
+        if prof.encoding == '16UC1':                                 # mm, como la D405 real
+            z = np.frombuffer(bytes(prof.data), dtype=np.uint16).reshape(prof.height, prof.width) / 1000.0
+        else:
+            z = np.frombuffer(bytes(prof.data), dtype=np.float32).reshape(prof.height, prof.width)
+        validos = np.isfinite(z) & (z > 0)
+        cerca, lejos = 0.07, 0.5                                     # rango útil de la D405
+        t = np.clip((np.where(validos, z, lejos) - cerca) / (lejos - cerca), 0, 1)
+        paleta = np.array([[253, 231, 37], [94, 201, 98], [33, 145, 140], [59, 82, 139], [68, 1, 84]], float)
+        x = t * (len(paleta) - 1)                                   # cerca amarillo, lejos morado
+        k = np.minimum(x.astype(int), len(paleta) - 2)
+        f = (x - k)[..., None]
+        rgb = ((1 - f) * paleta[k] + f * paleta[k + 1]).astype(np.uint8)
+        rgb[~validos | (z > lejos)] = 0
+        PILImage.fromarray(rgb).save(base + '_profundidad.png')
+        en_rango = validos & (z <= lejos)
+        self.get_logger().info(f'D405: {en_rango.mean():.0%} de píxeles con profundidad en 7–50 cm; '
+                               f'mediana {np.median(z[en_rango]) if en_rango.any() else float("nan"):.3f} m')
+
     def foto(self, nombre, ruta, timeout=20.0):
         llegada = {}
         sub = self.create_subscription(Image, f'/{nombre}/cam/image_raw', lambda m: llegada.setdefault('m', m), 1)
@@ -315,12 +308,22 @@ def main():
     ap.add_argument('--semilla', type=int, default=7)
     args, _ = ap.parse_known_args()
     os.makedirs(args.salida, exist_ok=True)
-    if args.escena == 'manzano':
-        escena_manzano(args.semilla)
     prefijo = 'nbv' if args.escena == 'prueba' else f'nbv_{args.escena}'
 
     rclpy.init()
     node = Demo()
+    escena_lanzada = False
+    if args.escena == 'manzano':
+        # Si la simulación se lanzó con escena:=manzano, se usa ese árbol (su verdad del terreno);
+        # si no, se genera aquí con la semilla pedida y se spawnea en el paso 2.
+        verdad = node.verdad()
+        escena_lanzada = verdad is not None
+        if escena_lanzada:
+            args.semilla = verdad['semilla']
+            node.get_logger().info(f'uso el manzano de /escena/verdad (semilla {args.semilla})')
+        else:
+            verdad = json.loads(escena_manzano.verdad_json(escena_manzano.generar(args.semilla)))
+        usar_escena(verdad)
     kin = Cinematica(node.urdf())
 
     # 1. Candidatas: visibilidad y alcanzabilidad
@@ -347,7 +350,8 @@ def main():
     links += ''.join(esfera(f'otra{i}', c, r, COLOR_FRUTA) for i, (c, r) in enumerate(OTRAS))
     for i, (c, n, r) in enumerate(HOJAS):
         links += disco(f'hoja{i}', c, n, r, COLOR_HOJA)
-    node.spawnear('escena_fruta', sdf_modelo('escena_fruta', links))
+    if not escena_lanzada:
+        node.spawnear('escena_fruta', sdf_modelo('escena_fruta', links))
 
     # 3. Lo que vería la cámara desde la vista frontal y desde la elegida (brazo plegado y sin
     #    marcadores, para que solo se vea la oclusión por las hojas)
@@ -361,7 +365,16 @@ def main():
     node.foto('cam_frontal', os.path.join(args.salida, f'{prefijo}_vista_frontal.png'))
     node.foto('cam_elegida', os.path.join(args.salida, f'{prefijo}_vista_elegida.png'))
 
-    # 4. Candidatas y brazo en la mejor vista (pinza abierta), y la foto de la escena completa
+    # 4. Brazo en la mejor vista (pinza abierta): lo que ven las cámaras del gripper, antes de
+    #    poner los marcadores de las candidatas
+    for _ in range(20):
+        node.arm.publish(Float64MultiArray(data=[float(v) for v in mejor['q']]))
+        node.grip.publish(Float64MultiArray(data=[0.03, -0.03]))
+        rclpy.spin_once(node, timeout_sec=0.1)
+    time.sleep(3.0)
+    node.camara_gripper(os.path.join(args.salida, f'{prefijo}_d405'))
+
+    # 5. Candidatas coloreadas por visibilidad y la foto de la escena completa
     vis = ''
     for i, k in enumerate(cands):
         col = color_visibilidad(k['visibilidad'], k['alcanzable'])
@@ -370,11 +383,7 @@ def main():
         vis += esfera(f'c{i}', k['c'], radio, col, sombra=False)
         vis += cilindro_entre(f'r{i}', k['c'], k['c'] + (R_VISTA - 0.06) * k['d'], grosor, col, sombra=False)
     node.spawnear('vistas_candidatas', sdf_modelo('vistas_candidatas', vis))
-    for _ in range(20):
-        node.arm.publish(Float64MultiArray(data=[float(v) for v in mejor['q']]))
-        node.grip.publish(Float64MultiArray(data=[0.03, -0.03]))
-        rclpy.spin_once(node, timeout_sec=0.1)
-    time.sleep(3.0)
+    time.sleep(1.0)
     node.spawnear('cam_escena', sdf_camara('cam_escena', pose_mirando((0.18, -1.05, 0.78), (0.38, 0.0, 0.26)), 0.85, 1600, 1000))
     time.sleep(2.0)
     node.foto('cam_escena', os.path.join(args.salida, f'{prefijo}_escena.png'))

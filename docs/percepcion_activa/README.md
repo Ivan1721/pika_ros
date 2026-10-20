@@ -72,9 +72,10 @@ Para NBV de fruta con brazo, Gazebo es el estándar en los trabajos comparables.
 | Pieza | Estado |
 |---|---|
 | `pika_sim` fase 1: teleop de Piper + gripper Pika en Gazebo sin hardware | ✅ Probada headless contra los nodos reales de FK/IK/teleop. Uso: [src/pika_sim/README.md](../../src/pika_sim/README.md) y Flujo D+ del [Manual](../manuales/Manual.md) |
-| Cámaras simuladas en la pinza Pika | ⏳ paso 1 |
+| Cámaras simuladas en la pinza Pika | ✅ paso 1: D405 (color, profundidad en 16UC1 mm, nube) y fisheye con los topics `/gripper/camera/...` del hardware, a 30 Hz. Falta confirmar hacia dónde miran las reales |
 | MoveIt para Piper + Pika | ⏳ paso 2. Existe una config para la pinza original del Piper en `piper_ros` (fuera de este repo) |
-| Escena de fruta, planner, experimentos | ⏳ pasos 3–5 |
+| Escena de fruta | ✅ paso 3, primera versión: manzano reproducible por semilla (`escena:=manzano`) con la verdad del terreno en `/escena/verdad` y `/escena/frutas`. Falta controlar el nivel de oclusión y usar mallas de hojas realistas |
+| Planner, experimentos | ⏳ pasos 4–5. La demo de NBV ([lazos_cinematica_nbv.md §5.6](lazos_cinematica_nbv.md#56-ejemplo-en-simulación-manzano)) ya calcula visibilidad y alcanzabilidad, pero no es el planner |
 | Captura teleop con `data_tools` | ⚠️ las configs `*_pika_teleop` esperan topics que este fork no publica; ver [problemas conocidos](../manuales/Manual.md#problemas-conocidos-del-software) |
 | Milo: `nbv_planner` | Diseñado en su documentación, no implementado |
 
@@ -84,8 +85,9 @@ El código de percepción activa no nombra a ningún robot: recibe estos paráme
 
 | Parámetro | Piper + Pika (`pika_sim`) | Milo |
 |---|---|---|
-| Nube de puntos | `/gripper/camera/depth/color/points` (por definir en el paso 1) | `/gripper_camera/depth/points` |
-| Frame óptico de la cámara | `pika_depth_link` (D405) | `gripper_camera_depth_optical_frame` |
+| Nube de puntos | `/gripper/camera/depth/color/points` | `/gripper_camera/depth/points` |
+| Frame óptico de la cámara | `pika_d405_optical_frame` en `pika_sim`; con el hardware, el que publique el driver de la D405 (por defecto `camera_color_optical_frame`) | `gripper_camera_depth_optical_frame` |
+| Verdad del terreno de la escena | `/escena/verdad` (JSON) y `/escena/frutas` (`MarkerArray`) | — |
 | Grupo de MoveIt y frames | por definir en el paso 2 (6 ejes, punta `pika_tcp`) | `brazo` (7 ejes: lift + 6), `base_footprint` → `gripper_tcp` |
 | Rango útil de la cámara | D405: ~0,07–0,5 m | Gemini Plus: 0,25–2,5 m (mejor 0,3–0,8 m) |
 | Radio de las vistas candidatas | ~0,15–0,35 m | 0,4–0,6 m |
