@@ -9,6 +9,7 @@
 # (igual que la cámara real), y deja todo lo demás igual.
 import numpy as np
 import rclpy
+from rclpy.executors import ExternalShutdownException
 from rclpy.node import Node
 from rclpy.qos import qos_profile_sensor_data
 from sensor_msgs.msg import Image
@@ -39,7 +40,7 @@ def main():
     nodo = ProfundidadMm()
     try:
         rclpy.spin(nodo)
-    except KeyboardInterrupt:
+    except (KeyboardInterrupt, ExternalShutdownException):
         pass
     finally:
         nodo.destroy_node()

@@ -267,6 +267,7 @@ def verdad_json(escena):
 
 def main():
     import rclpy
+    from rclpy.executors import ExternalShutdownException
     from gazebo_msgs.srv import DeleteEntity, SpawnEntity
     from rclpy.node import Node
     from rclpy.qos import DurabilityPolicy, QoSProfile
@@ -343,7 +344,7 @@ def main():
     nodo.publicar()
     try:
         rclpy.spin(nodo)                     # sigue vivo para servir la verdad (transient local)
-    except KeyboardInterrupt:
+    except (KeyboardInterrupt, ExternalShutdownException):
         pass
     finally:
         nodo.destroy_node()

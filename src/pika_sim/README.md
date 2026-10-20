@@ -59,7 +59,9 @@ ros2 topic pub --once /mit_emulador/perturbacion std_msgs/msg/Float64MultiArray 
 | `escena` | `ninguna` | `manzano`: carga el manzano de percepción activa (ver más abajo) |
 | `semilla` | `7` | semilla del follaje del manzano; 7 es la de la documentación |
 | `arbol` | `primitivas` | `helios`: manzano realista generado con Helios (ver más abajo) |
-| `ruta_helios` | `~/.cache/pika_sim/manzanos/apple_fruitingwall_e640_s7` | carpeta del árbol de Helios que se carga |
+| `densidad` | `base` | con `arbol:=helios`: `media` o `alta`, más fruta en racimos y más follaje (hay que generarlos antes) |
+| `ruta_helios` | (según `densidad`) | carpeta de otro árbol de Helios; pisa a `densidad` |
+| `luz` | `dia` | iluminación: `dia`, `atardecer`, `contraluz`, `nublado`, `noche_fria`, `noche_calida` (ver más abajo) |
 | `camaras` | `true` | `false`: sin la D405 ni la fisheye del gripper (Gazebo más liviano, p. ej. en modo MIT) |
 | `gui` | `true` | `false`: Gazebo sin ventana (solo `gzserver`) |
 | `rviz` | `true` | `false`: sin RViz |
@@ -140,8 +142,34 @@ frutal en espaldera, que es el sistema de los huertos pensados para cosecha rob�
 ```bash
 python3 -m venv ~/.venvs/helios && ~/.venvs/helios/bin/pip install pyhelios3d pillow
 env -u PYTHONPATH ~/.venvs/helios/bin/python -I ~/pika_ros/src/pika_sim/scripts/generar_manzano_helios.py \
-    [--modelo apple_fruitingwall|apple] [--edad 640] [--semilla 7]
+    [--modelo apple_fruitingwall|apple] [--edad 640] [--semilla 7] [--densidad base|media|alta]
 ```
+
+**Densidad de fruta y follaje.** `--densidad` cambia parámetros de los brotes de Helios. Cada uno
+se puede ajustar aparte (`--flor`, `--cuaja`, `--racimo`, `--brote`, `--hoja`):
+
+| | `base` (Helios) | `media` | `alta` |
+|---|---|---|---|
+| Brotación floral (`flor`) | 0,3 | 0,5 | 0,7 |
+| Cuaja de frutos (`cuaja`) | 0,3 | 0,45 | 0,6 |
+| Manzanas por dardo (`racimo`) | 1 | 2 | 3 |
+| Brotación vegetativa mínima (`brote`) | 0,1 | 0,25 | 0,4 |
+| Tamaño de hoja (`hoja`) | 1,0 | 1,1 | 1,2 |
+| **Resultado:** manzanas (raleadas) | 39 (0) | 197 (57) | 264 (714) |
+| Hojas | 1318 | 2307 | 4366 |
+| Triángulos por árbol | 140 000 | 268 000 | 477 000 |
+| Tiempo de generación | 16 s | 32 s | 80 s |
+
+Helios pone las manzanas de un mismo dardo casi en el mismo punto, y con mucha fruta se
+interpenetran: hasta con la densidad base hay 3 pares. El generador las separa como esferas que se
+empujan, sin moverlas más de 6 cm, y les agrega un pedúnculo hasta la rama. Las que igual no caben
+se ralean, como en un huerto real. Por eso `alta` termina con 264 manzanas de las 978 que forma
+Helios: el muro ya no tiene espacio para más.
+
+![Densidades base, media y alta](../../docs/percepcion_activa/img/helios_densidad_panel.png)
+
+Con `densidad:=media` o `alta` en el launch se carga el árbol correspondiente; hay que generarlo
+antes con la misma `--densidad`.
 
 El script escribe en `~/.cache/pika_sim/manzanos/<modelo>_e<edad>_s<semilla>/`:
 - las mallas `madera.obj`, `hojas.obj` y `frutas.obj`, con sus texturas;
@@ -169,8 +197,59 @@ Las manzanas candidatas son las que dejan la plataforma entre 0,4 y 1,4 m de alt
 Con 117 manzanas y unos 140 000 triángulos por árbol, Gazebo sigue en tiempo real (factor 1,0) y
 las cámaras del gripper a 30 Hz.
 
+### Iluminación
+
+`luz:=...` arma el mundo de Gazebo con el ambiente, el color de fondo y el sol de cada caso. Las
+condiciones de luz cambian lo que ve la cámara, así que sirven para probar la percepción:
+
+| `luz` | Sol | Ambiente | Para qué |
+|---|---|---|---|
+| `dia` (por defecto) | blanco, alto, con sombras | neutro | referencia, igual al mundo vacío de Gazebo |
+| `atardecer` | cálido (~3000 K), bajo y de frente al árbol | cálido | hora dorada: sombras largas y color anaranjado |
+| `contraluz` | cálido, detrás del árbol | tenue | caso difícil: la cara que ve el robot queda en sombra |
+| `nublado` | frío (~7000 K) y difuso, sin sombras | frío y alto | día nublado |
+| `noche_fria` | casi nulo | oscuro | cosecha nocturna con tres focos LED fríos (~6500 K) en la plataforma |
+| `noche_calida` | casi nulo | oscuro | lo mismo con LED cálidos (~3000 K) |
+
+![Las seis iluminaciones](../../docs/percepcion_activa/img/helios_luces_panel.png)
+
+Los focos de noche van en la plataforma, a los lados y sobre el brazo, apuntando a la manzana
+objetivo. El mundo se escribe en `~/.cache/pika_sim/mundos/`. La luz no cambia la visibilidad
+geométrica que calcula la demo (47 % en todas): cambia la imagen, que es lo que tendría que
+resolver un detector como YOLO.
+
 **Licencias:** PyHelios es MIT, y el núcleo de Helios y sus texturas son LGPL-2.1. Por eso el repo
 guarda el generador y no las mallas: cada máquina las genera.
+
+## Consumo de recursos
+
+Medido el 20-10-2026 en este equipo: AMD Ryzen 7 5800H (8 núcleos, 16 hilos), 15 GB de RAM y
+GPU NVIDIA RTX 3070 Laptop de 8 GB, que también dibuja el escritorio. Cada configuración se dejó
+asentar 15 s y se midió durante 30 s. Se midió por grupo de procesos, leyendo `/proc`, y se usaron
+`nvidia-smi` y `gz stats`. La CPU va en % de un núcleo: 100 % es un núcleo entero de los 16 hilos.
+
+| Configuración | CPU simulación | `gzserver` | `gzclient` + `rviz2` | RAM | GPU (uso / memoria) | Tiempo real | Cámaras |
+|---|---|---|---|---|---|---|---|
+| Sin escena, sin ventanas | 137 % | 109 % | — | 0,7 GB | 34 % / 670 MB | 1,00 | 30 / 30 Hz |
+| Manzano de primitivas | 143 % | 115 % | — | 1,0 GB | 34 % / 655 MB | 0,96 | 29 / 30 Hz |
+| Helios base | 128 % | 100 % | — | 0,9 GB | 39 % / 667 MB | 1,00 | 28 / 29 Hz |
+| Helios base, `camaras:=false` | **39 %** | 21 % | — | 0,6 GB | **0 %** / 496 MB | 1,00 | — |
+| Helios media | 131 % | 104 % | — | 0,9 GB | 39 % / 676 MB | 1,00 | 30 / 28 Hz |
+| Helios alta | 132 % | 105 % | — | 1,0 GB | 40 % / 693 MB | 1,00 | 30 / 30 Hz |
+| Helios base, `luz:=noche_fria` | 120 % | 93 % | — | 0,9 GB | 30 % / 600 MB | 1,00 | 30 / 30 Hz |
+| Helios base, con Gazebo y RViz | 236 % | 102 % | 26 % + 71 % | 1,7 GB | 43 % / 921 MB | 1,00 | 30 / 30 Hz |
+| Helios alta, con Gazebo y RViz | **278 %** | 122 % | 29 % + 90 % | 1,9 GB | **66 %** / 974 MB | 0,99 | 28 / **26 Hz** |
+
+La GPU incluye el escritorio, que en reposo usa 5–6 % y ~510 MB. La columna Cámaras es D405 color /
+fisheye.
+
+**Lo que dicen los números:**
+- **El caso más pesado ocupa menos de un quinto del equipo:** 2,8 núcleos de 16, 1,9 GB de 15 y dos tercios de la GPU. La simulación va siempre en tiempo real.
+- **Lo que cuesta son las cámaras del gripper, no el árbol.** Sin cámaras, `gzserver` baja de un núcleo a 0,2 y la GPU queda libre. No se midieron por separado, pero Gazebo dibuja la fisheye como un cubo de 6 imágenes a 30 Hz, así que es la candidata a bajar primero (resolución o frecuencia) si hace falta liberar GPU.
+- **La densidad casi no cambia el consumo:** de 140 000 a 477 000 triángulos por árbol, la CPU sube 4 % y la GPU 1 punto. La geometría es estática y la dibuja la GPU.
+- **Con ventanas, RViz gasta más que Gazebo:** 0,7–0,9 núcleos, sobre todo por la nube de la D405, de 307 000 puntos a 30 Hz. Si no se necesita, conviene desactivar el display de la nube.
+- **Margen de la captura:** con densidad alta y ventanas, la fisheye baja a 26 Hz. Sigue sobre los 25 Hz que exige `data_tools`, pero con poco margen; para grabar, conviene correr sin ventanas.
+- **El modo `noche` es algo más liviano:** sin sombras del sol, la GPU baja a 30 %.
 
 ## Escena de demostración de NBV
 

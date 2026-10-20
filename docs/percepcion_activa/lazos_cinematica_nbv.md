@@ -270,6 +270,23 @@ descartan las vistas en que la cámara o las garras pasarían a menos de 3 cm de
 - **En un árbol real, la madera limita tanto como la cinemática.** En el muro, el tronco y los brazos de la espaldera cruzan casi todas las líneas de aproximación.
 - Las ramas también tapan: la vista frontal ve 0 %, por un cruce de ramas delante de la manzana (vista (b) del panel).
 
+**Con más fruta y follaje** (`densidad:=media|alta`, ver
+[src/pika_sim/README.md](../../src/pika_sim/README.md#manzano-realista-helios)):
+
+![Densidades base, media y alta](img/helios_densidad_panel.png)
+
+| Densidad | Manzanas en la hilera | Vistas alcanzables | Chocan con ramas | De frente | Mejor vista |
+|---|---|---|---|---|---|
+| base | 117 | 3 de 20 | 9 | 0 % | 47 % |
+| media | 591 | 4 de 20 | 3 | 35 % | 41 % |
+| alta | 792 | 2 de 20 | 6 | 11 % | 15 % |
+
+Cada densidad es otro árbol y el nodo elige otra manzana objetivo, así que la tabla no es una
+comparación controlada. Muestra que con follaje alto la mejor vista alcanzable ya ve poco: hace
+falta más de una vista. Barrer niveles de oclusión con la misma manzana queda pendiente (paso 5).
+La iluminación no cambia estos números, solo la imagen
+([panel de las seis luces](img/helios_luces_panel.png)).
+
 | D405 color | D405 profundidad | Fisheye |
 |---|---|---|
 | ![D405 color](img/nbv_helios_d405_color.png) | ![D405 profundidad](img/nbv_helios_d405_profundidad.png) | ![Fisheye](img/nbv_helios_fisheye.png) |

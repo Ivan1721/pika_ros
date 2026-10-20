@@ -15,6 +15,8 @@
 import copy
 
 import rclpy
+
+from rclpy.executors import ExternalShutdownException
 from rclpy.node import Node
 from geometry_msgs.msg import Pose, PoseStamped
 from sensor_msgs.msg import JointState
@@ -126,7 +128,7 @@ def main():
     node = FakePikaSense()
     try:
         rclpy.spin(node)
-    except KeyboardInterrupt:
+    except (KeyboardInterrupt, ExternalShutdownException):
         pass
     finally:
         node.destroy_node()
