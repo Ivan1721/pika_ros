@@ -108,6 +108,9 @@ vez, porque las dos usan el puerto 11345 de Gazebo; hay que cambiar `GAZEBO_MAST
 | 5 | Experimentos por nivel de oclusión (visibilidad 25/50/70/75/100 %, los mismos rangos del estudio YOLO de oclusión): visibilidad alcanzada, número de vistas, tiempo y recorrido articular, contra controles fijos (una vista frontal, una órbita fija) | — |
 | 6 | Milo como segundo robot (mismos nodos, otros parámetros) y demos humanas con Pika como línea base | todo lo anterior |
 
+Modelos de vegetación, escenas agrícolas, datasets publicados y material del sistema Pika que se
+pueden usar para mejorar la escena: [recursos_publicos.md](recursos_publicos.md).
+
 Los lazos de control, la cinemática (con la precisión medida de la IK), el lazo de impedancia y
 el procedimiento detallado para generar el NBV en Piper + Pika están en
 [lazos_cinematica_nbv.md](lazos_cinematica_nbv.md).
