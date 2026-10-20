@@ -108,6 +108,10 @@ vez, porque las dos usan el puerto 11345 de Gazebo; hay que cambiar `GAZEBO_MAST
 | 5 | Experimentos por nivel de oclusión (visibilidad 25/50/70/75/100 %, los mismos rangos del estudio YOLO de oclusión): visibilidad alcanzada, número de vistas, tiempo y recorrido articular, contra controles fijos (una vista frontal, una órbita fija) | — |
 | 6 | Milo como segundo robot (mismos nodos, otros parámetros) y demos humanas con Pika como línea base | todo lo anterior |
 
+Los lazos de control, la cinemática (con la precisión medida de la IK), el lazo de impedancia y
+el procedimiento detallado para generar el NBV en Piper + Pika están en
+[lazos_cinematica_nbv.md](lazos_cinematica_nbv.md).
+
 ## 7. Cómo retomar el trabajo
 
 Desde otra máquina o desde otro repositorio:
@@ -124,7 +128,7 @@ ros2 launch pika_sim sim_piper_single.launch.py     # comprobar que la simulaci�
 
 Lecturas, en orden:
 
-1. Este documento.
+1. Este documento y [lazos_cinematica_nbv.md](lazos_cinematica_nbv.md).
 2. [AGENTS.md](../../AGENTS.md): estructura, entornos Python, sync con upstream, convenciones.
 3. [src/pika_sim/README.md](../../src/pika_sim/README.md): contrato de topics del simulador.
 4. En Milo: [CLAUDE.md](https://github.com/Ivan1721/milo_ws/blob/brazo/CLAUDE.md) y [docs/tecnologias §11](https://github.com/Ivan1721/milo_ws/blob/brazo/docs/tecnologias/README.md#11-alcanza-milo-a-hacer-nbv).
