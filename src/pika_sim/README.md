@@ -81,16 +81,18 @@ En modo MIT, el emulador reporta `q − q_d` en `/rosout` cada 2 s.
 Con la simulación en modo teleop corriendo (`gui:=false rviz:=false` sirve), el script hace lo siguiente:
 
 ```bash
-ros2 run pika_sim escena_nbv_demo.py --salida ~/pika_ros/docs/percepcion_activa/img
-python3 ~/pika_ros/src/pika_sim/scripts/panel_nbv.py ~/pika_ros/docs/percepcion_activa/img
+ros2 run pika_sim escena_nbv_demo.py --escena manzano --salida ~/pika_ros/docs/percepcion_activa/img
+python3 ~/pika_ros/src/pika_sim/scripts/panel_nbv.py ~/pika_ros/docs/percepcion_activa/img nbv_manzano
 ```
 
-1. Arma una escena: rama, fruta y hojas que la ocluyen de frente.
-2. Genera 20 vistas candidatas en un casquete y calcula la visibilidad de cada una (trazando rayos contra las hojas) y si es alcanzable (IK para la D405, con |J5| > 10°).
+1. Arma una escena:
+   - `manzano` (por defecto): tronco, ramas, follaje al azar con semilla fija (`--semilla`) y varias manzanas, con la objetivo detrás de un racimo de hojas;
+   - `prueba`: una fruta y tres hojas.
+2. Genera 20 vistas candidatas en un casquete y calcula la visibilidad de cada una (trazando rayos contra las hojas y las otras frutas) y si es alcanzable (IK para la D405, con |J5| > 10°).
 3. Lleva el brazo a la mejor vista.
 4. Guarda capturas de cámaras virtuales: la escena, la vista frontal y la elegida, más un JSON con los números.
 
-`panel_nbv.py` arma con todo eso la figura `nbv_escena_panel.png`.
+`panel_nbv.py` arma con todo eso la figura `<prefijo>_escena_panel.png`. El prefijo es `nbv_manzano` o, para la escena de prueba, `nbv`.
 
 Las cámaras de Gazebo necesitan `DISPLAY`: en una sesión sin pantalla, usar un servidor X virtual. Es
 una demostración para documentación, no el planner del paso 4. Los colores AgileX del brazo en

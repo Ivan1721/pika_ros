@@ -218,21 +218,27 @@ mueven más masa y tardan más.
   2. **Después del paso 2:** MoveIt con OctoMap, que planifica sin chocar.
   3. **Opcional:** acercamiento final en modo impedancia (sección 4).
 
-### 5.6 Ejemplo en simulación
+### 5.6 Ejemplo en simulación: manzano
 
-![Escena de NBV en Gazebo](img/nbv_escena_panel.png)
+![NBV en un manzano simulado](img/nbv_manzano_escena_panel.png)
 
-Escena de prueba en `pika_sim` (`ros2 run pika_sim escena_nbv_demo.py`, datos en
-[img/nbv_escena.json](img/nbv_escena.json)):
-- **La escena:** una fruta de 4 cm de radio en una rama, con tres hojas que la tapan de frente.
-- **Las candidatas:** 20 vistas en un casquete de 0,22 m (elevación −15° a 60°, azimut ±50°).
-- **La visibilidad** de cada vista se calcula trazando rayos contra las hojas, como en la política B con la geometría exacta.
+Demo con **manzanas**, el primer cultivo elegido para probar
+(`ros2 run pika_sim escena_nbv_demo.py --escena manzano`, datos en
+[img/nbv_manzano_escena.json](img/nbv_manzano_escena.json)):
+- **El manzano:** un tronco, cinco ramas, 83 hojas al azar con semilla fija (la escena es reproducible) y cuatro manzanas de ~7,5 cm.
+- **La manzana objetivo** cuelga detrás de un racimo de hojas.
+- **Las candidatas:** 20 vistas en un casquete de 0,22 m.
+- **La visibilidad** se calcula trazando rayos contra las hojas y las otras manzanas; las ramas y el tronco todavía no se cuentan.
 - **La alcanzabilidad,** con IK para la D405: error < 5 mm y < 3°, y |J5| > 10°.
 
 Resultados:
-- **Solo 7 de las 20 vistas son alcanzables.** Las muy laterales (±50°), las altas (60°) y las que miran hacia arriba exigen girar la muñeca más allá de su límite de ±70°. En el Piper, la cinemática restringe tanto como la oclusión.
-- **La vista frontal ve el 0 % de la fruta;** la mejor alcanzable (elevación 35°, azimut 25°) ve el 50 %.
+- **La vista frontal ve el 0 % de la manzana objetivo,** aunque se ven las otras: un detector encontraría frutas, pero no la que se busca.
+- **La mejor vista alcanzable** (elevación 35°, azimut −25°) la ve en un 42 %.
+- **Solo 7 de las 20 vistas son alcanzables,** igual que en la escena de prueba. Las vistas laterales (±50°), las altas (60°) y las que miran hacia arriba exigen girar la muñeca más allá de su límite de ±70°: en el Piper, la cinemática restringe tanto como la oclusión.
 - Supuesto: la D405 mira a lo largo del eje de la herramienta. Las vistas (b) y (c) son cámaras virtuales con su campo visual, sin el brazo.
+
+La primera escena de prueba, con una fruta y tres hojas en disco (`--escena prueba`), dio 0 % de
+frente y 50 % en la mejor vista: [img/nbv_escena_panel.png](img/nbv_escena_panel.png).
 
 ### 5.7 Medición
 

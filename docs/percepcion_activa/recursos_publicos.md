@@ -2,7 +2,7 @@
 
 Revisión del 20 de octubre de 2026. Reúne modelos de vegetación, generadores de escenas agrícolas,
 datasets publicados con papers y material disponible sobre el sistema Pika, para pasar de la escena
-de prueba actual (esferas y discos, ver [lazos_cinematica_nbv.md §5.6](lazos_cinematica_nbv.md#56-ejemplo-en-simulación))
+de prueba actual (esferas y discos, ver [lazos_cinematica_nbv.md §5.6](lazos_cinematica_nbv.md#56-ejemplo-en-simulación-manzano))
 a una escena agrícola realista.
 
 **Licencias:** varios recursos no declaran licencia. Usarlos en investigación suele ser aceptable,
@@ -52,5 +52,5 @@ corregirlo, en orden:
 4. **Benchmark offline.** Evaluar las políticas A y B en DAVIS-Ag antes de gastar tiempo de simulación: su grafo de vistas reproduce el bucle "mirar → moverse".
 5. **Validación con datos reales.** TomatoWUR y Pheno4D para la geometría de tomate; Fuji-SfM si el cultivo objetivo son manzanas.
 
-Antes de elegir entre tomate y manzana, conviene **definir el cultivo objetivo** con el grupo. El
-estudio YOLO y el proyecto del concurso Endowment hablan de "fruta" en general.
+**Cultivo:** la primera demo es con **manzanas** (decisión del 20-10-2026). La evaluación de otras
+frutas está en [frutas_candidatas.md](frutas_candidatas.md).

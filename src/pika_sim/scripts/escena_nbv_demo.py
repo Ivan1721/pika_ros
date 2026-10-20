@@ -12,9 +12,15 @@
 #     de la singularidad de muñeca)
 # Supuesto: la D405 mira a lo largo de +Z de gripper_base (eje de la herramienta).
 #
+# Escenas (--escena):
+#   manzano (por defecto)  tronco, ramas, follaje aleatorio con semilla fija y varias manzanas; la
+#                          manzana objetivo queda detrás de un racimo de hojas
+#   prueba                 una fruta, tres hojas en disco y un tallo (la primera escena de prueba)
+# En la visibilidad cuentan las hojas y las otras frutas; ramas y tronco no.
+#
 # Uso, con la simulación corriendo (sin conda):
 #   ros2 launch pika_sim sim_piper_single.launch.py gui:=false rviz:=false
-#   ros2 run pika_sim escena_nbv_demo.py --salida ~/pika_ros/docs/percepcion_activa/img
+#   ros2 run pika_sim escena_nbv_demo.py [--escena manzano|prueba] [--semilla N] --salida ~/pika_ros/docs/percepcion_activa/img
 import argparse
 import json
 import math
@@ -42,10 +48,49 @@ HOJAS = [((0.485, 0.020, 0.315), (1.0, 0.15, 0.25), 0.050),
          ((0.490, -0.035, 0.285), (1.0, -0.25, -0.10), 0.045),
          ((0.525, 0.000, 0.355), (0.45, 0.0, 1.0), 0.045)]
 RAMA = ((0.62, 0.0, 0.0), (0.62, 0.0, 0.42), 0.012)          # tallo vertical detrás de la fruta
+RAMAS = [RAMA, ((0.62, 0.0, 0.36), tuple(FRUTA + [0.0, 0.0, R_FRUTA * 0.8]), 0.004)]   # + pedúnculo
+OTRAS = []                                                    # otras frutas: (centro, radio)
+COLOR_FRUTA, COLOR_HOJA, COLOR_MADERA = '0.80 0.12 0.10 1', '0.20 0.55 0.18 1', '0.42 0.30 0.20 1'
 # Candidatas: casquete de radio R alrededor de la fruta, del lado del robot
 R_VISTA = 0.22
 ELEVACIONES = [-15, 10, 35, 60]
 AZIMUTS = [-50, -25, 0, 25, 50]                                # respecto de la dirección fruta → robot
+
+
+def escena_manzano(semilla=7):
+    """Manzano simplificado con follaje aleatorio reproducible (misma semilla, misma escena)."""
+    global FRUTA, R_FRUTA, HOJAS, RAMAS, OTRAS, COLOR_FRUTA, COLOR_HOJA
+    rng = np.random.default_rng(semilla)
+    FRUTA = np.array([0.55, 0.0, 0.30])
+    R_FRUTA = 0.038                                            # manzana de ~7,5 cm
+    COLOR_FRUTA, COLOR_HOJA = '0.70 0.09 0.09 1', '0.15 0.42 0.13 1'
+    tronco = ((0.74, 0.0, 0.0), (0.74, 0.0, 0.46), 0.035)
+    ramas = [((0.74, 0.0, 0.33), (0.565, 0.0, 0.36), 0.010),   # rama de la manzana objetivo
+             ((0.74, 0.0, 0.30), (0.58, 0.13, 0.36), 0.012),
+             ((0.74, 0.0, 0.36), (0.60, -0.14, 0.42), 0.012),
+             ((0.74, 0.0, 0.22), (0.58, 0.07, 0.22), 0.010),
+             ((0.74, 0.0, 0.42), (0.64, 0.03, 0.52), 0.010)]
+    pedunculo = ((0.565, 0.0, 0.36), tuple(FRUTA + [0.0, 0.0, R_FRUTA * 0.85]), 0.004)
+    RAMAS = [tronco] + ramas + [pedunculo]
+    OTRAS = [(np.array([0.585, 0.135, 0.32]), 0.036), (np.array([0.605, -0.14, 0.38]), 0.037),
+             (np.array([0.585, 0.075, 0.185]), 0.035)]
+
+    def libre(p):
+        # sin hojas metidas dentro de una manzana
+        return all(np.linalg.norm(p - c) > r + 0.012 for c, r in [(FRUTA, R_FRUTA)] + OTRAS)
+
+    hojas = []
+    for a, b, _ in ramas:                                      # follaje a lo largo de las ramas
+        a, b = np.array(a), np.array(b)
+        for _ in range(16):
+            p = a + rng.uniform(0.25, 1.0) * (b - a) + rng.normal(0, 0.03, 3)
+            if libre(p):
+                hojas.append((tuple(p), tuple(rng.normal(size=3)), rng.uniform(0.024, 0.032)))
+    for _ in range(10):                                        # racimo delante de la manzana objetivo
+        p = FRUTA + np.r_[-rng.uniform(0.055, 0.085), rng.uniform(-0.045, 0.045), rng.uniform(-0.04, 0.025)]
+        if libre(p):
+            hojas.append((tuple(p), (1.0, rng.normal(0, 0.35), rng.normal(0, 0.35)), rng.uniform(0.026, 0.032)))
+    HOJAS = hojas
 
 
 # ── Cinemática directa sobre el URDF ──
@@ -139,6 +184,14 @@ def visibilidad(c, n=600, seed=0):
                 continue
             t = normal @ (centro - p) / den
             if 0 < t < 1 and np.linalg.norm(p + t * (c - p) - centro) < radio:
+                tapado = True
+                break
+        for centro, radio in ([] if tapado else OTRAS):         # otras frutas por delante
+            d = c - p
+            f = p - centro
+            b, cc = f @ d, f @ f - radio ** 2
+            disc = b * b - (d @ d) * cc
+            if disc > 0 and 0 < (-b - math.sqrt(disc)) / (d @ d) < 1:
                 tapado = True
                 break
         visibles += not tapado
@@ -258,8 +311,13 @@ class Demo(Node):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--salida', default=os.path.expanduser('~/pika_ros/docs/percepcion_activa/img'))
+    ap.add_argument('--escena', choices=['manzano', 'prueba'], default='manzano')
+    ap.add_argument('--semilla', type=int, default=7)
     args, _ = ap.parse_known_args()
     os.makedirs(args.salida, exist_ok=True)
+    if args.escena == 'manzano':
+        escena_manzano(args.semilla)
+    prefijo = 'nbv' if args.escena == 'prueba' else f'nbv_{args.escena}'
 
     rclpy.init()
     node = Demo()
@@ -283,12 +341,12 @@ def main():
                            f'azim {mejor["azimut"]}°, visibilidad {mejor["visibilidad"]:.0%}; '
                            f'frontal: {frontal["visibilidad"]:.0%}')
 
-    # 2. Escena: rama, fruta y hojas (solo visuales, sin colisión)
-    links = cilindro_entre('rama', RAMA[0], RAMA[1], RAMA[2], '0.42 0.30 0.20 1')
-    links += cilindro_entre('pedunculo', (0.62, 0.0, 0.36), FRUTA + [0.0, 0.0, R_FRUTA * 0.8], 0.004, '0.42 0.30 0.20 1')
-    links += esfera('fruta', FRUTA, R_FRUTA, '0.80 0.12 0.10 1')
+    # 2. Escena: ramas, frutas y hojas (solo visuales, sin colisión)
+    links = ''.join(cilindro_entre(f'rama{i}', a, b, r, COLOR_MADERA) for i, (a, b, r) in enumerate(RAMAS))
+    links += esfera('fruta', FRUTA, R_FRUTA, COLOR_FRUTA)
+    links += ''.join(esfera(f'otra{i}', c, r, COLOR_FRUTA) for i, (c, r) in enumerate(OTRAS))
     for i, (c, n, r) in enumerate(HOJAS):
-        links += disco(f'hoja{i}', c, n, r, '0.20 0.55 0.18 1')
+        links += disco(f'hoja{i}', c, n, r, COLOR_HOJA)
     node.spawnear('escena_fruta', sdf_modelo('escena_fruta', links))
 
     # 3. Lo que vería la cámara desde la vista frontal y desde la elegida (brazo plegado y sin
@@ -300,8 +358,8 @@ def main():
     node.spawnear('cam_frontal', sdf_camara('cam_frontal', pose_mirando(frontal['c'], FRUTA), 1.52, 848, 480))
     node.spawnear('cam_elegida', sdf_camara('cam_elegida', pose_mirando(mejor['c'], FRUTA), 1.52, 848, 480))
     time.sleep(2.0)
-    node.foto('cam_frontal', os.path.join(args.salida, 'nbv_vista_frontal.png'))
-    node.foto('cam_elegida', os.path.join(args.salida, 'nbv_vista_elegida.png'))
+    node.foto('cam_frontal', os.path.join(args.salida, f'{prefijo}_vista_frontal.png'))
+    node.foto('cam_elegida', os.path.join(args.salida, f'{prefijo}_vista_elegida.png'))
 
     # 4. Candidatas y brazo en la mejor vista (pinza abierta), y la foto de la escena completa
     vis = ''
@@ -319,9 +377,9 @@ def main():
     time.sleep(3.0)
     node.spawnear('cam_escena', sdf_camara('cam_escena', pose_mirando((0.18, -1.05, 0.78), (0.38, 0.0, 0.26)), 0.85, 1600, 1000))
     time.sleep(2.0)
-    node.foto('cam_escena', os.path.join(args.salida, 'nbv_escena.png'))
+    node.foto('cam_escena', os.path.join(args.salida, f'{prefijo}_escena.png'))
 
-    resumen = {'fruta': FRUTA.tolist(), 'radio_fruta': R_FRUTA, 'radio_casquete': R_VISTA,
+    resumen = {'escena': args.escena, 'semilla': args.semilla, 'hojas': len(HOJAS), 'fruta': FRUTA.tolist(), 'radio_fruta': R_FRUTA, 'radio_casquete': R_VISTA,
                'candidatas': [{'elevacion': k['elevacion'], 'azimut': k['azimut'],
                                'visibilidad': round(k['visibilidad'], 3), 'alcanzable': k['alcanzable'],
                                'error_pos_mm': round(k['error_pos_mm'], 2),
@@ -331,7 +389,7 @@ def main():
                          'visibilidad': round(mejor['visibilidad'], 3)},
                'frontal': {'elevacion': frontal['elevacion'], 'azimut': frontal['azimut'],
                            'visibilidad': round(frontal['visibilidad'], 3)}}
-    with open(os.path.join(args.salida, 'nbv_escena.json'), 'w') as f:
+    with open(os.path.join(args.salida, f'{prefijo}_escena.json'), 'w') as f:
         json.dump(resumen, f, indent=1, ensure_ascii=False)
     node.destroy_node()
     rclpy.shutdown()

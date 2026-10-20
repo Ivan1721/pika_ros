@@ -5,7 +5,8 @@
 # Los números salen de nbv_escena.json. No necesita ROS.
 #
 # Uso:
-#   python3 panel_nbv.py [carpeta]      # por defecto ~/pika_ros/docs/percepcion_activa/img
+#   python3 panel_nbv.py [carpeta] [prefijo]   # por defecto ~/pika_ros/docs/percepcion_activa/img, nbv
+#   python3 panel_nbv.py ~/pika_ros/docs/percepcion_activa/img nbv_manzano
 import json
 import os
 import sys
@@ -16,12 +17,13 @@ import matplotlib.pyplot as plt  # noqa: E402
 from matplotlib.lines import Line2D  # noqa: E402
 
 CARPETA = sys.argv[1] if len(sys.argv) > 1 else os.path.expanduser('~/pika_ros/docs/percepcion_activa/img')
+PREFIJO = sys.argv[2] if len(sys.argv) > 2 else 'nbv'
 INK, MUTED, SURF = '#2b2b29', '#6b6a63', '#fcfcfb'
 ROJO, GRAFITO, GRIS = '#d91f2e', '#55595c', '#cccbc7'
 
 
 def main():
-    d = json.load(open(os.path.join(CARPETA, 'nbv_escena.json')))
+    d = json.load(open(os.path.join(CARPETA, f'{PREFIJO}_escena.json')))
     n = len(d['candidatas'])
     alc = sum(k['alcanzable'] for k in d['candidatas'])
     m, f = d['mejor'], d['frontal']
@@ -31,7 +33,7 @@ def main():
     gs = fig.add_gridspec(2, 2, width_ratios=[1.81, 1], wspace=0.03, hspace=0.16)
 
     ax = ax_escena = fig.add_subplot(gs[:, 0])
-    ax.imshow(plt.imread(os.path.join(CARPETA, 'nbv_escena.png')))
+    ax.imshow(plt.imread(os.path.join(CARPETA, f'{PREFIJO}_escena.png')))
     ax.set_anchor('E')
     ax.set_title(f'(a) Escena en Gazebo: {n} vistas candidatas a {d["radio_casquete"]:.2f} m de la fruta; '
                  f'{alc} alcanzables', loc='left', fontsize=12)
@@ -44,9 +46,9 @@ def main():
         loc='lower right', fontsize=10, framealpha=0.92)
 
     for fila, (archivo, titulo) in enumerate([
-            ('nbv_vista_frontal.png', f'(b) Vista frontal (elev. {f["elevacion"]}°, azim. {f["azimut"]}°): '
+            (f'{PREFIJO}_vista_frontal.png', f'(b) Vista frontal (elev. {f["elevacion"]}°, azim. {f["azimut"]}°): '
                                       f'{f["visibilidad"]:.0%} de la fruta visible'),
-            ('nbv_vista_elegida.png', f'(c) Vista elegida (elev. {m["elevacion"]}°, azim. {m["azimut"]}°): '
+            (f'{PREFIJO}_vista_elegida.png', f'(c) Vista elegida (elev. {m["elevacion"]}°, azim. {m["azimut"]}°): '
                                       f'{m["visibilidad"]:.0%} visible')]):
         ax = fig.add_subplot(gs[fila, 1])
         ax.imshow(plt.imread(os.path.join(CARPETA, archivo)))
@@ -56,9 +58,9 @@ def main():
 
     fig.canvas.draw()  # aplica el aspecto de las imágenes para conocer el borde real de (a)
     fig.text(ax_escena.get_position().x0, 0.015, 'Piper + Pika en pika_sim. Visibilidad: fracción de la cara de la fruta hacia la cámara '
-             'sin hojas en el camino\n(trazado de rayos sobre la geometría). Vistas (b) y (c): cámara virtual con el '
+             'sin hojas ni otras frutas en el camino\n(trazado de rayos sobre la geometría; ramas y tronco no se cuentan). Vistas (b) y (c): cámara virtual con el '
              'campo visual de la D405 (87°), sin el brazo.', fontsize=9, color=MUTED)
-    salida = os.path.join(CARPETA, 'nbv_escena_panel.png')
+    salida = os.path.join(CARPETA, f'{PREFIJO}_escena_panel.png')
     fig.savefig(salida, dpi=130, bbox_inches='tight')
     print(f'Listo: {salida}')
 
