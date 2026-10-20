@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Genera arquitectura_comunicaciones.png y .svg desde arquitectura_comunicaciones.dot.
+"""Genera el PNG y el SVG de un diagrama de arquitectura desde su .dot.
 
 El enrutado ortogonal de Graphviz (flechas con codos) trata cualquier nodo como obstáculo, así
 que las franjas de fondo de cada capa no pueden estar en el mismo dibujo. Se dibuja en dos
@@ -8,18 +8,20 @@ pasadas con el mismo marco (los nodos invisibles esquina_inf / esquina_sup) y se
   frente = todo menos FRANJAS, flechas ortogonales, fondo transparente
 
 Uso (desde cualquier carpeta; necesita Graphviz y Pillow):
-  python3 docs/arquitectura/generar_diagrama.py
+  python3 docs/arquitectura/generar_diagrama.py                      # arquitectura_comunicaciones.dot
+  python3 docs/arquitectura/generar_diagrama.py arquitectura_un_brazo.dot
 """
 import os
 import re
 import subprocess
+import sys
 import tempfile
 
 from PIL import Image
 
 AQUI = os.path.dirname(os.path.abspath(__file__))
-FUENTE = os.path.join(AQUI, 'arquitectura_comunicaciones.dot')
-SALIDA = os.path.join(AQUI, 'arquitectura_comunicaciones')
+FUENTE = os.path.join(AQUI, sys.argv[1] if len(sys.argv) > 1 else 'arquitectura_comunicaciones.dot')
+SALIDA = os.path.splitext(FUENTE)[0]
 DPI = 100
 
 
@@ -30,9 +32,9 @@ def partes(texto):
     frente = (texto[:ini] + texto[fin:]).replace('bgcolor="#fcfcfb"', 'bgcolor="transparent"')
     # El título se dibuja solo en el fondo. En el frente queda transparente, para que las dos
     # pasadas tengan exactamente el mismo tamaño.
-    titulo = frente.index('label=<<B>Pika + Piper')
+    titulo = frente.index('label=<<B>', frente.index('graph ['))
     fin_titulo = frente.index('labelloc=t];', titulo)
-    frente = (frente[:titulo] + frente[titulo:fin_titulo].replace('COLOR="#6b6a63"', 'COLOR="transparent"')
+    frente = (frente[:titulo] + re.sub(r'COLOR="#[0-9a-fA-F]{6}"', 'COLOR="transparent"', frente[titulo:fin_titulo])
               + 'labelloc=t, fontcolor="transparent"];' + frente[fin_titulo + len('labelloc=t];'):])
     return fondo, frente
 

@@ -22,6 +22,29 @@ al comienzo del `.dot`. Las etiquetas de las flechas van en `xlabel`.
 
 Las líneas y bordes punteados marcan lo que está **por confirmar** o **recomendado y no instalado**.
 
+### Versión de un brazo, sobre el remolque del Scout
+
+![Un brazo sobre el remolque del Scout](arquitectura_un_brazo.png)
+
+[SVG](arquitectura_un_brazo.svg) · fuente [arquitectura_un_brazo.dot](arquitectura_un_brazo.dot). Para
+regenerarla: `python3 generar_diagrama.py arquitectura_un_brazo.dot`.
+
+Montaje del Flujo A: un Piper con Pika Gripper, Pika Sense y Pika Station, sobre un remolque que
+tira un **AgileX Scout 2.0**. Está dibujada angosta (~780 pt): al ancho de una página de 16 cm, los
+títulos quedan en ~8 pt y los detalles en ~7 pt.
+
+Alimentación:
+- **Scout 2.0:** se alimenta con su propia batería de 24 V, junto con el **kit Pro I+D** (Jetson Xavier). No alimenta nada del remolque.
+- **Remolque:** su batería alimenta dos cosas:
+  - el **motor trifásico** que reubica la base del brazo;
+  - un **inversor DC → AC de 220 V**, conectado a una regleta donde todos los equipos se enchufan con sus transformadores de fábrica (Piper, Station, laptop, hub).
+
+Por confirmar:
+- la tensión y capacidad de la batería del remolque, y cómo se acciona el motor;
+- **el tipo de motor:** el presupuesto CSV describe el Hydronit MA6C1ST08 como un motor de 12 V DC, pero en el montaje se describe como trifásico;
+- si hay enlace de datos entre la Jetson del Scout y el laptop;
+- la fuente de 24 V del Pika Gripper (ver la sección 4).
+
 ## 1. Alimentación
 
 | Equipo | Entrada | Consumo | Fuente del dato |
