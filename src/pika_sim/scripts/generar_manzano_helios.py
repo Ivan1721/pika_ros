@@ -5,7 +5,8 @@
 #
 # Helios arma la planta completa: tronco, ramas con sus horquetas, pecíolos, hojas, pedúnculos y
 # manzanas, con texturas fotográficas de corteza, hoja y fruto. Este script:
-#   - recorta cada hoja a la silueta de la foto de hoja de manzano: Helios la dibuja como un
+#   - recorta cada hoja a la silueta de la foto de hoja de manzano y la escribe con sus dos caras
+#     (Gazebo no dibuja la cara trasera): Helios la dibuja como un
 #     rectángulo curvo con transparencia, y la cámara de profundidad de Gazebo no respeta la
 #     transparencia (vería rectángulos)
 #   - escribe madera.obj (tronco, ramas, pecíolos y pedúnculos), hojas.obj y frutas.obj, con sus .mtl
@@ -271,7 +272,9 @@ def main():
             uv_hoja, tris_hoja = malla_silueta(centro, borde)
             textura(uus[0])
         xyz = uv_a_3d(uv_hoja, [uv(u) for u in uus], [tri(u) for u in uus])
-        hojas.agregar('hoja', xyz, uv_hoja, tris_hoja)
+        # las dos caras: Gazebo no dibuja la cara trasera de un triángulo, y una hoja vista desde atrás
+        # desaparecería de la imagen (aunque siga tapando en el cálculo de visibilidad)
+        hojas.agregar('hoja', xyz, uv_hoja, np.vstack([tris_hoja, tris_hoja[:, ::-1]]))
         tris_hojas.extend(xyz[tris_hoja])
         centros_hoja.append(xyz[0])
     hojas.escribir(os.path.join(destino, 'hojas.obj'), 'hojas.mtl')

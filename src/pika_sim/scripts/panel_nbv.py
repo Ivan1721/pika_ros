@@ -61,12 +61,12 @@ def main():
 
     fig.canvas.draw()  # aplica el aspecto de las imágenes para conocer el borde real de (a)
     if HELIOS:
-        nota = ('Piper + Pika en pika_sim, manzano de Helios (muro frutal). Visibilidad: fracción de la cara de la fruta '
-                'hacia la cámara sin hojas, ramas ni otras frutas en el camino\n(trazado de rayos sobre los triángulos del '
+        nota = ('Piper + Pika en pika_sim, manzano de Helios (muro frutal). Visibilidad: fracción del área de la fruta en la imagen '
+                'sin hojas, ramas ni otras frutas delante\n(trazado de rayos sobre los triángulos del '
                 'árbol). Vistas (b) y (c): cámara virtual con el campo visual de la D405 (87°), sin el brazo.')
     else:
-        nota = ('Piper + Pika en pika_sim. Visibilidad: fracción de la cara de la fruta hacia la cámara '
-                'sin hojas ni otras frutas en el camino\n(trazado de rayos sobre la geometría; ramas y tronco no se cuentan). '
+        nota = ('Piper + Pika en pika_sim. Visibilidad: fracción del área de la fruta en la imagen '
+                'sin hojas ni otras frutas delante\n(trazado de rayos sobre la geometría; ramas y tronco no se cuentan). '
                 'Vistas (b) y (c): cámara virtual con el campo visual de la D405 (87°), sin el brazo.')
     fig.text(ax_escena.get_position().x0, 0.015, nota, fontsize=9, color=MUTED)
     salida = os.path.join(CARPETA, f'{PREFIJO}_escena_panel.png')

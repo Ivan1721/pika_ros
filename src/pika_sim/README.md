@@ -157,7 +157,7 @@ se puede ajustar aparte (`--flor`, `--cuaja`, `--racimo`, `--brote`, `--hoja`):
 | Tamaño de hoja (`hoja`) | 1,0 | 1,1 | 1,2 |
 | **Resultado:** manzanas (raleadas) | 39 (0) | 197 (57) | 264 (714) |
 | Hojas | 1318 | 2307 | 4366 |
-| Triángulos por árbol | 140 000 | 268 000 | 477 000 |
+| Triángulos dibujados por árbol (hojas con dos caras) | 235 000 | 434 000 | 791 000 |
 | Tiempo de generación | 16 s | 32 s | 80 s |
 
 Helios pone las manzanas de un mismo dardo casi en el mismo punto, y con mucha fruta se
@@ -190,11 +190,11 @@ ros2 launch pika_sim sim_piper_single.launch.py escena:=manzano arbol:=helios
 El nodo elige como objetivo la manzana cuya vista de frente se acerque más a 30 % de visibilidad
 (parámetro `visibilidad_frontal`). Ubica el árbol para que esa manzana quede en (0,55; 0; 0,30) m.
 Las manzanas candidatas son las que dejan la plataforma entre 0,4 y 1,4 m de altura.
-- **Plataforma:** el robot queda sobre una plataforma. El suelo de Gazebo se reemplaza por uno de huerto a la altura que resulta, 0,77 m con el árbol por defecto.
+- **Plataforma:** el robot queda sobre una plataforma. El suelo de Gazebo se reemplaza por uno de huerto a la altura que resulta, 0,76 m con el árbol por defecto.
 - **Hilera:** se agrega un árbol vecino a cada lado (parámetro `vecinos`).
 - **Verdad del terreno:** `/escena/verdad` trae las manzanas en `world`, la ruta de `triangulos.npz` y la transformación del árbol a `world`.
 
-Con 117 manzanas y unos 140 000 triángulos por árbol, Gazebo sigue en tiempo real (factor 1,0) y
+Con 117 manzanas y unos 235 000 triángulos dibujados por árbol, Gazebo sigue en tiempo real (factor 1,0) y
 las cámaras del gripper a 30 Hz.
 
 ### Iluminación
@@ -215,7 +215,7 @@ condiciones de luz cambian lo que ve la cámara, así que sirven para probar la 
 
 Los focos de noche van en la plataforma, a los lados y sobre el brazo, apuntando a la manzana
 objetivo. El mundo se escribe en `~/.cache/pika_sim/mundos/`. La luz no cambia la visibilidad
-geométrica que calcula la demo (47 % en todas): cambia la imagen, que es lo que tendría que
+geométrica que calcula la demo (69 % en la mejor vista, con las seis): cambia la imagen, que es lo que tendría que
 resolver un detector como YOLO.
 
 **Licencias:** PyHelios es MIT, y el núcleo de Helios y sus texturas son LGPL-2.1. Por eso el repo
@@ -232,23 +232,24 @@ asentar 15 s y se midió durante 30 s. Se midió por grupo de procesos, leyendo 
 |---|---|---|---|---|---|---|---|
 | Sin escena, sin ventanas | 137 % | 109 % | — | 0,7 GB | 34 % / 670 MB | 1,00 | 30 / 30 Hz |
 | Manzano de primitivas | 143 % | 115 % | — | 1,0 GB | 34 % / 655 MB | 0,96 | 29 / 30 Hz |
-| Helios base | 128 % | 100 % | — | 0,9 GB | 39 % / 667 MB | 1,00 | 28 / 29 Hz |
-| Helios base, `camaras:=false` | **39 %** | 21 % | — | 0,6 GB | **0 %** / 496 MB | 1,00 | — |
-| Helios media | 131 % | 104 % | — | 0,9 GB | 39 % / 676 MB | 1,00 | 30 / 28 Hz |
-| Helios alta | 132 % | 105 % | — | 1,0 GB | 40 % / 693 MB | 1,00 | 30 / 30 Hz |
-| Helios base, `luz:=noche_fria` | 120 % | 93 % | — | 0,9 GB | 30 % / 600 MB | 1,00 | 30 / 30 Hz |
-| Helios base, con Gazebo y RViz | 236 % | 102 % | 26 % + 71 % | 1,7 GB | 43 % / 921 MB | 1,00 | 30 / 30 Hz |
-| Helios alta, con Gazebo y RViz | **278 %** | 122 % | 29 % + 90 % | 1,9 GB | **66 %** / 974 MB | 0,99 | 28 / **26 Hz** |
+| Helios base | 126 % | 97 % | — | 0,9 GB | 39 % / 662 MB | 1,00 | 30 / 30 Hz |
+| Helios base, `camaras:=false` (\*) | **39 %** | 21 % | — | 0,6 GB | **0 %** / 496 MB | 1,00 | — |
+| Helios media (\*) | 131 % | 104 % | — | 0,9 GB | 39 % / 676 MB | 1,00 | 30 / 28 Hz |
+| Helios alta | 131 % | 103 % | — | 1,1 GB | 40 % / 702 MB | 1,00 | 30 / 30 Hz |
+| Helios base, `luz:=noche_fria` (\*) | 120 % | 93 % | — | 0,9 GB | 30 % / 600 MB | 1,00 | 30 / 30 Hz |
+| Helios base, con Gazebo y RViz | 250 % | 106 % | 27 % + 78 % | 1,7 GB | 50 % / 961 MB | 0,98 | 30 / 30 Hz |
+| Helios alta, con Gazebo y RViz (2 corridas) | **263–270 %** | 121–122 % | 27 % + 80–85 % | 2,0–2,2 GB | **76–78 %** / 1036 MB | 1,00 | **24 / 17–23 Hz** |
 
 La GPU incluye el escritorio, que en reposo usa 5–6 % y ~510 MB. La columna Cámaras es D405 color /
-fisheye.
+fisheye. Las filas con (\*) se midieron antes de escribir las hojas con sus dos caras, que duplicó
+los triángulos de hoja; en las filas que se repitieron, sin ventanas, el cambio fue menor a 2 %.
 
 **Lo que dicen los números:**
-- **El caso más pesado ocupa menos de un quinto del equipo:** 2,8 núcleos de 16, 1,9 GB de 15 y dos tercios de la GPU. La simulación va siempre en tiempo real.
+- **El caso más pesado ocupa menos de un quinto del CPU y la RAM:** 2,7 núcleos de 16 y 2,2 GB de 15. La GPU llega a 78 %. La física va siempre en tiempo real.
 - **Lo que cuesta son las cámaras del gripper, no el árbol.** Sin cámaras, `gzserver` baja de un núcleo a 0,2 y la GPU queda libre. No se midieron por separado, pero Gazebo dibuja la fisheye como un cubo de 6 imágenes a 30 Hz, así que es la candidata a bajar primero (resolución o frecuencia) si hace falta liberar GPU.
-- **La densidad casi no cambia el consumo:** de 140 000 a 477 000 triángulos por árbol, la CPU sube 4 % y la GPU 1 punto. La geometría es estática y la dibuja la GPU.
+- **Sin ventanas, la densidad casi no cambia el consumo:** de la densidad base a la alta, la CPU sube 4 % y la GPU 1 punto, porque la geometría es estática y la dibuja la GPU. **Con ventanas sí pesa:** `gzclient` dibuja la hilera completa y la GPU sube de 50 % a 78 %.
 - **Con ventanas, RViz gasta más que Gazebo:** 0,7–0,9 núcleos, sobre todo por la nube de la D405, de 307 000 puntos a 30 Hz. Si no se necesita, conviene desactivar el display de la nube.
-- **Margen de la captura:** con densidad alta y ventanas, la fisheye baja a 26 Hz. Sigue sobre los 25 Hz que exige `data_tools`, pero con poco margen; para grabar, conviene correr sin ventanas.
+- **Para grabar, sin ventanas:** con densidad alta, Gazebo y RViz, las cámaras bajan a 24 Hz (D405) y 17–23 Hz (fisheye), **bajo los 25 Hz que exige `data_tools`**. Sin ventanas, o con la densidad base, siguen a 30 Hz.
 - **El modo `noche` es algo más liviano:** sin sombras del sol, la GPU baja a 30 %.
 
 ## Escena de demostración de NBV
@@ -264,10 +265,10 @@ python3 ~/pika_ros/src/pika_sim/scripts/panel_nbv.py ~/pika_ros/docs/percepcion_
 1. Arma una escena:
    - `manzano` (por defecto): si la simulación se lanzó con `escena:=manzano`, usa ese árbol (lo lee de `/escena/verdad`); si no, lo genera y spawnea con `--semilla`;
    - `prueba`: una fruta y tres hojas.
-2. Genera 20 vistas candidatas en un casquete y calcula la visibilidad de cada una (trazando rayos contra las hojas y las otras frutas) y si es alcanzable (IK para la D405, con |J5| > 10°).
+2. Genera 20 vistas candidatas en un casquete y calcula la visibilidad de cada una y si es alcanzable (IK para la D405, con |J5| > 10°). La visibilidad es la fracción del área de la fruta en la imagen sin nada delante: rayos desde puntos repartidos sobre el disco de la fruta hasta la cámara, contra las hojas y las otras frutas. Coincide con la imagen de Gazebo en ±4,5 puntos (`galeria_oclusion.py`, ver el [informe de escenarios](../../docs/percepcion_activa/escenarios_simulacion.md#4-oclusión-manzanas-con-distinto-nivel-de-visibilidad)).
    - Con el manzano de Helios, los rayos se trazan contra los triángulos reales de hojas y madera.
    - Además, se descartan las vistas en que la cámara o las puntas de las garras, unos 15 cm por delante de la D405, pasarían a menos de 3 cm de tronco o ramas (`--despeje`). Pecíolos y pedúnculos no cuentan, porque ceden.
-   - El casquete es de 0,22 m con primitivas y de 0,30 m con Helios (`--radio`). Con 0,22 m, las garras quedan a unos 3 cm de la piel de la manzana, entre las ramas: con el árbol de Helios, 18 de las 20 vistas chocaban.
+   - El casquete es de 0,22 m con primitivas y de 0,30 m con Helios (`--radio`). Con 0,22 m, las garras quedan a unos 3 cm de la piel de la manzana, entre las ramas: en la primera prueba con el árbol de Helios, 18 de las 20 vistas chocaban.
 3. Lleva el brazo a la mejor vista.
 4. Guarda lo que ven la D405 (`_d405_color.png`, `_d405_profundidad.png`) y la fisheye (`_fisheye.png`) del gripper en esa vista.
 5. Guarda capturas de cámaras virtuales: la escena, la vista frontal y la elegida, más un JSON con los números.

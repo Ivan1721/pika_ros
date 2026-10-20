@@ -5,8 +5,9 @@
 # cámaras virtuales de Gazebo para documentación (no es todavía el planner del paso 4).
 #
 # Qué calcula, sin datos inventados:
-#   - visibilidad de cada candidata: fracción de la superficie de la fruta (mirando a la cámara)
-#     cuyo rayo hasta la cámara no cruza ninguna hoja (geometría conocida = política B ideal)
+#   - visibilidad de cada candidata: fracción de la fruta que vería la cámara (puntos repartidos
+#     sobre el disco que ocupa en la imagen) cuyo rayo hasta la cámara no cruza ninguna hoja
+#     (geometría conocida = política B ideal)
 #   - alcanzabilidad: IK de la D405 (posición + eje óptico hacia la fruta) sobre el URDF que
 #     publica robot_state_publisher; se acepta con error < 5 mm y < 3°, y |J5| > 10° (fuera
 #     de la singularidad de muñeca)
@@ -169,16 +170,10 @@ class Cinematica:
 def visibilidad(c, n=600, seed=0):
     if TRIS is not None:
         return escena_manzano.fraccion_visible(FRUTA, R_FRUTA, c, TRIS, OTRAS, n=n, seed=seed)
-    rng = np.random.default_rng(seed)
-    v = rng.normal(size=(n, 3))
-    v /= np.linalg.norm(v, axis=1, keepdims=True)
-    pts = FRUTA + R_FRUTA * v
-    hacia = (c - pts)
-    frente = (v * hacia).sum(1) > 0
+    # primitivas: hojas en disco y otras frutas; mismo muestreo de la fruta que con Helios
+    pts = escena_manzano.muestras_fruta(FRUTA, R_FRUTA, c, n, seed)
     visibles = 0
-    for p, ok in zip(pts, frente):
-        if not ok:
-            continue
+    for p in pts:
         tapado = False
         for centro, normal, radio in HOJAS:
             centro, normal = np.array(centro), np.array(normal) / np.linalg.norm(normal)
@@ -198,7 +193,7 @@ def visibilidad(c, n=600, seed=0):
                 tapado = True
                 break
         visibles += not tapado
-    return visibles / max(1, frente.sum())
+    return visibles / max(1, len(pts))
 
 
 def candidatas():

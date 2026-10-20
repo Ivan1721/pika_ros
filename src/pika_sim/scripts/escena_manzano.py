@@ -96,18 +96,40 @@ def _corta(o, d, tris, eps=1e-9):
     return tapado
 
 
-def fraccion_visible(centro, radio, camara, tris, esferas=(), n=600, seed=0):
-    """Fracción de la cara de la fruta que mira a la cámara cuyo rayo hasta la cámara no cruza
-    ningún triángulo ni otra fruta."""
+def muestras_fruta(centro, radio, camara, n=600, seed=0, metrica='proyectada'):
+    """Puntos de la superficie de la fruta que mira a la cámara.
+    proyectada  uniformes sobre el disco que la fruta ocupa en la imagen: la fracción visible es la
+                que vería la cámara (validado contra imágenes de Gazebo, ver galeria_oclusion.py)
+    superficie  uniformes sobre la superficie: cuenta igual el borde, que en la imagen casi no se ve"""
     rng = np.random.default_rng(seed)
-    v = rng.normal(size=(n, 3))
-    v /= np.linalg.norm(v, axis=1, keepdims=True)
-    pts = np.asarray(centro) + radio * v
-    d = np.asarray(camara) - pts
-    frente = (v * d).sum(1) > 0
-    pts, d = pts[frente], d[frente]
+    centro, camara = np.asarray(centro, float), np.asarray(camara, float)
+    if metrica == 'superficie':
+        v = rng.normal(size=(n, 3))
+        v /= np.linalg.norm(v, axis=1, keepdims=True)
+        pts = centro + radio * v
+        return pts[(v * (camara - pts)).sum(1) > 0]
+    u = centro - camara
+    u /= np.linalg.norm(u)
+    a = np.cross(u, [0.0, 0.0, 1.0] if abs(u[2]) < 0.9 else [1.0, 0.0, 0.0])
+    a /= np.linalg.norm(a)
+    b = np.cross(u, a)
+    rr, th = radio * np.sqrt(rng.uniform(0, 1, n)), rng.uniform(0, 2 * np.pi, n)
+    q = rr[:, None] * (np.cos(th)[:, None] * a + np.sin(th)[:, None] * b)
+    rayos = centro + q - camara
+    rayos /= np.linalg.norm(rayos, axis=1, keepdims=True)
+    oc = camara - centro
+    bb, cc = rayos @ oc, oc @ oc - radio ** 2
+    t = -bb - np.sqrt(np.maximum(bb * bb - cc, 0.0))          # primer corte del rayo con la fruta
+    return camara + t[:, None] * rayos
+
+
+def fraccion_visible(centro, radio, camara, tris, esferas=(), n=600, seed=0, metrica='proyectada'):
+    """Fracción de la fruta que vería la cámara: puntos de la fruta (muestras_fruta) cuyo segmento
+    hasta la cámara no cruza ningún triángulo ni otra fruta."""
+    pts = muestras_fruta(centro, radio, camara, n, seed, metrica)
     if len(pts) == 0:
         return 0.0
+    d = np.asarray(camara) - pts
     # solo los triángulos cerca del segmento fruta–cámara
     medio, largo = (np.asarray(centro) + np.asarray(camara)) / 2, np.linalg.norm(np.asarray(camara) - centro)
     if len(tris):
@@ -176,11 +198,22 @@ def cargar_helios(ruta=RUTA_HELIOS, visibilidad_frontal=0.3, vecinos=1, objetivo
             'altura_plataforma': float(-t[2]), 'visibilidad_frontal': mejor['vis']}
 
 
-def triangulos_mundo(escena):
-    """Triángulos de hojas y madera del árbol central de helios, en el marco world."""
+def triangulos_mundo(escena, todos=False):
+    """Triángulos de hojas y madera del árbol central de helios (o de toda la hilera), en world."""
     datos = np.load(os.path.join(escena['ruta'], 'triangulos.npz'))
-    tris = np.concatenate([datos['hojas'], datos['madera']]).astype(float)
-    return tris @ np.asarray(escena['R']).T + np.asarray(escena['t'])
+    tris = np.concatenate([datos['hojas'], datos['madera']]).astype(float) @ np.asarray(escena['R']).T
+    if not todos:
+        return tris + np.asarray(escena['t'])
+    return np.concatenate([tris + np.asarray(t) for t, _ in escena['poses']])
+
+
+def triangulos_verdad(verdad):
+    """Lo mismo desde el JSON de /escena/verdad: triángulos de toda la hilera en world."""
+    datos = np.load(verdad['triangulos'])
+    R = np.array(verdad['arbol_a_world']['R'])
+    tris = np.concatenate([datos['hojas'], datos['madera']]).astype(float) @ R.T
+    poses = verdad.get('poses_arboles') or [verdad['arbol_a_world']['t'] + [0.0]]
+    return np.concatenate([tris + np.array(p[:3]) for p in poses])
 
 
 # ── SDF (solo visuales) ──
@@ -261,6 +294,7 @@ def verdad_json(escena):
                   'triangulos': os.path.join(escena['ruta'], 'triangulos.npz'),
                   'arbol_a_world': {'R': np.round(escena['R'], 6).tolist(), 't': np.round(escena['t'], 4).tolist()},
                   'altura_plataforma': round(escena['altura_plataforma'], 3),
+                  'poses_arboles': [[round(float(v), 4) for v in t] + [round(float(yaw), 6)] for t, yaw in escena['poses']],
                   'visibilidad_frontal': round(escena['visibilidad_frontal'], 3)})
     return json.dumps(d)
 

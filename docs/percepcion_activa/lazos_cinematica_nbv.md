@@ -220,79 +220,23 @@ mueven más masa y tardan más.
 
 ### 5.6 Ejemplo en simulación: manzano
 
-![NBV en un manzano simulado](img/nbv_manzano_escena_panel.png)
-
-Demo con **manzanas**, el primer cultivo elegido para probar
-(`ros2 launch pika_sim sim_piper_single.launch.py escena:=manzano` y luego
-`ros2 run pika_sim escena_nbv_demo.py`, datos en
-[img/nbv_manzano_escena.json](img/nbv_manzano_escena.json)):
-- **El manzano:** un tronco, cinco ramas, 83 hojas al azar con semilla fija (la escena es reproducible) y cuatro manzanas de ~7,5 cm.
-- **La manzana objetivo** cuelga detrás de un racimo de hojas.
-- **Las candidatas:** 20 vistas en un casquete de 0,22 m.
-- **La visibilidad** se calcula trazando rayos contra las hojas y las otras manzanas; las ramas y el tronco todavía no se cuentan.
-- **La alcanzabilidad,** con IK para la D405: error < 5 mm y < 3°, y |J5| > 10°.
-
-Resultados:
-- **La vista frontal ve el 0 % de la manzana objetivo,** aunque se ven las otras: un detector encontraría frutas, pero no la que se busca.
-- **La mejor vista alcanzable** (elevación 35°, azimut −25°) la ve en un 42 %.
-- **Solo 7 de las 20 vistas son alcanzables,** igual que en la escena de prueba. Las vistas laterales (±50°), las altas (60°) y las que miran hacia arriba exigen girar la muñeca más allá de su límite de ±70°: en el Piper, la cinemática restringe tanto como la oclusión.
-- Supuesto: la D405 mira a lo largo del eje de la herramienta. Las vistas (b) y (c) son cámaras virtuales con su campo visual, sin el brazo.
-
-Con la simulación lanzada con `escena:=manzano`, la demo también guarda lo que ven las cámaras
-simuladas del gripper con el brazo en la mejor vista. Son los mismos topics que publica el
-hardware ([src/pika_sim/README.md](../../src/pika_sim/README.md#cámaras-del-gripper)):
-
-| D405 color | D405 profundidad (amarillo cerca, morado lejos; negro fuera de 7–50 cm) | Fisheye |
-|---|---|---|
-| ![D405 color](img/nbv_manzano_d405_color.png) | ![D405 profundidad](img/nbv_manzano_d405_profundidad.png) | ![Fisheye](img/nbv_manzano_fisheye.png) |
-
-La manzana objetivo queda al centro de la D405, tapada en parte por el racimo, y abajo se ven las
-garras de la pinza. El 70 % de los píxeles tiene profundidad dentro del rango de la D405, con
-mediana de 0,20 m. Es coherente con el casquete de 0,22 m, medido desde la fruta.
-
-#### Con el manzano realista de Helios
-
 ![NBV en un muro frutal de Helios](img/nbv_helios_escena_panel.png)
 
-Misma demo, con `arbol:=helios`: un muro frutal de manzano de Helios, de 640 días, semilla 7, con un
-árbol vecino a cada lado (datos en [img/nbv_helios_escena.json](img/nbv_helios_escena.json)). La
-visibilidad se calcula trazando rayos contra los triángulos reales de hojas y madera, y se
-descartan las vistas en que la cámara o las garras pasarían a menos de 3 cm de tronco o ramas.
+La demo de NBV corre sobre manzanos simulados en `pika_sim`: uno de primitivas y un muro frutal
+realista de Helios, con tres densidades de fruta y follaje y seis iluminaciones. Los escenarios, los
+resultados y la galería de oclusión están en el
+**[informe de escenarios de simulación](escenarios_simulacion.md)**. En resumen:
 
-| | Primitivas | Helios |
-|---|---|---|
-| Casquete | 0,22 m | 0,30 m |
-| Vistas alcanzables | 7 de 20 | 3 de 20 (9 descartadas por chocar con ramas) |
-| Visibilidad de frente | 0 % | 0 % (además, de frente J5 queda en la singularidad) |
-| Mejor vista alcanzable | 42 % (elev. 35°, azim. −25°) | 47 % (elev. −15°, azim. 0°) |
+| Escenario | Alcanzables | De frente | Mejor vista alcanzable |
+|---|---|---|---|
+| Primitivas (casquete 0,22 m) | 7 de 20 | 0 % | 47 % |
+| Helios base (0,30 m) | 4 de 20 | 39 % | 69 % |
+| Helios media | 3 de 20 | 12 % | 46 % |
+| Helios alta | 2 de 20 | 7 % | 96 % |
 
-- **Con 0,22 m, 18 de las 20 vistas chocaban con las ramas.** Las garras de la Pika llegan unos 15 cm por delante de la D405, así que quedan a ~3 cm de la piel de la manzana, junto al dardo del que cuelga. Con 0,30 m quedan a ~10 cm; la D405 sigue en su mejor rango (15–35 cm).
-- **En un árbol real, la madera limita tanto como la cinemática.** En el muro, el tronco y los brazos de la espaldera cruzan casi todas las líneas de aproximación.
-- Las ramas también tapan: la vista frontal ve 0 %, por un cruce de ramas delante de la manzana (vista (b) del panel).
-
-**Con más fruta y follaje** (`densidad:=media|alta`, ver
-[src/pika_sim/README.md](../../src/pika_sim/README.md#manzano-realista-helios)):
-
-![Densidades base, media y alta](img/helios_densidad_panel.png)
-
-| Densidad | Manzanas en la hilera | Vistas alcanzables | Chocan con ramas | De frente | Mejor vista |
-|---|---|---|---|---|---|
-| base | 117 | 3 de 20 | 9 | 0 % | 47 % |
-| media | 591 | 4 de 20 | 3 | 35 % | 41 % |
-| alta | 792 | 2 de 20 | 6 | 11 % | 15 % |
-
-Cada densidad es otro árbol y el nodo elige otra manzana objetivo, así que la tabla no es una
-comparación controlada. Muestra que con follaje alto la mejor vista alcanzable ya ve poco: hace
-falta más de una vista. Barrer niveles de oclusión con la misma manzana queda pendiente (paso 5).
-La iluminación no cambia estos números, solo la imagen
-([panel de las seis luces](img/helios_luces_panel.png)).
-
-| D405 color | D405 profundidad | Fisheye |
-|---|---|---|
-| ![D405 color](img/nbv_helios_d405_color.png) | ![D405 profundidad](img/nbv_helios_d405_profundidad.png) | ![Fisheye](img/nbv_helios_fisheye.png) |
-
-La primera escena de prueba, con una fruta y tres hojas en disco (`--escena prueba`), dio 0 % de
-frente y 50 % en la mejor vista: [img/nbv_escena_panel.png](img/nbv_escena_panel.png).
+- La visibilidad es la fracción del área de la manzana en la imagen que no queda tapada. Coincide con lo medido en imágenes de Gazebo con un error medio de 2,6 puntos ([informe §4](escenarios_simulacion.md#4-oclusión-manzanas-con-distinto-nivel-de-visibilidad)).
+- En el árbol real, las ramas limitan tanto como la cinemática: entre 5 y 11 vistas de 20 meten la cámara o las garras en tronco o ramas.
+- Supuesto: la D405 mira a lo largo del eje de la herramienta.
 
 ### 5.7 Medición
 

@@ -16,6 +16,7 @@ install(PROGRAMS
   scripts/escena_manzano.py
   scripts/profundidad_mm.py
   scripts/panel_nbv.py
+  scripts/galeria_oclusion.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

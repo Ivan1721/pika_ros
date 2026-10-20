@@ -8,13 +8,13 @@
   0.0,
   0.3
  ],
- "radio_fruta": 0.0489,
+ "radio_fruta": 0.0474,
  "radio_casquete": 0.3,
  "candidatas": [
   {
    "elevacion": -15,
    "azimut": -50,
-   "visibilidad": 0.478,
+   "visibilidad": 0.998,
    "alcanzable": false,
    "error_pos_mm": 71.22,
    "error_ang_deg": 23.58,
@@ -26,13 +26,13 @@
     1.22,
     -0.5958
    ],
-   "despeje_mm": 23.8,
-   "choca_madera": true
+   "despeje_mm": 58.4,
+   "choca_madera": false
   },
   {
    "elevacion": -15,
    "azimut": -25,
-   "visibilidad": 0.493,
+   "visibilidad": 0.8,
    "alcanzable": false,
    "error_pos_mm": 39.84,
    "error_ang_deg": 9.15,
@@ -44,13 +44,13 @@
     -1.22,
     -2.0944
    ],
-   "despeje_mm": 57.8,
+   "despeje_mm": 64.3,
    "choca_madera": false
   },
   {
    "elevacion": -15,
    "azimut": 0,
-   "visibilidad": 0.472,
+   "visibilidad": 0.688,
    "alcanzable": true,
    "error_pos_mm": 0.2,
    "error_ang_deg": 0.03,
@@ -62,13 +62,13 @@
     -1.22,
     2.0276
    ],
-   "despeje_mm": 69.9,
+   "despeje_mm": 64.5,
    "choca_madera": false
   },
   {
    "elevacion": -15,
    "azimut": 25,
-   "visibilidad": 0.281,
+   "visibilidad": 0.647,
    "alcanzable": false,
    "error_pos_mm": 39.84,
    "error_ang_deg": 9.16,
@@ -80,13 +80,13 @@
     -1.22,
     2.0944
    ],
-   "despeje_mm": 44.7,
+   "despeje_mm": 48.7,
    "choca_madera": false
   },
   {
    "elevacion": -15,
    "azimut": 50,
-   "visibilidad": 0.008,
+   "visibilidad": 0.552,
    "alcanzable": false,
    "error_pos_mm": 71.22,
    "error_ang_deg": 23.58,
@@ -98,13 +98,13 @@
     1.22,
     0.5957
    ],
-   "despeje_mm": 19.0,
+   "despeje_mm": 17.8,
    "choca_madera": true
   },
   {
    "elevacion": 10,
    "azimut": -50,
-   "visibilidad": 0.377,
+   "visibilidad": 0.585,
    "alcanzable": false,
    "error_pos_mm": 56.83,
    "error_ang_deg": 15.69,
@@ -116,13 +116,13 @@
     1.22,
     0.161
    ],
-   "despeje_mm": 45.3,
-   "choca_madera": false
+   "despeje_mm": 17.8,
+   "choca_madera": true
   },
   {
    "elevacion": 10,
    "azimut": -25,
-   "visibilidad": 0.32,
+   "visibilidad": 0.463,
    "alcanzable": true,
    "error_pos_mm": 0.04,
    "error_ang_deg": 0.01,
@@ -134,13 +134,13 @@
     1.1103,
     0.039
    ],
-   "despeje_mm": 72.9,
+   "despeje_mm": 46.0,
    "choca_madera": false
   },
   {
    "elevacion": 10,
    "azimut": 0,
-   "visibilidad": 0.0,
+   "visibilidad": 0.387,
    "alcanzable": false,
    "error_pos_mm": 0.02,
    "error_ang_deg": 0.0,
@@ -152,13 +152,13 @@
     -0.1391,
     0.0
    ],
-   "despeje_mm": 44.5,
+   "despeje_mm": 56.7,
    "choca_madera": false
   },
   {
    "elevacion": 10,
    "azimut": 25,
-   "visibilidad": 0.053,
+   "visibilidad": 0.512,
    "alcanzable": true,
    "error_pos_mm": 0.04,
    "error_ang_deg": 0.01,
@@ -170,13 +170,13 @@
     1.1103,
     -0.039
    ],
-   "despeje_mm": 42.3,
+   "despeje_mm": 46.6,
    "choca_madera": false
   },
   {
    "elevacion": 10,
    "azimut": 50,
-   "visibilidad": 0.016,
+   "visibilidad": 0.63,
    "alcanzable": false,
    "error_pos_mm": 56.83,
    "error_ang_deg": 15.69,
@@ -188,13 +188,13 @@
     1.22,
     -0.1608
    ],
-   "despeje_mm": 33.7,
-   "choca_madera": false
+   "despeje_mm": 24.9,
+   "choca_madera": true
   },
   {
    "elevacion": 35,
    "azimut": -50,
-   "visibilidad": 0.0,
+   "visibilidad": 0.425,
    "alcanzable": false,
    "error_pos_mm": 70.39,
    "error_ang_deg": 17.52,
@@ -206,13 +206,13 @@
     1.22,
     0.2372
    ],
-   "despeje_mm": 60.4,
-   "choca_madera": false
+   "despeje_mm": 13.6,
+   "choca_madera": true
   },
   {
    "elevacion": 35,
    "azimut": -25,
-   "visibilidad": 0.0,
+   "visibilidad": 0.067,
    "alcanzable": false,
    "error_pos_mm": 10.93,
    "error_ang_deg": 2.38,
@@ -224,14 +224,14 @@
     1.22,
     0.0212
    ],
-   "despeje_mm": 52.9,
+   "despeje_mm": 32.9,
    "choca_madera": false
   },
   {
    "elevacion": 35,
    "azimut": 0,
    "visibilidad": 0.0,
-   "alcanzable": false,
+   "alcanzable": true,
    "error_pos_mm": 0.06,
    "error_ang_deg": 0.01,
    "q": [
@@ -242,8 +242,8 @@
     0.9255,
     -0.0002
    ],
-   "despeje_mm": 14.8,
-   "choca_madera": true
+   "despeje_mm": 41.7,
+   "choca_madera": false
   },
   {
    "elevacion": 35,
@@ -260,8 +260,8 @@
     1.22,
     -0.0212
    ],
-   "despeje_mm": 21.9,
-   "choca_madera": true
+   "despeje_mm": 49.9,
+   "choca_madera": false
   },
   {
    "elevacion": 35,
@@ -278,13 +278,13 @@
     1.22,
     -0.2372
    ],
-   "despeje_mm": 33.5,
+   "despeje_mm": 40.7,
    "choca_madera": false
   },
   {
    "elevacion": 60,
    "azimut": -50,
-   "visibilidad": 0.433,
+   "visibilidad": 0.01,
    "alcanzable": false,
    "error_pos_mm": 122.34,
    "error_ang_deg": 25.95,
@@ -296,13 +296,13 @@
     1.22,
     0.1366
    ],
-   "despeje_mm": 27.3,
+   "despeje_mm": 4.6,
    "choca_madera": true
   },
   {
    "elevacion": 60,
    "azimut": -25,
-   "visibilidad": 0.151,
+   "visibilidad": 0.0,
    "alcanzable": false,
    "error_pos_mm": 91.15,
    "error_ang_deg": 18.7,
@@ -314,13 +314,13 @@
     1.22,
     0.0706
    ],
-   "despeje_mm": 6.1,
+   "despeje_mm": 25.1,
    "choca_madera": true
   },
   {
    "elevacion": 60,
    "azimut": 0,
-   "visibilidad": 0.0,
+   "visibilidad": 0.247,
    "alcanzable": false,
    "error_pos_mm": 78.6,
    "error_ang_deg": 15.84,
@@ -332,13 +332,13 @@
     1.22,
     -0.0002
    ],
-   "despeje_mm": 10.6,
+   "despeje_mm": 6.6,
    "choca_madera": true
   },
   {
    "elevacion": 60,
    "azimut": 25,
-   "visibilidad": 0.038,
+   "visibilidad": 0.765,
    "alcanzable": false,
    "error_pos_mm": 91.15,
    "error_ang_deg": 18.7,
@@ -350,13 +350,13 @@
     1.22,
     -0.0706
    ],
-   "despeje_mm": 3.8,
+   "despeje_mm": 14.5,
    "choca_madera": true
   },
   {
    "elevacion": 60,
    "azimut": 50,
-   "visibilidad": 0.187,
+   "visibilidad": 1.0,
    "alcanzable": false,
    "error_pos_mm": 122.34,
    "error_ang_deg": 25.95,
@@ -368,18 +368,18 @@
     1.22,
     -0.1367
    ],
-   "despeje_mm": 18.6,
-   "choca_madera": true
+   "despeje_mm": 41.6,
+   "choca_madera": false
   }
  ],
  "mejor": {
   "elevacion": -15,
   "azimut": 0,
-  "visibilidad": 0.472
+  "visibilidad": 0.688
  },
  "frontal": {
   "elevacion": 10,
   "azimut": 0,
-  "visibilidad": 0.0
+  "visibilidad": 0.387
  }
 }

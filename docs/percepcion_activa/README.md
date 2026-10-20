@@ -75,7 +75,7 @@ Para NBV de fruta con brazo, Gazebo es el estándar en los trabajos comparables.
 | Cámaras simuladas en la pinza Pika | ✅ paso 1: D405 (color, profundidad en 16UC1 mm, nube) y fisheye con los topics `/gripper/camera/...` del hardware, a 30 Hz. Falta confirmar hacia dónde miran las reales |
 | MoveIt para Piper + Pika | ⏳ paso 2. Existe una config para la pinza original del Piper en `piper_ros` (fuera de este repo) |
 | Escena de fruta | ✅ paso 3, primera versión: manzano reproducible por semilla (`escena:=manzano`) con la verdad del terreno en `/escena/verdad` y `/escena/frutas`. Con `arbol:=helios`, manzano realista de Helios (muro frutal con hojas, horquetas y texturas reales), con choques de cámara y garras contra las ramas. Falta barrer niveles de oclusión |
-| Planner, experimentos | ⏳ pasos 4–5. La demo de NBV ([lazos_cinematica_nbv.md §5.6](lazos_cinematica_nbv.md#56-ejemplo-en-simulación-manzano)) ya calcula visibilidad y alcanzabilidad, pero no es el planner |
+| Planner, experimentos | ⏳ pasos 4–5. La demo de NBV ya calcula visibilidad (validada contra la imagen) y alcanzabilidad, pero no es el planner. Resultados por escenario, iluminación y nivel de oclusión: [escenarios_simulacion.md](escenarios_simulacion.md) |
 | Captura teleop con `data_tools` | ⚠️ las configs `*_pika_teleop` esperan topics que este fork no publica; ver [problemas conocidos](../manuales/Manual.md#problemas-conocidos-del-software) |
 | Milo: `nbv_planner` | Diseñado en su documentación, no implementado |
 
@@ -114,6 +114,9 @@ Modelos de vegetación, escenas agrícolas, datasets publicados y material del s
 pueden usar para mejorar la escena: [recursos_publicos.md](recursos_publicos.md). Frutas candidatas
 (la primera demo es con manzanas) y su encaje con el Piper y la pinza Pika:
 [frutas_candidatas.md](frutas_candidatas.md).
+
+El informe de los escenarios de simulación (densidades, iluminación, galería de oclusión,
+consumo de recursos) está en [escenarios_simulacion.md](escenarios_simulacion.md).
 
 Los lazos de control, la cinemática (con la precisión medida de la IK), el lazo de impedancia y
 el procedimiento detallado para generar el NBV en Piper + Pika están en
