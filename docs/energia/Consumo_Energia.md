@@ -109,7 +109,7 @@ El equipo de cómputo (laptop o mini PC que ejecuta ROS 2, `colcon`, y los nodos
 
 ## 4. Plataforma del remolque (batería e inversor)
 
-Esquema eléctrico de la plataforma que tira el Scout 2.0 (montaje de un brazo, 20-10-2026). La batería y el inversor-cargador de esta tabla son **los equipos comprados y montados en la plataforma**; los datos salen de sus fichas de venta. Diagrama en [docs/arquitectura](../arquitectura/README.md#versión-de-un-brazo-sobre-el-remolque-del-scout).
+Esquema eléctrico de la plataforma remolcable (montaje de un brazo, 20-10-2026). La plataforma es autónoma: el vehículo que la remolca (hoy un Scout 2.0) tiene su propia alimentación y no le entrega energía. La batería y el inversor-cargador de esta tabla son **los equipos comprados y montados en la plataforma**; los datos salen de sus fichas de venta. Diagrama en [docs/arquitectura](../arquitectura/README.md#versión-de-un-brazo-plataforma-remolcable).
 
 | Elemento | Dato | Origen |
 | --- | --- | --- |

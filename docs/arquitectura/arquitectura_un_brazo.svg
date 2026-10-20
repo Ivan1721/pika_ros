@@ -9,7 +9,7 @@
 <g id="graph0" class="graph" transform="scale(1.39 1.39) rotate(0) translate(43 1324.72)">
 <title>un_brazo</title>
 <polygon fill="#fcfcfb" stroke="transparent" points="-43,18 -43,-1324.72 734,-1324.72 734,18 -43,18"/>
-<text text-anchor="start" x="32" y="-1290.92" font-family="DejaVu Sans" font-weight="bold" font-size="16.00">Un brazo sobre el remolque del Scout: alimentación y comunicaciones</text>
+<text text-anchor="start" x="37.5" y="-1290.92" font-family="DejaVu Sans" font-weight="bold" font-size="16.00">Plataforma remolcable con un brazo: alimentación y comunicaciones</text>
 <text text-anchor="start" x="-17" y="-1278.12" font-family="DejaVu Sans" font-size="12.00" fill="#6b6a63">Flujo A: 1 Piper + Pika Gripper + Pika Sense · rutas udev: Sense ttyUSB50/video50 · Gripper ttyUSB60/video60 · CAN can0</text>
 <!-- esquina_inf -->
 <!-- esquina_sup -->
@@ -17,13 +17,13 @@
 <g id="node3" class="node">
 <title>f_scout</title>
 <path fill="none" stroke="#55585c" stroke-width="1.4" d="M679,-1267.36C679,-1267.36 12,-1267.36 12,-1267.36 6,-1267.36 0,-1261.36 0,-1255.36 0,-1255.36 0,-1185.36 0,-1185.36 0,-1179.36 6,-1173.36 12,-1173.36 12,-1173.36 679,-1173.36 679,-1173.36 685,-1173.36 691,-1179.36 691,-1185.36 691,-1185.36 691,-1255.36 691,-1255.36 691,-1261.36 685,-1267.36 679,-1267.36"/>
-<text text-anchor="start" x="9.5" y="-1252.96" font-family="DejaVu Sans" font-weight="bold" font-size="13.00" fill="#2b2b29">0 · Base móvil (alimentación propia)</text>
+<text text-anchor="start" x="9.5" y="-1252.96" font-family="DejaVu Sans" font-weight="bold" font-size="13.00" fill="#2b2b29">0 · Vehículo tractor (intercambiable, sistema independiente)</text>
 </g>
 <!-- f_energia -->
 <g id="node4" class="node">
 <title>f_energia</title>
 <path fill="none" stroke="#c8323f" stroke-width="1.4" d="M679,-1147.36C679,-1147.36 12,-1147.36 12,-1147.36 6,-1147.36 0,-1141.36 0,-1135.36 0,-1135.36 0,-785.36 0,-785.36 0,-779.36 6,-773.36 12,-773.36 12,-773.36 679,-773.36 679,-773.36 685,-773.36 691,-779.36 691,-785.36 691,-785.36 691,-1135.36 691,-1135.36 691,-1141.36 685,-1147.36 679,-1147.36"/>
-<text text-anchor="start" x="9.5" y="-1132.96" font-family="DejaVu Sans" font-weight="bold" font-size="13.00" fill="#c8323f">1 · Alimentación del remolque (batería LiFePO4 + inversor&#45;cargador)</text>
+<text text-anchor="start" x="9.5" y="-1132.96" font-family="DejaVu Sans" font-weight="bold" font-size="13.00" fill="#c8323f">1 · Alimentación propia de la plataforma (batería LiFePO4 + inversor&#45;cargador)</text>
 </g>
 <!-- f_equipos -->
 <g id="node5" class="node">
@@ -45,26 +45,26 @@
 </g>
 
 <title>un_brazo</title>
-<text text-anchor="start" x="32.93" y="-1290.92" font-family="DejaVu Sans" font-weight="bold" font-size="16.00" fill="#fffffe">Un brazo sobre el remolque del Scout: alimentación y comunicaciones</text>
+<text text-anchor="start" x="38.43" y="-1290.92" font-family="DejaVu Sans" font-weight="bold" font-size="16.00" fill="#fffffe">Plataforma remolcable con un brazo: alimentación y comunicaciones</text>
 <text text-anchor="start" x="-16.07" y="-1278.12" font-family="DejaVu Sans" font-size="12.00" fill="#fffffe">Flujo A: 1 Piper + Pika Gripper + Pika Sense · rutas udev: Sense ttyUSB50/video50 · Gripper ttyUSB60/video60 · CAN can0</text>
 <!-- esquina_inf -->
 <!-- esquina_sup -->
 <!-- scout -->
 <g id="frente_node3" class="node">
 <title>scout</title>
-<path fill="#1d2124" stroke="#1d2124" stroke-width="1.2" d="M248.5,-1228.36C248.5,-1228.36 126.5,-1228.36 126.5,-1228.36 120.5,-1228.36 114.5,-1222.36 114.5,-1216.36 114.5,-1216.36 114.5,-1194.36 114.5,-1194.36 114.5,-1188.36 120.5,-1182.36 126.5,-1182.36 126.5,-1182.36 248.5,-1182.36 248.5,-1182.36 254.5,-1182.36 260.5,-1188.36 260.5,-1194.36 260.5,-1194.36 260.5,-1216.36 260.5,-1216.36 260.5,-1222.36 254.5,-1228.36 248.5,-1228.36"/>
-<text text-anchor="start" x="123.5" y="-1214.16" font-family="DejaVu Sans" font-weight="bold" font-size="14.00" fill="white">AgileX Scout 2.0</text>
-<text text-anchor="start" x="130" y="-1201.76" font-family="DejaVu Sans" font-size="12.00" fill="white">batería propia 24 V</text>
-<text text-anchor="start" x="136" y="-1189.76" font-family="DejaVu Sans" font-size="12.00" fill="white">tira del remolque</text>
+<path fill="#1d2124" stroke="#1d2124" stroke-width="1.2" d="M274,-1228.36C274,-1228.36 101,-1228.36 101,-1228.36 95,-1228.36 89,-1222.36 89,-1216.36 89,-1216.36 89,-1194.36 89,-1194.36 89,-1188.36 95,-1182.36 101,-1182.36 101,-1182.36 274,-1182.36 274,-1182.36 280,-1182.36 286,-1188.36 286,-1194.36 286,-1194.36 286,-1216.36 286,-1216.36 286,-1222.36 280,-1228.36 274,-1228.36"/>
+<text text-anchor="start" x="124.5" y="-1214.16" font-family="DejaVu Sans" font-weight="bold" font-size="14.00" fill="white">Vehículo tractor</text>
+<text text-anchor="start" x="122" y="-1201.76" font-family="DejaVu Sans" font-size="12.00" fill="white">p. ej. AgileX Scout 2.0</text>
+<text text-anchor="start" x="98" y="-1189.76" font-family="DejaVu Sans" font-size="12.00" fill="white">cualquiera capaz de remolcar</text>
 </g>
 <!-- jetson -->
 <g id="frente_node4" class="node">
 <title>jetson</title>
-<path fill="#f1f1ef" stroke="#55585c" stroke-width="1.2" d="M630,-1228.36C630,-1228.36 425,-1228.36 425,-1228.36 419,-1228.36 413,-1222.36 413,-1216.36 413,-1216.36 413,-1194.36 413,-1194.36 413,-1188.36 419,-1182.36 425,-1182.36 425,-1182.36 630,-1182.36 630,-1182.36 636,-1182.36 642,-1188.36 642,-1194.36 642,-1194.36 642,-1216.36 642,-1216.36 642,-1222.36 636,-1228.36 630,-1228.36"/>
-<text text-anchor="start" x="431" y="-1214.16" font-family="DejaVu Sans" font-weight="bold" font-size="14.00" fill="#2b2b29">Kit Pro I+D</text>
-<text text-anchor="start" x="518" y="-1214.16" font-family="DejaVu Sans" font-size="14.00" fill="#2b2b29"> · Jetson Xavier</text>
-<text text-anchor="start" x="455.5" y="-1201.76" font-family="DejaVu Sans" font-size="12.00" fill="#2b2b29">alimentado por el Scout</text>
-<text text-anchor="start" x="422" y="-1189.76" font-family="DejaVu Sans" font-size="12.00" fill="#2b2b29">enlace con el laptop: por confirmar</text>
+<path fill="none" stroke="#55585c" stroke-width="1.2" stroke-dasharray="5,2" d="M653,-1234.36C653,-1234.36 352,-1234.36 352,-1234.36 346,-1234.36 340,-1228.36 340,-1222.36 340,-1222.36 340,-1188.36 340,-1188.36 340,-1182.36 346,-1176.36 352,-1176.36 352,-1176.36 653,-1176.36 653,-1176.36 659,-1176.36 665,-1182.36 665,-1188.36 665,-1188.36 665,-1222.36 665,-1222.36 665,-1228.36 659,-1234.36 653,-1234.36"/>
+<text text-anchor="start" x="381.5" y="-1220.16" font-family="DejaVu Sans" font-weight="bold" font-size="14.00" fill="#2b2b29">Sin conexión con la plataforma</text>
+<text text-anchor="start" x="349" y="-1207.76" font-family="DejaVu Sans" font-size="12.00" fill="#2b2b29">alimentación y control propios (Scout: batería 24 V,</text>
+<text text-anchor="start" x="414.5" y="-1195.76" font-family="DejaVu Sans" font-size="12.00" fill="#2b2b29">kit Pro I+D con Jetson Xavier)</text>
+<text text-anchor="start" x="380" y="-1183.76" font-family="DejaVu Sans" font-size="12.00" fill="#2b2b29">ni eléctrica ni de datos: solo el enganche</text>
 </g>
 <!-- bateria -->
 <g id="frente_node5" class="node">
@@ -292,126 +292,111 @@
 <text text-anchor="start" x="540.5" y="-71.56" font-family="DejaVu Sans" font-size="11.00" fill="#2b2b29">── software</text>
 <text text-anchor="start" x="540.5" y="-58.56" font-family="DejaVu Sans" font-size="11.00" fill="#2b2b29">punteado: por confirmar</text>
 </g>
-<!-- scout&#45;&gt;jetson -->
-<g id="frente_edge1" class="edge">
-<title>scout&#45;&gt;jetson</title>
-<path fill="none" stroke="#c8323f" stroke-width="2.2" d="M260.86,-1213C260.86,-1213 404.81,-1213 404.81,-1213"/>
-<polygon fill="#c8323f" stroke="#c8323f" stroke-width="2.2" points="404.81,-1215.8 412.81,-1213 404.81,-1210.2 404.81,-1215.8"/>
-<text text-anchor="middle" x="320.33" y="-1216.2" font-family="DejaVu Sans" font-size="11.00" fill="#c8323f">24 V</text>
-</g>
-<!-- scout&#45;&gt;jetson -->
-<g id="frente_edge17" class="edge">
-<title>scout&#45;&gt;jetson</title>
-<path fill="none" stroke="#1d2124" stroke-width="2.4" d="M268.86,-1197C268.86,-1197 404.81,-1197 404.81,-1197"/>
-<polygon fill="#1d2124" stroke="#1d2124" stroke-width="2.4" points="404.81,-1199.8 412.81,-1197 404.81,-1194.2 404.81,-1199.8"/>
-<polygon fill="#1d2124" stroke="#1d2124" stroke-width="2.4" points="268.86,-1194.2 260.86,-1197 268.86,-1199.8 268.86,-1194.2"/>
-<text text-anchor="middle" x="324.83" y="-1200.2" font-family="DejaVu Sans" font-size="11.00" fill="#1d2124">CAN</text>
-</g>
 <!-- scout&#45;&gt;bateria -->
-<g id="frente_edge30" class="edge">
+<g id="frente_edge28" class="edge">
 <title>scout&#45;&gt;bateria</title>
-<path fill="none" stroke="#a9acb0" stroke-width="1.5" stroke-dasharray="1,5" d="M187.5,-1182.09C187.5,-1162.14 187.5,-1133.54 187.5,-1113.6"/>
-<text text-anchor="middle" x="128" y="-1151.04" font-family="DejaVu Sans" font-size="11.00" fill="#6b6a63">enganche (mecánico)</text>
+<path fill="none" stroke="#55585c" stroke-width="2.2" stroke-dasharray="1,5" d="M187.5,-1182.09C187.5,-1162.14 187.5,-1133.54 187.5,-1113.6"/>
+<text text-anchor="middle" x="115" y="-1151.04" font-family="DejaVu Sans" font-size="11.00" fill="#6b6a63">enganche (solo mecánico)</text>
 </g>
 <!-- bateria&#45;&gt;motor -->
-<g id="frente_edge2" class="edge">
+<g id="frente_edge1" class="edge">
 <title>bateria&#45;&gt;motor</title>
 <path fill="none" stroke="#c8323f" stroke-width="2.2" d="M295.02,-1090C295.02,-1090 455.95,-1090 455.95,-1090"/>
 <polygon fill="#c8323f" stroke="#c8323f" stroke-width="2.2" points="455.95,-1092.8 463.95,-1090 455.95,-1087.2 455.95,-1092.8"/>
 <text text-anchor="middle" x="404.99" y="-1081.2" font-family="DejaVu Sans" font-size="11.00" fill="#c8323f">12 V DC · prot. 225 A</text>
 </g>
 <!-- bateria&#45;&gt;inversor -->
-<g id="frente_edge3" class="edge">
+<g id="frente_edge2" class="edge">
 <title>bateria&#45;&gt;inversor</title>
 <path fill="none" stroke="#c8323f" stroke-width="2.2" d="M187.5,-1066.88C187.5,-1066.88 187.5,-1026.57 187.5,-1026.57"/>
 <polygon fill="#c8323f" stroke="#c8323f" stroke-width="2.2" points="190.3,-1026.57 187.5,-1018.57 184.7,-1026.57 190.3,-1026.57"/>
 <text text-anchor="middle" x="138.5" y="-1049.92" font-family="DejaVu Sans" font-size="11.00" fill="#c8323f">12 V · prot. 225 A</text>
 </g>
 <!-- inversor&#45;&gt;pdu -->
-<g id="frente_edge5" class="edge">
+<g id="frente_edge4" class="edge">
 <title>inversor&#45;&gt;pdu</title>
 <path fill="none" stroke="#c8323f" stroke-width="2.2" d="M282.75,-972.13C282.75,-972.13 282.75,-941.56 282.75,-941.56"/>
 <polygon fill="#c8323f" stroke="#c8323f" stroke-width="2.2" points="285.55,-941.56 282.75,-933.56 279.95,-941.56 285.55,-941.56"/>
 <text text-anchor="middle" x="240.75" y="-960.05" font-family="DejaVu Sans" font-size="11.00" fill="#c8323f">230 V (DIN ×2)</text>
 </g>
 <!-- red&#45;&gt;inversor -->
-<g id="frente_edge4" class="edge">
+<g id="frente_edge3" class="edge">
 <title>red&#45;&gt;inversor</title>
 <path fill="none" stroke="#c8323f" stroke-width="2.2" stroke-dasharray="5,2" d="M450.55,-995C450.55,-995 298.29,-995 298.29,-995"/>
 <polygon fill="#c8323f" stroke="#c8323f" stroke-width="2.2" points="298.29,-992.2 290.29,-995 298.29,-997.8 298.29,-992.2"/>
 <text text-anchor="middle" x="374.42" y="-986.2" font-family="DejaVu Sans" font-size="11.00" fill="#c8323f">entrada de carga (DIN)</text>
 </g>
 <!-- pdu&#45;&gt;fte_piper -->
-<g id="frente_edge6" class="edge">
+<g id="frente_edge5" class="edge">
 <title>pdu&#45;&gt;fte_piper</title>
 <path fill="none" stroke="#c8323f" stroke-width="2.2" d="M275.36,-910C205.35,-910 121,-910 121,-910 121,-910 121,-846.5 121,-846.5"/>
 <polygon fill="#c8323f" stroke="#c8323f" stroke-width="2.2" points="123.8,-846.5 121,-838.5 118.2,-846.5 123.8,-846.5"/>
 </g>
 <!-- pdu&#45;&gt;fte_hub -->
-<g id="frente_edge7" class="edge">
+<g id="frente_edge6" class="edge">
 <title>pdu&#45;&gt;fte_hub</title>
 <path fill="none" stroke="#c8323f" stroke-width="2.2" d="M304.75,-887.18C304.75,-887.18 304.75,-846.64 304.75,-846.64"/>
 <polygon fill="#c8323f" stroke="#c8323f" stroke-width="2.2" points="307.55,-846.64 304.75,-838.64 301.95,-846.64 307.55,-846.64"/>
 </g>
 <!-- pdu&#45;&gt;fte_pc -->
-<g id="frente_edge8" class="edge">
+<g id="frente_edge7" class="edge">
 <title>pdu&#45;&gt;fte_pc</title>
 <path fill="none" stroke="#c8323f" stroke-width="2.2" d="M407,-887.18C407,-887.18 407,-846.64 407,-846.64"/>
 <polygon fill="#c8323f" stroke="#c8323f" stroke-width="2.2" points="409.8,-846.64 407,-838.64 404.2,-846.64 409.8,-846.64"/>
 </g>
 <!-- pdu&#45;&gt;fte_st -->
-<g id="frente_edge9" class="edge">
+<g id="frente_edge8" class="edge">
 <title>pdu&#45;&gt;fte_st</title>
 <path fill="none" stroke="#c8323f" stroke-width="2.2" d="M459.63,-910C519.7,-910 587,-910 587,-910 587,-910 587,-846.5 587,-846.5"/>
 <polygon fill="#c8323f" stroke="#c8323f" stroke-width="2.2" points="589.8,-846.5 587,-838.5 584.2,-846.5 589.8,-846.5"/>
 </g>
 <!-- fte_piper&#45;&gt;estop -->
-<g id="frente_edge10" class="edge">
+<g id="frente_edge9" class="edge">
 <title>fte_piper&#45;&gt;estop</title>
 <path fill="none" stroke="#c8323f" stroke-width="2.2" d="M77.67,-802.15C77.67,-802.15 77.67,-756.55 77.67,-756.55"/>
 <polygon fill="#c8323f" stroke="#c8323f" stroke-width="2.2" points="80.47,-756.55 77.67,-748.55 74.87,-756.55 80.47,-756.55"/>
 <text text-anchor="middle" x="65.17" y="-782.55" font-family="DejaVu Sans" font-size="11.00" fill="#c8323f">24 V</text>
 </g>
 <!-- fte_piper&#45;&gt;gripper -->
-<g id="frente_edge12" class="edge">
+<g id="frente_edge11" class="edge">
 <title>fte_piper&#45;&gt;gripper</title>
 <path fill="none" stroke="#c8323f" stroke-width="2.2" stroke-dasharray="5,2" d="M117.33,-802.17C117.33,-789.55 117.33,-775 117.33,-775 117.33,-775 267.5,-775 267.5,-775 267.5,-775 267.5,-666.42 267.5,-666.42"/>
 <polygon fill="#c8323f" stroke="#c8323f" stroke-width="2.2" points="270.3,-666.42 267.5,-658.42 264.7,-666.42 270.3,-666.42"/>
 <text text-anchor="middle" x="165.62" y="-778.2" font-family="DejaVu Sans" font-size="11.00" fill="#c8323f">24 V XT30 por confirmar</text>
 </g>
 <!-- fte_hub&#45;&gt;hub -->
-<g id="frente_edge13" class="edge">
+<g id="frente_edge12" class="edge">
 <title>fte_hub&#45;&gt;hub</title>
 <path fill="none" stroke="#c8323f" stroke-width="2.2" d="M329.5,-802.26C329.5,-802.26 329.5,-481.57 329.5,-481.57"/>
 <polygon fill="#c8323f" stroke="#c8323f" stroke-width="2.2" points="332.3,-481.57 329.5,-473.57 326.7,-481.57 332.3,-481.57"/>
 <text text-anchor="middle" x="337.5" y="-645.11" font-family="DejaVu Sans" font-size="11.00" fill="#c8323f">PD</text>
 </g>
 <!-- fte_pc&#45;&gt;lrs -->
-<g id="frente_edge15" class="edge">
+<g id="frente_edge14" class="edge">
 <title>fte_pc&#45;&gt;lrs</title>
 <path fill="none" stroke="#c8323f" stroke-width="2.2" d="M484.5,-802.13C484.5,-802.13 484.5,-366.61 484.5,-366.61"/>
 <polygon fill="#c8323f" stroke="#c8323f" stroke-width="2.2" points="487.3,-366.61 484.5,-358.61 481.7,-366.61 487.3,-366.61"/>
 </g>
 <!-- fte_st&#45;&gt;station -->
-<g id="frente_edge14" class="edge">
+<g id="frente_edge13" class="edge">
 <title>fte_st&#45;&gt;station</title>
 <path fill="none" stroke="#c8323f" stroke-width="2.2" d="M597.5,-802.28C597.5,-802.28 597.5,-666.39 597.5,-666.39"/>
 <polygon fill="#c8323f" stroke="#c8323f" stroke-width="2.2" points="600.3,-666.39 597.5,-658.39 594.7,-666.39 600.3,-666.39"/>
 <text text-anchor="middle" x="585" y="-737.54" font-family="DejaVu Sans" font-size="11.00" fill="#c8323f">12 V</text>
 </g>
 <!-- estop&#45;&gt;piper -->
-<g id="frente_edge11" class="edge">
+<g id="frente_edge10" class="edge">
 <title>estop&#45;&gt;piper</title>
 <path fill="none" stroke="#c8323f" stroke-width="2.2" d="M97.5,-712.04C97.5,-712.04 97.5,-666.68 97.5,-666.68"/>
 <polygon fill="#c8323f" stroke="#c8323f" stroke-width="2.2" points="100.3,-666.68 97.5,-658.68 94.7,-666.68 100.3,-666.68"/>
 </g>
 <!-- piper&#45;&gt;gripper -->
-<g id="frente_edge29" class="edge">
+<g id="frente_edge27" class="edge">
 <title>piper&#45;&gt;gripper</title>
 <path fill="none" stroke="#a9acb0" stroke-width="1.5" stroke-dasharray="1,5" d="M141.72,-635C162.48,-635 187.49,-635 209.72,-635"/>
 </g>
 <!-- piper&#45;&gt;usbcan -->
-<g id="frente_edge16" class="edge">
+<g id="frente_edge15" class="edge">
 <title>piper&#45;&gt;usbcan</title>
 <path fill="none" stroke="#1d2124" stroke-width="2.4" d="M97.5,-604.2C97.5,-604.2 97.5,-481.54 97.5,-481.54"/>
 <polygon fill="#1d2124" stroke="#1d2124" stroke-width="2.4" points="100.3,-481.54 97.5,-473.54 94.7,-481.54 100.3,-481.54"/>
@@ -419,7 +404,7 @@
 <text text-anchor="middle" x="61.5" y="-546.07" font-family="DejaVu Sans" font-size="11.00" fill="#1d2124">CAN 1 Mbit/s</text>
 </g>
 <!-- gripper&#45;&gt;hub -->
-<g id="frente_edge18" class="edge">
+<g id="frente_edge16" class="edge">
 <title>gripper&#45;&gt;hub</title>
 <path fill="none" stroke="#55585c" stroke-width="2.4" d="M294.75,-604.2C294.75,-604.2 294.75,-481.54 294.75,-481.54"/>
 <polygon fill="#55585c" stroke="#55585c" stroke-width="2.4" points="297.55,-481.54 294.75,-473.54 291.95,-481.54 297.55,-481.54"/>
@@ -427,12 +412,12 @@
 <text text-anchor="middle" x="272.75" y="-546.07" font-family="DejaVu Sans" font-size="11.00" fill="#55585c">USB 3.0</text>
 </g>
 <!-- sense&#45;&gt;tracker -->
-<g id="frente_edge28" class="edge">
+<g id="frente_edge26" class="edge">
 <title>sense&#45;&gt;tracker</title>
 <path fill="none" stroke="#a9acb0" stroke-width="1.5" stroke-dasharray="1,5" d="M455,-612.04C455,-586.76 455,-550 455,-550 455,-550 503.92,-550 544.44,-550"/>
 </g>
 <!-- sense&#45;&gt;hub -->
-<g id="frente_edge19" class="edge">
+<g id="frente_edge17" class="edge">
 <title>sense&#45;&gt;hub</title>
 <path fill="none" stroke="#55585c" stroke-width="2.4" d="M403,-604.2C403,-604.2 403,-481.54 403,-481.54"/>
 <polygon fill="#55585c" stroke="#55585c" stroke-width="2.4" points="405.8,-481.54 403,-473.54 400.2,-481.54 405.8,-481.54"/>
@@ -440,21 +425,21 @@
 <text text-anchor="middle" x="381" y="-546.07" font-family="DejaVu Sans" font-size="11.00" fill="#55585c">USB 3.0</text>
 </g>
 <!-- station&#45;&gt;tracker -->
-<g id="frente_edge26" class="edge">
+<g id="frente_edge24" class="edge">
 <title>station&#45;&gt;tracker</title>
 <path fill="none" stroke="#c8323f" stroke-width="1.5" stroke-dasharray="1,5" d="M597.5,-612.13C597.5,-612.13 597.5,-576.44 597.5,-576.44"/>
 <polygon fill="#c8323f" stroke="#c8323f" stroke-width="1.5" points="600.3,-576.44 597.5,-568.44 594.7,-576.44 600.3,-576.44"/>
 <text text-anchor="middle" x="592" y="-597.49" font-family="DejaVu Sans" font-size="11.00" fill="#c8323f">IR</text>
 </g>
 <!-- tracker&#45;&gt;dongle -->
-<g id="frente_edge27" class="edge">
+<g id="frente_edge25" class="edge">
 <title>tracker&#45;&gt;dongle</title>
 <path fill="none" stroke="#8a8d91" stroke-width="1.5" stroke-dasharray="1,5" d="M597.5,-532.04C597.5,-532.04 597.5,-481.62 597.5,-481.62"/>
 <polygon fill="#8a8d91" stroke="#8a8d91" stroke-width="1.5" points="600.3,-481.62 597.5,-473.62 594.7,-481.62 600.3,-481.62"/>
 <text text-anchor="middle" x="575.5" y="-510.03" font-family="DejaVu Sans" font-size="11.00" fill="#6b6a63">2,4 GHz</text>
 </g>
 <!-- usbcan&#45;&gt;hub -->
-<g id="frente_edge22" class="edge">
+<g id="frente_edge20" class="edge">
 <title>usbcan&#45;&gt;hub</title>
 <path fill="none" stroke="#8a8d91" stroke-width="1.7" d="M150.19,-461C150.19,-461 256.28,-461 256.28,-461"/>
 <polygon fill="#8a8d91" stroke="#8a8d91" stroke-width="1.7" points="256.28,-463.8 264.28,-461 256.28,-458.2 256.28,-463.8"/>
@@ -462,34 +447,34 @@
 <text text-anchor="middle" x="181.24" y="-464.2" font-family="DejaVu Sans" font-size="11.00" fill="#6b6a63">USB 2.0</text>
 </g>
 <!-- hub&#45;&gt;socketcan -->
-<g id="frente_edge24" class="edge">
+<g id="frente_edge22" class="edge">
 <title>hub&#45;&gt;socketcan</title>
 <path fill="none" stroke="#8a8d91" stroke-width="1.7" d="M256.48,-449C256.48,-449 146.25,-449 146.25,-449 146.25,-449 146.25,-366.79 146.25,-366.79"/>
 <polygon fill="#8a8d91" stroke="#8a8d91" stroke-width="1.7" points="256.48,-451.8 264.48,-449 256.48,-446.2 256.48,-451.8"/>
 <polygon fill="#8a8d91" stroke="#8a8d91" stroke-width="1.7" points="149.05,-366.79 146.25,-358.79 143.45,-366.79 149.05,-366.79"/>
 </g>
 <!-- hub&#45;&gt;udev -->
-<g id="frente_edge20" class="edge">
+<g id="frente_edge18" class="edge">
 <title>hub&#45;&gt;udev</title>
 <path fill="none" stroke="#55585c" stroke-width="2.4" d="M291.75,-429.14C291.75,-429.14 291.75,-366.5 291.75,-366.5"/>
 <polygon fill="#55585c" stroke="#55585c" stroke-width="2.4" points="294.55,-366.5 291.75,-358.5 288.95,-366.5 294.55,-366.5"/>
 <polygon fill="#55585c" stroke="#55585c" stroke-width="2.4" points="288.95,-429.14 291.75,-437.14 294.55,-429.14 288.95,-429.14"/>
 </g>
 <!-- hub&#45;&gt;lrs -->
-<g id="frente_edge21" class="edge">
+<g id="frente_edge19" class="edge">
 <title>hub&#45;&gt;lrs</title>
 <path fill="none" stroke="#55585c" stroke-width="2.4" d="M398,-429.14C398,-429.14 398,-366.5 398,-366.5"/>
 <polygon fill="#55585c" stroke="#55585c" stroke-width="2.4" points="400.8,-366.5 398,-358.5 395.2,-366.5 400.8,-366.5"/>
 <polygon fill="#55585c" stroke="#55585c" stroke-width="2.4" points="395.2,-429.14 398,-437.14 400.8,-429.14 395.2,-429.14"/>
 </g>
 <!-- hub&#45;&gt;hidraw -->
-<g id="frente_edge25" class="edge">
+<g id="frente_edge23" class="edge">
 <title>hub&#45;&gt;hidraw</title>
 <path fill="none" stroke="#8a8d91" stroke-width="1.7" d="M430.56,-449C464.97,-449 497,-449 497,-449 497,-449 497,-340 497,-340 497,-340 553.22,-340 553.22,-340"/>
 <polygon fill="#8a8d91" stroke="#8a8d91" stroke-width="1.7" points="553.22,-342.8 561.22,-340 553.22,-337.2 553.22,-342.8"/>
 </g>
 <!-- dongle&#45;&gt;hub -->
-<g id="frente_edge23" class="edge">
+<g id="frente_edge21" class="edge">
 <title>dongle&#45;&gt;hub</title>
 <path fill="none" stroke="#8a8d91" stroke-width="1.7" d="M530.25,-461C530.25,-461 438.91,-461 438.91,-461"/>
 <polygon fill="#8a8d91" stroke="#8a8d91" stroke-width="1.7" points="438.91,-458.2 430.91,-461 438.91,-463.8 438.91,-458.2"/>
@@ -497,74 +482,74 @@
 <text text-anchor="middle" x="462.58" y="-464.2" font-family="DejaVu Sans" font-size="11.00" fill="#6b6a63">USB 2.0</text>
 </g>
 <!-- socketcan&#45;&gt;n_piper -->
-<g id="frente_edge31" class="edge">
+<g id="frente_edge29" class="edge">
 <title>socketcan&#45;&gt;n_piper</title>
 <path fill="none" stroke="#2b2b29" stroke-width="1.1" d="M97.5,-322.02C97.5,-322.02 97.5,-266.59 97.5,-266.59"/>
 <polygon fill="#2b2b29" stroke="#2b2b29" stroke-width="1.1" points="100.3,-266.59 97.5,-258.59 94.7,-266.59 100.3,-266.59"/>
 </g>
 <!-- udev&#45;&gt;n_serial -->
-<g id="frente_edge32" class="edge">
+<g id="frente_edge30" class="edge">
 <title>udev&#45;&gt;n_serial</title>
 <path fill="none" stroke="#2b2b29" stroke-width="1.1" d="M267.5,-322.02C267.5,-322.02 267.5,-266.59 267.5,-266.59"/>
 <polygon fill="#2b2b29" stroke="#2b2b29" stroke-width="1.1" points="270.3,-266.59 267.5,-258.59 264.7,-266.59 270.3,-266.59"/>
 </g>
 <!-- udev&#45;&gt;n_fish -->
-<g id="frente_edge33" class="edge">
+<g id="frente_edge31" class="edge">
 <title>udev&#45;&gt;n_fish</title>
 <path fill="none" stroke="#2b2b29" stroke-width="1.1" d="M319.26,-340C335.13,-340 348.5,-340 348.5,-340 348.5,-340 348.5,-171.67 348.5,-171.67"/>
 <polygon fill="#2b2b29" stroke="#2b2b29" stroke-width="1.1" points="351.3,-171.67 348.5,-163.67 345.7,-171.67 351.3,-171.67"/>
 </g>
 <!-- lrs&#45;&gt;n_rs -->
-<g id="frente_edge34" class="edge">
+<g id="frente_edge32" class="edge">
 <title>lrs&#45;&gt;n_rs</title>
 <path fill="none" stroke="#2b2b29" stroke-width="1.1" d="M427.5,-322.02C427.5,-322.02 427.5,-266.59 427.5,-266.59"/>
 <polygon fill="#2b2b29" stroke="#2b2b29" stroke-width="1.1" points="430.3,-266.59 427.5,-258.59 424.7,-266.59 430.3,-266.59"/>
 </g>
 <!-- hidraw&#45;&gt;n_loc -->
-<g id="frente_edge35" class="edge">
+<g id="frente_edge33" class="edge">
 <title>hidraw&#45;&gt;n_loc</title>
 <path fill="none" stroke="#2b2b29" stroke-width="1.1" d="M597.5,-322.02C597.5,-322.02 597.5,-266.59 597.5,-266.59"/>
 <polygon fill="#2b2b29" stroke="#2b2b29" stroke-width="1.1" points="600.3,-266.59 597.5,-258.59 594.7,-266.59 600.3,-266.59"/>
 </g>
 <!-- n_serial&#45;&gt;n_teleop -->
-<g id="frente_edge37" class="edge">
+<g id="frente_edge35" class="edge">
 <title>n_serial&#45;&gt;n_teleop</title>
 <path fill="none" stroke="#2b2b29" stroke-width="1.1" d="M204.33,-222.28C204.33,-222.28 204.33,-81.51 204.33,-81.51"/>
 <polygon fill="#2b2b29" stroke="#2b2b29" stroke-width="1.1" points="207.13,-81.51 204.33,-73.51 201.53,-81.51 207.13,-81.51"/>
 </g>
 <!-- n_serial&#45;&gt;n_data -->
-<g id="frente_edge39" class="edge">
+<g id="frente_edge37" class="edge">
 <title>n_serial&#45;&gt;n_data</title>
 <path fill="none" stroke="#2b2b29" stroke-width="1.1" d="M252.75,-222.25C252.75,-175.61 252.75,-55 252.75,-55 252.75,-55 349.26,-55 349.26,-55"/>
 <polygon fill="#2b2b29" stroke="#2b2b29" stroke-width="1.1" points="349.26,-57.8 357.26,-55 349.26,-52.2 349.26,-57.8"/>
 </g>
 <!-- n_rs&#45;&gt;n_data -->
-<g id="frente_edge40" class="edge">
+<g id="frente_edge38" class="edge">
 <title>n_rs&#45;&gt;n_data</title>
 <path fill="none" stroke="#2b2b29" stroke-width="1.1" d="M430.5,-222.28C430.5,-222.28 430.5,-81.51 430.5,-81.51"/>
 <polygon fill="#2b2b29" stroke="#2b2b29" stroke-width="1.1" points="433.3,-81.51 430.5,-73.51 427.7,-81.51 433.3,-81.51"/>
 </g>
 <!-- n_loc&#45;&gt;n_teleop -->
-<g id="frente_edge36" class="edge">
+<g id="frente_edge34" class="edge">
 <title>n_loc&#45;&gt;n_teleop</title>
 <path fill="none" stroke="#2b2b29" stroke-width="1.1" d="M597.5,-222.35C597.5,-208.6 597.5,-192 597.5,-192 597.5,-192 209.17,-192 209.17,-192 209.17,-192 209.17,-81.5 209.17,-81.5"/>
 <polygon fill="#2b2b29" stroke="#2b2b29" stroke-width="1.1" points="211.97,-81.5 209.17,-73.5 206.37,-81.5 211.97,-81.5"/>
 <text text-anchor="middle" x="334.26" y="-195.2" font-family="DejaVu Sans" font-size="11.00" fill="#4a4944">/pika_pose</text>
 </g>
 <!-- n_loc&#45;&gt;n_data -->
-<g id="frente_edge42" class="edge">
+<g id="frente_edge40" class="edge">
 <title>n_loc&#45;&gt;n_data</title>
 <path fill="none" stroke="#2b2b29" stroke-width="1.1" d="M540.37,-240C526.34,-240 515.25,-240 515.25,-240 515.25,-240 515.25,-61 515.25,-61 515.25,-61 465.59,-61 465.59,-61"/>
 <polygon fill="#2b2b29" stroke="#2b2b29" stroke-width="1.1" points="465.59,-58.2 457.59,-61 465.59,-63.8 465.59,-58.2"/>
 </g>
 <!-- n_fish&#45;&gt;n_data -->
-<g id="frente_edge41" class="edge">
+<g id="frente_edge39" class="edge">
 <title>n_fish&#45;&gt;n_data</title>
 <path fill="none" stroke="#2b2b29" stroke-width="1.1" d="M380.5,-127.15C380.5,-127.15 380.5,-81.55 380.5,-81.55"/>
 <polygon fill="#2b2b29" stroke="#2b2b29" stroke-width="1.1" points="383.3,-81.55 380.5,-73.55 377.7,-81.55 383.3,-81.55"/>
 </g>
 <!-- n_teleop&#45;&gt;n_piper -->
-<g id="frente_edge38" class="edge">
+<g id="frente_edge36" class="edge">
 <title>n_teleop&#45;&gt;n_piper</title>
 <path fill="none" stroke="#2b2b29" stroke-width="1.1" d="M121.25,-73.44C121.25,-73.44 121.25,-214.21 121.25,-214.21"/>
 <polygon fill="#2b2b29" stroke="#2b2b29" stroke-width="1.1" points="118.45,-214.21 121.25,-222.21 124.05,-214.21 118.45,-214.21"/>

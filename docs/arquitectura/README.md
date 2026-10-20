@@ -22,20 +22,25 @@ al comienzo del `.dot`. Las etiquetas de las flechas van en `xlabel`.
 
 Las líneas y bordes punteados marcan lo que está **por confirmar** o **recomendado y no instalado**.
 
-### Versión de un brazo, sobre el remolque del Scout
+### Versión de un brazo: plataforma remolcable
 
-![Un brazo sobre el remolque del Scout](arquitectura_un_brazo.png)
+![Plataforma remolcable con un brazo](arquitectura_un_brazo.png)
 
 [SVG](arquitectura_un_brazo.svg) · fuente [arquitectura_un_brazo.dot](arquitectura_un_brazo.dot). Para
 regenerarla: `python3 generar_diagrama.py arquitectura_un_brazo.dot`.
 
-Montaje del Flujo A: un Piper con Pika Gripper, Pika Sense y Pika Station, sobre un remolque que
-tira un **AgileX Scout 2.0**. Está dibujada angosta (~780 pt): al ancho de una página de 16 cm, los
+Montaje del Flujo A: un Piper con Pika Gripper, Pika Sense y Pika Station, sobre una **plataforma
+remolcable y autónoma**. Está dibujada angosta (~780 pt): al ancho de una página de 16 cm, los
 títulos quedan en ~8 pt y los detalles en ~7 pt.
 
-Alimentación, según el esquema eléctrico de la plataforma (20-10-2026):
-- **Scout 2.0:** se alimenta con su propia batería de 24 V, junto con el kit Pro I+D (Jetson Xavier). No alimenta nada del remolque.
-- **Remolque** (equipos comprados y montados en la plataforma): una **batería LiFePO4 Ritar LFP12.8V200Ah G2** (12,8 V, 200 Ah, 2,56 kWh, BMS) con dos ramas, cada una protegida con 225 A:
+**El vehículo tractor es un sistema independiente.** La plataforma tiene su propia alimentación y
+su propio computador, y no comparte ni energía ni datos con el vehículo que la remolca: la única
+unión es el enganche mecánico. Hoy la tira un AgileX Scout 2.0, que tiene su batería de 24 V y su
+kit Pro I+D (Jetson Xavier) para su propio control. Pero la idea es que **cualquier vehículo capaz
+de remolcarla** sirva, sin cambiar nada en la plataforma.
+
+Alimentación de la plataforma, según su esquema eléctrico (20-10-2026), con los equipos comprados y montados:
+- **Batería LiFePO4 Ritar LFP12.8V200Ah G2** (12,8 V, 200 Ah, 2,56 kWh, BMS), con dos ramas, cada una protegida con 225 A:
   - el **motor Hydronit**, conectado directo en 12 V DC (~119 A según placa, ciclo intermitente S2);
   - el **inversor-cargador Enertik IVMDPP-1.5K-12**: 1200 W solo con batería, 230 V senoidal, conmutación UPS de 10–20 ms, cargador AC de 80 A. La conexión a la red es opcional y solo para cargar.
 - **Equipos:** del inversor, por interruptores DIN, a **2 PDU Diartek** de 12 enchufes con protección, donde todo se conecta con su transformador de fábrica.
@@ -44,7 +49,6 @@ Balance de corrientes y autonomía: [Consumo_Energia.md, sección 4](../energia/
 
 Por confirmar:
 - la corriente máxima de descarga de la Ritar G2 (su ficha no la publica; ver el aviso en el documento de energía);
-- si hay enlace de datos entre la Jetson del Scout y el laptop;
 - la fuente de 24 V del Pika Gripper (ver la sección 4).
 
 ## 1. Alimentación
