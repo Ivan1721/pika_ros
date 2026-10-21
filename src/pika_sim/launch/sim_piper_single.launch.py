@@ -12,6 +12,9 @@
 #   control:=teleop|mit
 #   sense:=fake         marcador en RViz hace de Pika Sense (solo teleop; por defecto)
 #   sense:=real         sin Sense falso; correr aparte bash scripts/start_single_sensor.bash
+#   lado:=_l            con sense:=real y los dos Sense conectados (start_multi_sensor.bash): el brazo
+#                       simulado sigue al Sense izquierdo (_l) o derecho (_r); la teleop va con
+#                       teleop_rand_single_piper.launch.py sim:=true index_name:=_l
 #   mit_script:=<ruta>  de donde se leen KP, KD, TARGETS, T_FF, ESCALA_GRAVEDAD
 #   escala_gravedad:=X  pisa ESCALA_GRAVEDAD del script (0 = sin compensacion)
 #   escena:=manzano     manzano de percepción activa (escena_manzano.py); escena:=ninguna, vacío
@@ -165,7 +168,8 @@ def launch_setup(context):
         ))
     else:
         controladores = ['joint_state_broadcaster', 'arm_controller', 'gripper_controller']
-        nodos_modo.append(Node(package='pika_sim', executable='piper_sim_bridge.py', output='screen'))
+        nodos_modo.append(Node(package='pika_sim', executable='piper_sim_bridge.py', output='screen',
+                               parameters=[{'index_name': LaunchConfiguration('lado').perform(context)}]))
         if LaunchConfiguration('sense').perform(context) == 'fake':
             nodos_modo.append(Node(package='pika_sim', executable='fake_pika_sense.py', output='screen'))
 
@@ -243,6 +247,7 @@ def generate_launch_description():
     return LaunchDescription([
         DeclareLaunchArgument('control', default_value='teleop', choices=['teleop', 'mit']),
         DeclareLaunchArgument('sense', default_value='fake', choices=['fake', 'real']),
+        DeclareLaunchArgument('lado', default_value='', choices=['', '_l', '_r']),
         DeclareLaunchArgument('mit_script', default_value='~/pika_ros/scripts/test_piper_mit_impedance.py'),
         DeclareLaunchArgument('escala_gravedad', default_value=''),
         DeclareLaunchArgument('escena', default_value='ninguna', choices=['ninguna', 'manzano']),

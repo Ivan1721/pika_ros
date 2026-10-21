@@ -35,6 +35,24 @@ En RViz, **click derecho sobre el Pika Sense naranja** (simulado, con la malla d
 Con la teleop iniciada, arrastra las flechas/anillos del marcador: el brazo sigue
 el movimiento relativo, aplicado en el marco de la herramienta (igual que con el Vive).
 
+### Con los dos Sense conectados
+
+Con el montaje doble (`start_multi_sensor.bash`), los topics de cada Sense llevan sufijo `_l` o
+`_r`. Para que el Piper simulado siga a uno de ellos, sin tocar las reglas udev (no usar
+`start_single_sensor.bash`, que las reescribe por fabricante y deja ambiguos los dos Sense):
+
+```bash
+bash ~/pika_ros/scripts/start_multi_sensor.bash                                          # terminal 1, sin conda
+ros2 launch pika_sim sim_piper_single.launch.py sense:=real lado:=_l                      # terminal 2, sin conda
+ros2 launch pika_remote_piper teleop_rand_single_piper.launch.py sim:=true index_name:=_l # terminal 3, conda pika
+```
+
+Doble click en el Sense izquierdo arma la teleoperación (o `ros2 service call /teleop_trigger_l
+std_srvs/srv/Trigger`). Cadena: `/pika_pose_l` → teleop → `/joint_states_l` → el nodo del Sense le
+agrega la apertura de su pinza → `/joint_states_gripper_l` → puente → Gazebo → `/joint_states_single_l`
+→ FK. Probado el 21-10-2026 con los dos Sense reales: Gazebo sigue al comando con menos de 0,002 rad
+de diferencia y la pinza simulada copia la apertura del Sense (hasta 94 mm).
+
 ### Modo MIT (impedancia)
 
 `control:=mit` emula el modo MIT del Piper con los valores de
@@ -56,6 +74,7 @@ ros2 topic pub --once /mit_emulador/perturbacion std_msgs/msg/Float64MultiArray 
 |---|---|---|
 | `control` | `teleop` | `mit`: emulación del modo MIT, sin puente ni Sense falso |
 | `sense` | `fake` | `real`: no arranca el Sense falso; correr aparte `bash scripts/start_single_sensor.bash` con el Sense y las base stations conectados |
+| `lado` | `''` | `_l` o `_r`: con `sense:=real` y los dos Sense conectados, el brazo simulado sigue a ese Sense (ver *Con los dos Sense conectados*) |
 | `escena` | `ninguna` | `manzano`: carga el manzano de percepción activa (ver más abajo) |
 | `semilla` | `7` | semilla del follaje del manzano; 7 es la de la documentación |
 | `arbol` | `primitivas` | `helios`: manzano realista generado con Helios (ver más abajo) |
