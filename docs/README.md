@@ -28,6 +28,7 @@ algoritmos y caminos) y después el [Manual](manuales/Manual.md) para instalar y
 | Algoritmos posibles (visión, NBV, IK, MoveIt…) | [§6](estado_del_proyecto.md#6-algoritmos-posibles-por-área) |
 | Qué falta y qué sigue | [estado actual](estado_del_proyecto.md#5-estado-actual) · [caminos](estado_del_proyecto.md#9-caminos-posibles) · [hoja de ruta](percepcion_activa/README.md#6-hoja-de-ruta) |
 | Resolver un problema | [problemas frecuentes](manuales/Manual.md#problemas-frecuentes) · [problemas conocidos del software](manuales/Manual.md#problemas-conocidos-del-software) |
+| Plan para pasar la investigación al repo privado Next-Best-View | [plan_migracion_next_best_view.md](plan_migracion_next_best_view.md) |
 | Reglas para trabajar en el repo (commits, estilo) | [AGENTS.md](../AGENTS.md) |
 
 ## 1. Visión general
