@@ -12,6 +12,8 @@
 
 </div>
 
+> **Mapa de la documentación:** todos los documentos de este fork, con enlaces directos a sus secciones, están en [docs/README.md](docs/README.md).
+
 ## Introducción
 
 Pika (en adelante, "Pika") es un **producto de captura de datos espaciales** orientado a escenarios de recolección de datos en el campo de la **inteligencia encarnada** (embodied intelligence). Es una solución ligera y portátil de captura-y-ejecución para operación de propósito general, compuesta por una unidad de captura de datos, un ejecutor con inferencia de modelos, y una estación de localización y mochila de datos complementarias. Permite capturar de forma eficiente, precisa, rápida y ligera los datos de operación espacial de un robot.

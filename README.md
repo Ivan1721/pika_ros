@@ -12,6 +12,8 @@
 
 </div>
 
+> **Documentation map (Spanish):** every document of this fork, with direct links to its sections, is listed in [docs/README.md](docs/README.md).
+
 ## Introduction
 
 Pika (hereinafter "Pika") is a **spatial data acquisition product** for **embodied intelligence** data collection scenarios. It is a lightweight, portable, general-purpose acquisition-and-execution solution, composed of a data collection unit, a model-inference execution unit, and a companion localization base station and data backpack. It supports efficient, accurate, fast, and lightweight acquisition of a robot's spatial manipulation data.
