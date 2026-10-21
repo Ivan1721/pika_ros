@@ -2,6 +2,8 @@
 
 Índice de la documentación del proyecto, organizada por tema.
 
+**Para empezar:** [estado_del_proyecto.md](estado_del_proyecto.md) resume el hardware, el software, el acceso a los datos de los sensores, el trabajo hecho, el estado actual, las limitaciones, los algoritmos posibles por área y los caminos a seguir.
+
 | Carpeta | Contenido |
 |---|---|
 | [`manuales/`](manuales/) | Guía de configuración en español ([Manual.md](manuales/Manual.md)), manual oficial de AgileX para el brazo Piper, y manual oficial de producto Pika (EN) |
