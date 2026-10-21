@@ -1,8 +1,8 @@
 # Archivos de AgileX
 
 Enviados por el soporte de AgileX (Cyntia) en el grupo de WhatsApp "Universidad Andrés
-Bello&AgileX" el 20 de octubre de 2026, a pedido del equipo. No son públicos: **antes de
-publicarlos fuera del equipo hay que confirmar con AgileX que se pueden redistribuir.**
+Bello&AgileX" el 20 de octubre de 2026, a pedido del equipo. AgileX autorizó publicarlos en
+este repositorio.
 
 | Carpeta | Contenido | Origen |
 |---|---|---|

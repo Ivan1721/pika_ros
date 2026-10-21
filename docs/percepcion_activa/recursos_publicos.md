@@ -73,8 +73,7 @@ correr en Gazebo. **El primero de la tabla ya está integrado en `pika_sim`** (`
 **Actualización del 20-10-2026:** a pedido nuestro, el soporte de AgileX envió los URDF y las
 mallas del Pika Gripper y del Sense, los STEP de ambos y dos planos con medidas. Están integrados
 en `pika_description` ([PIPER_PIKA.md §6](../../src/pika_description/docs/PIPER_PIKA.md#6-modelo-del-gripper-pika)).
-Son archivos entregados por AgileX, no públicos: antes de publicarlos fuera del equipo hay que
-confirmar con ellos que se pueden redistribuir.
+AgileX autorizó publicarlos en este repositorio.
 
 ## 4. Propuesta para la escena de NBV
 
