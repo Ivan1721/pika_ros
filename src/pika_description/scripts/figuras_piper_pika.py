@@ -395,7 +395,7 @@ def fig_cadena(medidas):
         ax.set_ylabel('Z (m)')
         style(ax, titulo)
     fig.text(0.5, 0.01, 'Ejes en el mundo para cada pose. ΔY = 0 en todos los tramos con J1 = '
-             'J4 = J6 = 0. TCP = pika_tcp (0,185 m desde la brida, eje de las garras).',
+             'J4 = J6 = 0. TCP = pika_tcp (0,180 m desde la brida, 1 cm detrás de las puntas de las garras).',
              ha='center', color=MUTED, fontsize=9)
     fig.tight_layout(rect=(0, 0.03, 1, 1))
     fig.savefig(os.path.join(OUT, 'fig_cadena.png'), dpi=130)

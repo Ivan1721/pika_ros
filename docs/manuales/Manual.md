@@ -535,7 +535,7 @@ conda activate pika
 ros2 launch pika_remote_piper teleop_rand_single_piper.launch.py sim:=true
 ```
 
-En RViz, click derecho sobre el bloque naranja → **Teleop: iniciar / detener** (equivale al doble click del Sense). Luego arrastra el marcador: el brazo sigue el movimiento. Las opciones **Pinza: abrir / media / cerrar** del mismo menú controlan la pinza.
+En RViz, click derecho sobre el Pika Sense naranja (malla de AgileX) → **Teleop: iniciar / detener** (equivale al doble click del Sense). Luego arrastra el marcador: el brazo sigue el movimiento. Las opciones **Pinza: abrir / media / cerrar** del mismo menú controlan la pinza.
 
 > Con el Pika Sense y las base stations conectados se puede usar la mano real: `sense:=real` en la Terminal 1 y `bash scripts/start_single_sensor.bash` en otra terminal.
 

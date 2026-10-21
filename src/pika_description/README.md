@@ -32,58 +32,42 @@ Medidas, grados de libertad, alcance y figuras del Piper + Pika (generadas del U
 
 ## Estructura del modelo
 
+El gripper es el modelo oficial de AgileX (`pika_gripper_description`, recibido el 20-10-2026):
+mallas en `meshes/agilex/gripper/`, originales y planos en `agilex/`. El detalle de la conversión
+y lo que cambió respecto de la aproximación anterior está en
+[docs/PIPER_PIKA.md §6](docs/PIPER_PIKA.md#6-modelo-del-gripper-pika).
+
 ```
 world
- └── gripper_base          ← housing + mecanismo (gripper_base.STL)
-      ├── pika_depth_link   ← Intel RealSense D405 (d405.stl)
-      ├── pika_fisheye_link ← cámara fisheye 200° WN-L712V11 (fisheye.stl)
-      ├── pika_jaw_left     ← garra izquierda (link7.STL, joint prismático)
-      ├── pika_jaw_right    ← garra derecha   (link8.STL, joint prismático)
-      └── pika_tcp          ← Tool Center Point (frame TF auxiliar)
+ └── gripper_base          ← carcasa, motor, D405 y fisheye (gripper_base_link.STL de AgileX)
+      ├── pika_depth_link   ← D405, imager izquierdo (solo marco)
+      ├── pika_fisheye_link ← fisheye (solo marco)
+      ├── pika_jaw_left     ← garra izquierda (gripper_left_link.STL, prismática en +Y)
+      ├── pika_jaw_right    ← garra derecha   (gripper_right_link.STL, prismática en −Y)
+      └── pika_tcp          ← Tool Center Point, entre las garras
 ```
-
-La geometría de garras y su conexión a la brida es idéntica a la del Piper arm
-(`joint7`/`joint8` en `piper_description/urdf/piper_description.urdf`).
 
 ## Posiciones de referencia (desde `gripper_base`)
 
-Posiciones de las cámaras ajustadas en RViz sobre el modelo. El eje **X** ubica la
-cámara a lo largo del cuerpo del gripper (valor negativo) y el eje **Z** define la
-altura sobre la brida.
-
-| Elemento | X (m) | Y (m) | Z (m) | Notas |
+| Elemento | X (m) | Y (m) | Z (m) | Fuente |
 |---|---|---|---|---|
-| Eje de garras | 0 | 0 | 0.1358 | = joint7/joint8 del Piper |
-| Intel D405 (双目) | -0.046 | 0 | 0.027 | X=-46 mm (largo), Z=27 mm (altura) |
-| Cámara fisheye (单目) | -0.0735 | 0 | 0.037 | X=-73.5 mm (largo), Z=37 mm (altura), WN-L712V11 |
-| TCP | 0 | 0 | 0.185 | estimado |
+| Garras (cerradas, origen de los joints) | −0.00642 | ±0.0415 | 0.0815 | URDF de AgileX |
+| Puntas de las garras | — | — | 0.190 | malla de AgileX |
+| Intel D405 (双目) | −0.0524 | 0.009 | 0.0583 | plano de AgileX: 46 mm sobre el eje de las garras, 132 mm detrás de las puntas |
+| Cámara fisheye (单目) | −0.0799 | 0 | 0.0683 | plano de AgileX: 73,5 mm sobre el eje de las garras, 122 mm detrás de las puntas |
+| TCP | −0.00642 | 0 | 0.180 | 1 cm detrás de las puntas |
 
-### Orientación de los visuals de cámara
-
-Cada mesh necesita una rotación respecto al frame de su joint para quedar alineada con el gripper:
-
-```xml
-<!-- D405 (pika_depth_link) — joint rpy="0 0 0" -->
-<visual>
-  <origin xyz="0 0 0" rpy="0 3.1416 1.5708"/>   <!-- 90° en Z + 180° en Y -->
-</visual>
-
-<!-- Fisheye (pika_fisheye_link) — joint rpy="-1.5708 0 0" -->
-<visual>
-  <origin xyz="0 0 0" rpy="1.5708 0 0"/>          <!-- 90° en X; lente apunta a +Y (frente) -->
-</visual>
-```
-
-La malla `fisheye.stl` (módulo WN-L712V11, Ø22.65 × 20.2 mm) se exportó del CAD
-original `.SLDPRT` vía Onshape → STL en milímetros (`scale="0.001"`).
+Las dos cámaras miran a lo largo de +Z. Las mallas anteriores (`gripper_base.STL`, `link7/8.STL`,
+`d405.stl`, `fisheye.stl`) quedan en `meshes/` pero ya no se usan.
 
 ## Marco de coordenadas
 
 ```
 Origen = cara de la brida (interfaz con link6 del Piper / parent)
 +Z  → hacia las garras (eje herramienta)
-+X  → apertura de las garras (derecha mirando la cara frontal)
-+Y  → cara frontal del dispositivo (hacia el espacio de trabajo)
++Y  → dirección en que se desplazan las garras
+−X  → lado de las cámaras
+(AgileX usa X herramienta, Y garras, Z cámaras: x = −z_AgileX, y = y_AgileX, z = x_AgileX)
 ```
 
 ## Lanzar visualización
@@ -116,11 +100,12 @@ rviz/
   pika_gripper.rviz                  ← config RViz standalone (Fixed Frame: world)
   pika_piper.rviz                    ← config RViz brazo completo
 meshes/
-  gripper_base.STL                   ← cuerpo del gripper
-  link7.STL                          ← garra izquierda
-  link8.STL                          ← garra derecha
-  d405.stl                           ← Intel RealSense D405
-  fisheye.stl                        ← cámara fisheye WN-L712V11
+  agilex/gripper/                    ← mallas oficiales del gripper (AgileX): base y garras
+  agilex/sense/                      ← mallas del Pika Sense (AgileX); fake_pika_sense las usa en RViz
+  gripper_base.STL, link7/8.STL, d405.stl, fisheye.stl  ← aproximación anterior, sin uso
+agilex/
+  gripper/, sense/                   ← URDF y CSV originales de AgileX (ROS 1, de referencia)
+  planos/                            ← planos con medidas del gripper y del Sense
 ```
 
 ## Integrar en otro URDF

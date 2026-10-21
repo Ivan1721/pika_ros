@@ -26,7 +26,7 @@ plan general en el [README de percepción activa](README.md).
 | Plataforma | El robot va sobre una plataforma; el suelo del huerto queda a la altura que resulte (0,76–0,83 m en estos escenarios) |
 | Árbol | Manzano frente al robot, con la manzana objetivo en (0,55; 0; 0,30) m desde la base del Piper |
 | Verdad del terreno | Posición y radio de cada manzana, triángulos de hojas y madera (`/escena/verdad`) |
-| Supuesto | La D405 y la fisheye miran a lo largo del eje de la herramienta; falta confirmarlo con el gripper real |
+| Gripper | Modelo oficial de AgileX (mallas y plano de cámaras, recibido el 20-10-2026): la D405 y la fisheye miran a lo largo del eje de la herramienta; apertura 0–94 mm |
 
 **Visibilidad.** Es la fracción del área que la manzana ocupa en la imagen que no queda tapada
 por hojas, madera ni otras manzanas. Se calcula trazando rayos desde puntos repartidos sobre el
@@ -141,7 +141,6 @@ validación.
 - **Barrer la oclusión con la misma manzana.** Fijar la manzana y la vista, y variar la densidad o la semilla. Es el paso 5 de la hoja de ruta.
 - **Choques del brazo completo:** hoy solo se revisan la cámara y las garras. Hace falta MoveIt.
 - **La plataforma no está en el modelo de rayos.** La galería solo usa manzanas sobre la cubierta. Las de más abajo quedan tapadas por la plataforma en la imagen, y el cálculo no lo sabe.
-- **Orientación de las cámaras reales:** falta confirmarla con el gripper o con el CAD de AgileX.
 - **Fruta real:** reemplazar la malla de manzana de Helios por una de las [100 manzanas escaneadas](https://zenodo.org/records/15635995) ([recursos_publicos.md §1b](recursos_publicos.md#1b-árboles-completos-hojas-ramas-y-frutos-en-3d-revisión-del-20-10-2026-segunda-parte)).
 
 ## 6. Consumo de recursos

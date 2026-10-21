@@ -63,7 +63,7 @@ TARGETS = [0.0, 0.255, -0.706, 0.00, 0.442, 0.283]  # joints 1-6
 
 # Compensacion de gravedad: torque de gravedad en TARGETS segun el URDF de
 # Piper + gripper Pika. Generado por calcular_gravedad_mit.py --escribir.
-T_FF = [0.000, 2.922, -4.017, -0.018, -0.818, -0.011]  # joints 1-6, N·m
+T_FF = [-0.000, 2.721, -4.320, -0.020, -1.042, -0.013]  # joints 1-6, N·m
 
 # Fraccion de T_FF que se aplica. 0.0 reproduce el demo original del SDK
 # (sin compensacion). La primera vez en el brazo real empieza con 0.5 para

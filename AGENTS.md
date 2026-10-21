@@ -50,6 +50,8 @@ ros2 launch pika_remote_piper teleop_rand_single_piper.launch.py sim:=true   # t
 
 The simulated D405 and fisheye on the Pika gripper publish the same `/gripper/camera/...` topics as the hardware, with depth in 16UC1 mm like the real driver. `escena:=manzano` loads a seed-reproducible apple tree and publishes its ground truth on `/escena/verdad` and `/escena/frutas` for the active-perception code. With `arbol:=helios` it loads a realistic Helios apple tree (leaves cut to the real outline, branch forks, textures) generated beforehand by `scripts/generar_manzano_helios.py` in a separate PyHelios virtualenv (no ROS). The generated meshes live in `~/.cache/pika_sim/manzanos/` and are not committed, because the Helios textures are LGPL-2.1. Fruit and foliage density (`--densidad` in the generator, `densidad:=` in the launch) and lighting presets (`luz:=`) are documented in `src/pika_sim/README.md`, together with measured CPU/RAM/GPU use.
 
+The Pika Gripper in `pika_description` is AgileX's official model (meshes and camera drawing sent by AgileX support). Keep its link and joint names; jaws open 0–94 mm. The AgileX files were shared privately, so confirm with AgileX before redistributing them outside the team.
+
 `control:=mit` emulates the Piper's MIT (impedance) mode with the values in `scripts/test_piper_mit_impedance.py`. Gazebo applies `kp` and `kd` as implicit joint springs and dampers, and `mit_emulador.py` sends `t_ref` as effort. Before changing MIT gains or targets, run `scripts/calcular_gravedad_mit.py`: it recomputes the gravity feedforward and checks stability. Gravity adds negative stiffness, so `kp` that is too low makes the target pose unstable even with feedforward.
 
 ## Active Perception Research

@@ -29,7 +29,7 @@ class PiperSimBridge(Node):
     def __init__(self):
         super().__init__('piper_sim_bridge')
         self.declare_parameter('index_name', '')
-        self.declare_parameter('jaw_max', 0.035)  # limite de cada garra en el URDF [m]
+        self.declare_parameter('jaw_max', 0.047)  # limite de cada garra en el URDF [m] (Pika: 0-94 mm en total)
         index_name = self.get_parameter('index_name').get_parameter_value().string_value
         self.jaw_max = self.get_parameter('jaw_max').get_parameter_value().double_value
 

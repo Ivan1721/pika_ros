@@ -53,13 +53,13 @@ flowchart LR
   |---|---|---|
   | `pika_depth_link` | (−0,046, 0, 0,027) m | D405 |
   | `pika_fisheye_link` | (−0,0735, 0, 0,037) m | fisheye |
-  | `pika_tcp` | (0, 0, 0,185) m | **5 mm antes** que el `ee` de la IK (0,19 m); hay que unificarlo |
+  | `pika_tcp` | (−0,0064; 0; 0,180) m | entre las garras, 1 cm detrás de las puntas (modelo de AgileX); el `ee` de la IK está en (0, 0, 0,19) m: hay que unificarlo |
 
 ```mermaid
 flowchart LR
   W["world"] --> B["base_link"] --> J1["joint1…joint6"] --> L6["link6 = gripper_base"]
   L6 --> EE["ee (IK de teleop)<br/>Ry(−90°) + 0,19 m"]
-  L6 --> TCP["pika_tcp<br/>z 0,185 m"]
+  L6 --> TCP["pika_tcp<br/>z 0,180 m"]
   L6 --> CAM["pika_depth_link (D405)<br/>x −0,046, z 0,027"]
 ```
 
@@ -236,7 +236,7 @@ resultados y la galería de oclusión están en el
 
 - La visibilidad es la fracción del área de la manzana en la imagen que no queda tapada. Coincide con lo medido en imágenes de Gazebo con un error medio de 2,6 puntos ([informe §4](escenarios_simulacion.md#4-oclusión-manzanas-con-distinto-nivel-de-visibilidad)).
 - En el árbol real, las ramas limitan tanto como la cinemática: entre 5 y 11 vistas de 20 meten la cámara o las garras en tronco o ramas.
-- Supuesto: la D405 mira a lo largo del eje de la herramienta.
+- La D405 mira a lo largo del eje de la herramienta (plano de AgileX).
 
 ### 5.7 Medición
 
@@ -249,7 +249,7 @@ resultados y la galería de oclusión están en el
 | # | Qué | Para qué lazo |
 |---|---|---|
 | 1 | D405 + fisheye simuladas con el frame óptico definido ([hoja de ruta, paso 1](README.md#6-hoja-de-ruta)) | L4 |
-| 2 | Unificar el TCP: `pika_tcp` (0,185 m) contra el `ee` de la IK (0,19 m) | L2, L4 |
+| 2 | Unificar el TCP: `pika_tcp` (0,180 m, modelo de AgileX) contra el `ee` de la IK (0,19 m) | L2, L4 |
 | 3 | IK para el NBV: frame de la cámara, costo `‖q − q_actual‖²`, verificación con FK | L4 |
 | 4 | Escena de fruta y visibilidad real por trazado de rayos | L4 |
 | 5 | Mapa de vóxeles, candidatos y las dos políticas, ejecutando por el puente | L4 |

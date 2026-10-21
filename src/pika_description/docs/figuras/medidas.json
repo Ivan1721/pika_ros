@@ -12,16 +12,16 @@
   "brazo_J2_J3": 0.285,
   "antebrazo_J3_J5": 0.2517,
   "muneca_J5_J6": 0.091,
-  "J6_a_TCP_pika": 0.185
+  "J6_a_TCP_pika": 0.1801
  },
  "tcp_en_pose_L_m": [
-  0.5263,
+  0.5213,
   -0.0,
-  0.4074
+  0.4138
  ],
  "anchos_m": {
   "base": 0.08,
-  "gripper_pika": 0.145
+  "gripper_pika": 0.215
  },
  "desplazamientos_pose_L_m": {
   "base->joint1": [
@@ -55,9 +55,9 @@
    -0.0001
   ],
   "joint6->TCP": [
-   0.185,
+   0.18,
    -0.0,
-   0.0
+   0.0065
   ]
  },
  "libertades": {
@@ -143,19 +143,19 @@
    "tipo": "2 prismáticas (en espejo)",
    "por_garra_m": [
     0.0,
-    0.035
+    0.047
    ],
    "apertura_total_m": [
     0.0,
-    0.07
+    0.094
    ]
   }
  },
  "alcance_tcp_m": {
-  "max_desde_hombro": 0.8127,
-  "max_horizontal_desde_eje_base": 0.812,
-  "z_min": -0.4387,
-  "z_max": 0.9356,
+  "max_desde_hombro": 0.8078,
+  "max_horizontal_desde_eje_base": 0.8074,
+  "z_min": -0.4333,
+  "z_max": 0.9306,
   "muestras": 40000
  }
 }

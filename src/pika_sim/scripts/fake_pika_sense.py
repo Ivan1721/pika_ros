@@ -26,7 +26,10 @@ from visualization_msgs.msg import InteractiveMarker, InteractiveMarkerControl, 
 from interactive_markers import InteractiveMarkerServer, MenuHandler
 
 MARKER_NAME = 'pika_sense'
-GRIPPER_PRESETS = [('Pinza: abrir', 0.07), ('Pinza: media', 0.035), ('Pinza: cerrar', 0.0)]
+# Partes del Sense en el marco de su base_link (pika_sensor_description de AgileX), con las garras en reposo
+SENSE_MALLAS = [('base_link.STL', (0.0, 0.0, 0.0)), ('left_hand_link.STL', (0.0175, 0.0356, -0.0185)),
+                ('right_hand_link.STL', (0.0175, -0.0356, -0.0185))]
+GRIPPER_PRESETS = [('Pinza: abrir', 0.094), ('Pinza: media', 0.047), ('Pinza: cerrar', 0.0)]   # Pika: 0-94 mm
 
 
 class FakePikaSense(Node):
@@ -35,7 +38,7 @@ class FakePikaSense(Node):
         self.declare_parameter('index_name', '')
         self.declare_parameter('frame_id', 'world')
         self.declare_parameter('rate', 100.0)  # Hz de /pika_pose
-        self.declare_parameter('gripper_opening', 0.07)  # apertura inicial [m]
+        self.declare_parameter('gripper_opening', 0.094)  # apertura inicial [m]
         self.declare_parameter('initial_xyz', [0.3, 0.0, 0.3])
         index_name = self.get_parameter('index_name').get_parameter_value().string_value
         self.frame_id = self.get_parameter('frame_id').get_parameter_value().string_value
@@ -75,11 +78,16 @@ class FakePikaSense(Node):
         marker.scale = 0.15
         marker.pose = copy.deepcopy(self.pose)
 
-        body = Marker(type=Marker.CUBE)
-        body.scale.x, body.scale.y, body.scale.z = 0.04, 0.06, 0.12
-        body.color.r, body.color.g, body.color.b, body.color.a = 0.9, 0.5, 0.1, 0.9
+        # Malla del Pika Sense de AgileX (cuerpo y garras), girada 180° en Y para que su eje de
+        # herramienta quede en +Z como el del gripper, y centrada en el marcador
         body_control = InteractiveMarkerControl(interaction_mode=InteractiveMarkerControl.MENU, always_visible=True)
-        body_control.markers.append(body)
+        for malla, (x, y, z) in SENSE_MALLAS:
+            parte = Marker(type=Marker.MESH_RESOURCE, mesh_resource=f'package://pika_description/meshes/agilex/sense/{malla}')
+            parte.scale.x = parte.scale.y = parte.scale.z = 1.0
+            parte.pose.position.x, parte.pose.position.y, parte.pose.position.z = -x - 0.048, y, -z + 0.052
+            parte.pose.orientation.y, parte.pose.orientation.w = 1.0, 0.0
+            parte.color.r, parte.color.g, parte.color.b, parte.color.a = 0.9, 0.5, 0.1, 0.9
+            body_control.markers.append(parte)
         marker.controls.append(body_control)
 
         for name, (w, x, y, z) in {'x': (1.0, 1.0, 0.0, 0.0), 'y': (1.0, 0.0, 0.0, 1.0), 'z': (1.0, 0.0, 1.0, 0.0)}.items():

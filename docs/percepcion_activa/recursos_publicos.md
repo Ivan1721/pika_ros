@@ -68,13 +68,13 @@ correr en Gazebo. **El primero de la tabla ya está integrado en `pika_sim`** (`
 
 **No encontré material público del Pika para simulación:**
 - **Datasets grabados con Pika:** ninguno, ni en Hugging Face ni en arXiv. La búsqueda solo trae guías de uso de distribuidores ([OpenELAB](https://openelab.io/blogs/learn/how-to-collect-robot-demonstration-data-with-agilex-pika)). El dataset `DaMiTian/agilex_dataset` de Hugging Face está vacío.
-- **CAD o URDF de la carcasa del Pika Gripper o del Sense:** no está publicado. AgileX dice en su [página de producto](https://global.agilex.ai/products/pika) que soporta URDF, pero no publica los archivos. Las tiendas dan las medidas (215 × 191 × 143 mm) y el peso (617–690 g, según la tienda). El `AgileX_Gripper.STEP` que circula es de la **pinza del Piper**, otro producto.
+- **CAD o URDF de la carcasa del Pika Gripper o del Sense:** no está publicado. AgileX dice en su [página de producto](https://global.agilex.ai/products/pika) que soporta URDF, pero no publica los archivos.
 
-Por eso `pika_description` usa la malla de la pinza del Piper, y el `pika_tcp` queda ~5 cm más allá
-de las garras dibujadas ([PIPER_PIKA.md §6](../../src/pika_description/docs/PIPER_PIKA.md)). Para
-corregirlo, en orden:
-1. **Pedir a AgileX** el STEP/URDF del Pika Gripper y del Sense (support@agilex.ai, el contacto del README).
-2. **Escanear el gripper real** por fotogrametría o con la propia D405, y medir dónde cierran las garras (el TCP real).
+**Actualización del 20-10-2026:** a pedido nuestro, el soporte de AgileX envió los URDF y las
+mallas del Pika Gripper y del Sense, los STEP de ambos y dos planos con medidas. Están integrados
+en `pika_description` ([PIPER_PIKA.md §6](../../src/pika_description/docs/PIPER_PIKA.md#6-modelo-del-gripper-pika)).
+Son archivos entregados por AgileX, no públicos: antes de publicarlos fuera del equipo hay que
+confirmar con ellos que se pueden redistribuir.
 
 ## 4. Propuesta para la escena de NBV
 

@@ -418,7 +418,7 @@ def main():
     #    poner los marcadores de las candidatas
     for _ in range(20):
         node.arm.publish(Float64MultiArray(data=[float(v) for v in mejor['q']]))
-        node.grip.publish(Float64MultiArray(data=[0.03, -0.03]))
+        node.grip.publish(Float64MultiArray(data=[0.047, -0.047]))
         rclpy.spin_once(node, timeout_sec=0.1)
     time.sleep(3.0)
     node.camara_gripper(os.path.join(args.salida, f'{prefijo}_d405'))

@@ -10,7 +10,9 @@ python3 ~/pika_ros/src/pika_description/scripts/figuras_piper_pika.py
 ```
 
 Convenciones: REP-103 (+X adelante, +Y a la izquierda, +Z arriba), con el origen en la base del
-brazo. El TCP es `pika_tcp`: 0,185 m desde la brida, sobre el eje de las garras.
+brazo. El TCP es `pika_tcp`: 0,180 m desde la brida, entre las garras, 1 cm detrás de sus puntas.
+El gripper es el **modelo oficial de AgileX** (mallas, medidas y plano de cámaras enviados por su
+soporte el 20-10-2026; ver la [sección 6](#6-modelo-del-gripper-pika)).
 
 ## 1. Resumen
 
@@ -20,15 +22,15 @@ brazo. El TCP es `pika_tcp`: 0,185 m desde la brida, sobre el eje de las garras.
 | hombro → codo (J2 → J3) | 0,285 m | brazo |
 | codo → muñeca (J3 → J4/J5) | 0,252 m | antebrazo; J4 y J5 comparten origen |
 | muñeca → brida (J5 → J6) | 0,091 m | |
-| brida → TCP | 0,185 m | gripper Pika hasta `pika_tcp` |
-| **alcance máximo del TCP desde el hombro** | **0,813 m** | suma de los cuatro tramos anteriores |
+| brida → TCP | 0,180 m | gripper Pika hasta `pika_tcp`; las puntas de las garras están a 0,190 m |
+| **alcance máximo del TCP desde el hombro** | **0,808 m** | suma de los cuatro tramos anteriores |
 
 | | |
 |---|---|
 | Grados de libertad | 6 rotacionales (brazo) + 1 de pinza (2 garras prismáticas en espejo) |
-| TCP en la pose de referencia en L | (0,526; 0; 0,407) m |
-| Envolvente del TCP (sin choques) | z de −0,44 a 0,94 m; hasta 0,81 m horizontal desde el eje de la base |
-| Ancho | base 0,080 m; gripper Pika 0,145 m |
+| TCP en la pose de referencia en L | (0,521; 0; 0,414) m |
+| Envolvente del TCP (sin choques) | z de −0,43 a 0,93 m; hasta 0,81 m horizontal desde el eje de la base |
+| Ancho | base 0,080 m; gripper Pika 0,215 m (riel de las garras) |
 
 ## 2. Dos poses de referencia
 
@@ -68,7 +70,7 @@ indicados son los de la pose en L.
 | joint4 | giro del antebrazo | +X | −100° … +100° | 200° |
 | joint5 | flexión de la muñeca | +Y | −70° … +70° | 140° |
 | joint6 | giro de la muñeca | +X | −120° … +120° | 240° |
-| pinza | 2 garras prismáticas en espejo | — | 0 … 35 mm cada una | apertura 0–70 mm |
+| pinza | 2 garras prismáticas en espejo | ±Y | 0 … 47 mm cada una | apertura 0–94 mm |
 
 - **Rango asimétrico de J1:** es −150° … +124°, no ±150°. El brazo gira más hacia la derecha (−Y) que hacia la izquierda.
 - **J4 y J6 giran la cámara alrededor del eje de la herramienta:** la D405 recorre los arcos grises de sus paneles. Para la percepción activa, J6 cambia la orientación de la imagen sin mover el TCP.
@@ -84,8 +86,37 @@ z = 0, o atravesando la base) no es alcanzable en la práctica. Sirve como cota 
 percepción activa, las vistas candidatas a 0,15–0,35 m de una fruta tienen que caer dentro de
 esta envolvente **más** el radio de la vista.
 
-## 6. Observaciones para el robot real
+## 6. Modelo del gripper Pika
 
-1. **El TCP queda ~5 cm más allá de las garras dibujadas.** `pika_tcp` está a 0,185 m de la brida, pero la punta de las garras de la malla queda a ~0,134 m. La malla del cuerpo es la del gripper original del Piper, no la de la carcasa Pika (215 × 191 × 143 mm, pendiente en el [README](../README.md)). Hay que **medir en el gripper real** dónde cierran las garras y corregir `pika_tcp`.
-2. **La IK de la teleop usa otro TCP:** su frame `ee` está a 0,19 m de la brida, 5 mm más allá que `pika_tcp`. Conviene que ambos salgan del mismo valor medido.
-3. **Masas:** las inercias del gripper Pika en el URDF son aproximadas. Afectan la compensación de gravedad del modo MIT (`scripts/calcular_gravedad_mit.py`).
+El 20-10-2026 el soporte de AgileX envió el paquete `pika_gripper_description` (URDF y mallas
+del gripper), `pika_sensor_description` (el Pika Sense), los STEP de ambos y dos planos con
+medidas. Los originales están en [`agilex/`](../agilex/); los STEP (80 MB) no se guardan en el
+repo.
+
+![Plano de cámaras del gripper (AgileX)](../agilex/planos/pika_gripper_camaras.jpeg)
+
+| Elemento | Antes (aproximación) | Ahora (AgileX) |
+|---|---|---|
+| Malla del cuerpo | gripper del Piper (145 mm de ancho) | carcasa Pika: 215 × 143 × 85 mm |
+| Puntas de las garras | 0,134 m de la brida | 0,190 m (el plano da 194,3 mm desde la base del montaje) |
+| Apertura | 0–70 mm (la del gripper del Piper) | 0–94 mm según la malla; el driver real admite hasta 98 mm |
+| Desplazamiento de las garras | a lo largo de X | a lo largo de **Y** |
+| D405 | (−0,046; 0; 0,039) m | (−0,0524; 0,009; 0,0583) m: 46 mm sobre el eje de las garras, a 132 mm de las puntas, en el imager izquierdo (línea base de 18 mm) |
+| Fisheye | (−0,0735; 0; 0,047) m | (−0,0799; 0; 0,0683) m: 73,5 mm sobre el eje de las garras, a 122 mm de las puntas |
+| Dirección de las cámaras | supuesta: +Z | confirmada por el plano: +Z, paralelas a las garras |
+| TCP | 0,185 m, sobre el eje de la brida | 0,180 m, sobre el eje de las garras (6,4 mm hacia las cámaras) |
+
+**Masa.** Las inercias del CAD de AgileX suman 0,257 kg, pero el gripper pesa 617–690 g según las
+tiendas. La base se escaló a 0,55 kg (total 0,617 kg), con el centro de masa y la forma de la
+inercia del CAD.
+
+**Conversión de marcos.** AgileX usa X como eje de la herramienta, Y para las garras y Z hacia las
+cámaras. Este repositorio mantiene el marco del link6 del Piper (Z herramienta), así que las mallas
+llevan una rotación `rpy="0 -1.5708 0"`. Los nombres de links y joints no cambiaron
+(`gripper_base`, `pika_jaw_left/right`, `pika_depth_link`, `pika_fisheye_link`, `pika_tcp`).
+
+## 7. Observaciones para el robot real
+
+1. **La IK de la teleop usa otro TCP:** su frame `ee` está a 0,19 m de la brida, sobre el eje de la brida; `pika_tcp` está a 0,180 m y 6,4 mm hacia las cámaras. Conviene que ambos salgan del modelo de AgileX.
+2. **Masas:** la del gripper se ajustó al peso publicado; conviene pesarlo. Afecta la compensación de gravedad del modo MIT (`scripts/calcular_gravedad_mit.py`).
+3. **La D405 tiene el centro óptico 4 mm detrás de la tapa.** En `pika_sim`, el sensor de Gazebo va 4 mm más adelante para no dibujar el interior de la carcasa.

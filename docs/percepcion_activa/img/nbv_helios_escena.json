@@ -16,15 +16,15 @@
    "azimut": -50,
    "visibilidad": 0.998,
    "alcanzable": false,
-   "error_pos_mm": 71.22,
-   "error_ang_deg": 23.58,
+   "error_pos_mm": 78.07,
+   "error_ang_deg": 25.77,
    "q": [
-    0.63,
-    1.9327,
-    -1.405,
+    0.6691,
+    1.8442,
+    -1.2829,
     -1.745,
     1.22,
-    -0.5958
+    -0.2406
    ],
    "despeje_mm": 58.4,
    "choca_madera": false
@@ -34,13 +34,13 @@
    "azimut": -25,
    "visibilidad": 0.8,
    "alcanzable": false,
-   "error_pos_mm": 39.84,
-   "error_ang_deg": 9.15,
+   "error_pos_mm": 44.3,
+   "error_ang_deg": 10.26,
    "q": [
-    0.4858,
-    1.4967,
-    -0.56,
-    0.8816,
+    0.5429,
+    1.3812,
+    -0.4647,
+    0.9225,
     -1.22,
     -2.0944
    ],
@@ -52,15 +52,15 @@
    "azimut": 0,
    "visibilidad": 0.688,
    "alcanzable": true,
-   "error_pos_mm": 0.2,
-   "error_ang_deg": 0.03,
+   "error_pos_mm": 0.16,
+   "error_ang_deg": 0.02,
    "q": [
-    0.2622,
-    1.3581,
-    -0.333,
-    0.2699,
+    -0.3637,
+    1.2398,
+    -0.2352,
+    -0.3746,
     -1.22,
-    2.0276
+    -1.8631
    ],
    "despeje_mm": 64.5,
    "choca_madera": false
@@ -70,13 +70,13 @@
    "azimut": 25,
    "visibilidad": 0.647,
    "alcanzable": false,
-   "error_pos_mm": 39.84,
-   "error_ang_deg": 9.16,
+   "error_pos_mm": 48.62,
+   "error_ang_deg": 11.26,
    "q": [
-    -0.4858,
-    1.4967,
-    -0.56,
-    -0.8816,
+    -0.5177,
+    1.4142,
+    -0.4476,
+    -0.8871,
     -1.22,
     2.0944
    ],
@@ -88,15 +88,15 @@
    "azimut": 50,
    "visibilidad": 0.552,
    "alcanzable": false,
-   "error_pos_mm": 71.22,
-   "error_ang_deg": 23.58,
+   "error_pos_mm": 78.06,
+   "error_ang_deg": 25.77,
    "q": [
-    -0.63,
-    1.9327,
-    -1.405,
+    -0.6691,
+    1.8441,
+    -1.2828,
     1.745,
     1.22,
-    0.5957
+    0.58
    ],
    "despeje_mm": 17.8,
    "choca_madera": true
@@ -106,15 +106,15 @@
    "azimut": -50,
    "visibilidad": 0.585,
    "alcanzable": false,
-   "error_pos_mm": 56.83,
-   "error_ang_deg": 15.69,
+   "error_pos_mm": 65.42,
+   "error_ang_deg": 18.1,
    "q": [
-    0.6547,
-    1.7548,
-    -1.4645,
-    -1.4169,
+    0.6973,
+    1.6885,
+    -1.4022,
+    -1.41,
     1.22,
-    0.161
+    0.3078
    ],
    "despeje_mm": 17.8,
    "choca_madera": true
@@ -124,15 +124,15 @@
    "azimut": -25,
    "visibilidad": 0.463,
    "alcanzable": true,
-   "error_pos_mm": 0.04,
-   "error_ang_deg": 0.01,
+   "error_pos_mm": 2.33,
+   "error_ang_deg": 0.43,
    "q": [
-    0.6957,
-    1.28,
-    -0.9952,
-    -1.4722,
-    1.1103,
-    0.039
+    0.8082,
+    1.2124,
+    -0.9861,
+    -1.4339,
+    1.22,
+    0.0615
    ],
    "despeje_mm": 46.0,
    "choca_madera": false
@@ -145,12 +145,12 @@
    "error_pos_mm": 0.02,
    "error_ang_deg": 0.0,
    "q": [
-    0.0,
-    1.0198,
-    -0.6189,
-    0.0,
-    -0.1391,
-    0.0
+    0.0059,
+    0.8794,
+    -0.5475,
+    0.0831,
+    -0.0704,
+    0.0991
    ],
    "despeje_mm": 56.7,
    "choca_madera": false
@@ -160,15 +160,15 @@
    "azimut": 25,
    "visibilidad": 0.512,
    "alcanzable": true,
-   "error_pos_mm": 0.04,
-   "error_ang_deg": 0.01,
+   "error_pos_mm": 2.34,
+   "error_ang_deg": 0.43,
    "q": [
-    -0.6957,
-    1.28,
-    -0.9952,
-    1.4722,
-    1.1103,
-    -0.039
+    -0.8091,
+    1.2114,
+    -0.9789,
+    1.436,
+    1.22,
+    0.241
    ],
    "despeje_mm": 46.6,
    "choca_madera": false
@@ -178,15 +178,15 @@
    "azimut": 50,
    "visibilidad": 0.63,
    "alcanzable": false,
-   "error_pos_mm": 56.83,
-   "error_ang_deg": 15.69,
+   "error_pos_mm": 65.43,
+   "error_ang_deg": 18.1,
    "q": [
-    -0.6547,
-    1.7548,
-    -1.4645,
-    1.4169,
+    -0.6974,
+    1.6885,
+    -1.402,
+    1.4101,
     1.22,
-    -0.1608
+    0.0312
    ],
    "despeje_mm": 24.9,
    "choca_madera": true
@@ -196,15 +196,15 @@
    "azimut": -50,
    "visibilidad": 0.425,
    "alcanzable": false,
-   "error_pos_mm": 70.39,
-   "error_ang_deg": 17.52,
+   "error_pos_mm": 75.27,
+   "error_ang_deg": 19.73,
    "q": [
-    0.5321,
-    1.7377,
-    -1.8047,
-    -0.9624,
+    0.5703,
+    1.6722,
+    -1.7527,
+    -0.9711,
     1.22,
-    0.2372
+    0.3775
    ],
    "despeje_mm": 13.6,
    "choca_madera": true
@@ -214,15 +214,15 @@
    "azimut": -25,
    "visibilidad": 0.067,
    "alcanzable": false,
-   "error_pos_mm": 10.93,
-   "error_ang_deg": 2.38,
+   "error_pos_mm": 20.24,
+   "error_ang_deg": 4.55,
    "q": [
-    0.4781,
-    1.4529,
-    -1.6711,
-    -0.7497,
+    0.5012,
+    1.374,
+    -1.6234,
+    -0.7529,
     1.22,
-    0.0212
+    0.0905
    ],
    "despeje_mm": 32.9,
    "choca_madera": false
@@ -235,12 +235,12 @@
    "error_pos_mm": 0.06,
    "error_ang_deg": 0.01,
    "q": [
-    -0.0,
-    1.2572,
-    -1.4847,
-    0.0001,
-    0.9255,
-    -0.0002
+    -0.026,
+    1.1794,
+    -1.4814,
+    0.0254,
+    1.0002,
+    0.0672
    ],
    "despeje_mm": 41.7,
    "choca_madera": false
@@ -250,15 +250,15 @@
    "azimut": 25,
    "visibilidad": 0.0,
    "alcanzable": false,
-   "error_pos_mm": 10.93,
-   "error_ang_deg": 2.38,
+   "error_pos_mm": 20.24,
+   "error_ang_deg": 4.55,
    "q": [
-    -0.4781,
-    1.4529,
-    -1.6711,
-    0.7497,
+    -0.5017,
+    1.374,
+    -1.623,
+    0.7532,
     1.22,
-    -0.0212
+    0.2468
    ],
    "despeje_mm": 49.9,
    "choca_madera": false
@@ -268,15 +268,15 @@
    "azimut": 50,
    "visibilidad": 0.0,
    "alcanzable": false,
-   "error_pos_mm": 70.39,
-   "error_ang_deg": 17.52,
+   "error_pos_mm": 75.27,
+   "error_ang_deg": 19.73,
    "q": [
-    -0.5321,
-    1.7377,
-    -1.8047,
-    0.9624,
+    -0.5704,
+    1.6722,
+    -1.7526,
+    0.9712,
     1.22,
-    -0.2372
+    -0.038
    ],
    "despeje_mm": 40.7,
    "choca_madera": false
@@ -286,15 +286,15 @@
    "azimut": -50,
    "visibilidad": 0.01,
    "alcanzable": false,
-   "error_pos_mm": 122.34,
-   "error_ang_deg": 25.95,
+   "error_pos_mm": 119.84,
+   "error_ang_deg": 28.25,
    "q": [
-    0.285,
-    1.7723,
-    -2.0273,
-    -0.5015,
+    0.3107,
+    1.7144,
+    -2.0019,
+    -0.5128,
     1.22,
-    0.1366
+    0.2971
    ],
    "despeje_mm": 4.6,
    "choca_madera": true
@@ -304,15 +304,15 @@
    "azimut": -25,
    "visibilidad": 0.0,
    "alcanzable": false,
-   "error_pos_mm": 91.15,
-   "error_ang_deg": 18.7,
+   "error_pos_mm": 91.08,
+   "error_ang_deg": 20.76,
    "q": [
-    0.187,
-    1.6643,
-    -1.9898,
-    -0.3051,
+    0.2029,
+    1.5978,
+    -1.9565,
+    -0.3119,
     1.22,
-    0.0706
+    0.2283
    ],
    "despeje_mm": 25.1,
    "choca_madera": true
@@ -322,15 +322,15 @@
    "azimut": 0,
    "visibilidad": 0.247,
    "alcanzable": false,
-   "error_pos_mm": 78.6,
-   "error_ang_deg": 15.84,
+   "error_pos_mm": 79.24,
+   "error_ang_deg": 17.78,
    "q": [
     -0.0,
-    1.6202,
-    -1.9822,
+    1.5501,
+    -1.9461,
     0.0,
     1.22,
-    -0.0002
+    0.1699
    ],
    "despeje_mm": 6.6,
    "choca_madera": true
@@ -340,15 +340,15 @@
    "azimut": 25,
    "visibilidad": 0.765,
    "alcanzable": false,
-   "error_pos_mm": 91.15,
-   "error_ang_deg": 18.7,
+   "error_pos_mm": 91.08,
+   "error_ang_deg": 20.76,
    "q": [
-    -0.187,
-    1.6643,
-    -1.9897,
-    0.3051,
+    -0.203,
+    1.5978,
+    -1.9565,
+    0.312,
     1.22,
-    -0.0706
+    0.1115
    ],
    "despeje_mm": 14.5,
    "choca_madera": true
@@ -358,15 +358,15 @@
    "azimut": 50,
    "visibilidad": 1.0,
    "alcanzable": false,
-   "error_pos_mm": 122.34,
-   "error_ang_deg": 25.95,
+   "error_pos_mm": 119.84,
+   "error_ang_deg": 28.25,
    "q": [
-    -0.285,
-    1.7723,
-    -2.0273,
-    0.5015,
+    -0.3108,
+    1.7144,
+    -2.0018,
+    0.5129,
     1.22,
-    -0.1367
+    0.0425
    ],
    "despeje_mm": 41.6,
    "choca_madera": false

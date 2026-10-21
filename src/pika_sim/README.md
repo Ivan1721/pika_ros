@@ -28,7 +28,7 @@ conda activate pika
 ros2 launch pika_remote_piper teleop_rand_single_piper.launch.py sim:=true
 ```
 
-En RViz, **click derecho sobre el bloque naranja** (Pika Sense simulado):
+En RViz, **click derecho sobre el Pika Sense naranja** (simulado, con la malla de AgileX):
 - *Teleop: iniciar / detener* — equivale al doble click del Sense
 - *Pinza: abrir / media / cerrar*
 
@@ -96,7 +96,7 @@ La D405 y la fisheye del gripper Pika están simuladas con los topics del hardwa
 | `/gripper/camera_fisheye/color/image_raw` y `camera_info` | fisheye equidistante de 180° en horizontal (la real tiene 200° en diagonal) |
 
 - **Profundidad:** Gazebo la publica en 32FC1 metros por `/gripper/camera/depth_sim/image_raw`, y `profundidad_mm.py` la convierte. Sin esa conversión, `dataCapture.cpp` guardaría 0 y 1, porque convierte con cv_bridge a 16UC1 sin reescalar.
-- **Orientación (supuesto):** las dos cámaras miran a lo largo de +Z de `gripper_base`, el eje de la herramienta, igual que en la demo de NBV. En la imagen, las garras quedan abajo. Hay que confirmarlo con el gripper real o con el CAD de AgileX.
+- **Orientación y posición:** las del modelo de AgileX (`pika_description`): ambas cámaras miran a lo largo de +Z de `gripper_base`, el eje de la herramienta, y las garras quedan abajo en la imagen. La D405 tiene el centro óptico 4 mm detrás de la tapa; el sensor de Gazebo va 4 mm más adelante para dibujar desde fuera de la carcasa.
 - **Verificado:** con el brazo en la mejor vista del manzano, miles de puntos de la nube caen a menos de 3 mm de la superficie de cada manzana y ninguno dentro, así que el marco óptico y el TF son correctos.
 - Gazebo avisa `Error advertising topic [.../pika_fisheye/image]`. Es su transporte interno y no afecta a los topics de ROS.
 
@@ -283,7 +283,6 @@ del URDF).
 
 ## Pendiente
 
-- Confirmar hacia dónde miran la D405 y la fisheye reales (con el gripper o el CAD de AgileX).
 - Probar una captura completa con `data_tools`: el config `single_pika_teleop` pide además topics del Sense y del brazo.
 - Niveles de oclusión controlados (25–100 %): con Helios, elegir la manzana objetivo por nivel de visibilidad y variar la edad y la semilla ([recursos públicos](../../docs/percepcion_activa/recursos_publicos.md)).
 - Choques del brazo completo con las ramas: la demo solo revisa la cámara y las garras. Hace falta MoveIt (paso 2 de la hoja de ruta).
