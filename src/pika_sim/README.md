@@ -241,6 +241,11 @@ resolver un detector como YOLO.
 **Licencias:** PyHelios es MIT, y el núcleo de Helios y sus texturas son LGPL-2.1. Por eso el repo
 guarda el generador y no las mallas: cada máquina las genera.
 
+## Modelos 3D
+
+Galería y ficha de cada modelo (robot, gripper, Sense, árboles, frutos, hojas, plataforma), con su origen,
+triángulos y licencia: [informe de escenarios, §2.4](../../docs/percepcion_activa/escenarios_simulacion.md#24-modelos-3d-de-la-simulación).
+
 ## Renders para figuras
 
 `render_camara.py` saca una imagen de alta resolución con una cámara virtual de Gazebo, sin

@@ -84,6 +84,38 @@ que no caben, como en un huerto real.
 | `noche_fria` | casi nulo; tres focos LED fríos (~6500 K) en la plataforma | cosecha nocturna |
 | `noche_calida` | casi nulo; tres focos LED cálidos (~3000 K) | cosecha nocturna |
 
+### 2.4 Modelos 3D de la simulación
+
+Cada modelo fotografiado solo en Gazebo, con fondo blanco (`fondo:=blanco`) y la cámara de
+`render_camara.py`; las poses de cámara están en [img/modelos/camaras.json](img/modelos/camaras.json).
+Las mallas STL se pueden girar en 3D en GitHub: abrir el enlace del archivo.
+
+| Robot sobre la plataforma | Pika Gripper | Pika Sense |
+|---|---|---|
+| ![Piper + Pika sobre la plataforma](img/modelos/robot_plataforma.jpg) | ![Pika Gripper](img/modelos/pika_gripper.jpg) | ![Pika Sense](img/modelos/pika_sense.jpg) |
+
+| Muro frutal, base | Muro frutal, media | Muro frutal, alta |
+|---|---|---|
+| ![Muro frutal base](img/modelos/muro_base.jpg) | ![Muro frutal media](img/modelos/muro_media.jpg) | ![Muro frutal alta](img/modelos/muro_alta.jpg) |
+
+| Manzano libre | Manzano de primitivas | Manzana | Follaje |
+|---|---|---|---|
+| ![Manzano libre](img/modelos/arbol_libre.jpg) | ![Manzano de primitivas](img/modelos/primitivas.jpg) | ![Manzana](img/modelos/manzana.jpg) | ![Follaje](img/modelos/follaje.jpg) |
+
+| Modelo | Origen | Archivos | Triángulos | Licencia | Uso en la simulación |
+|---|---|---|---|---|---|
+| Brazo Piper | AgileX, `piper_description` (submódulo PikaAnyArm) | 7 STL: [base](https://github.com/Ivan1721/PikaAnyArm/blob/pika-custom-ros2/piper/piper_ros/src/piper_description/meshes/base_link.STL), [link1](https://github.com/Ivan1721/PikaAnyArm/blob/pika-custom-ros2/piper/piper_ros/src/piper_description/meshes/link1.STL) … [link6](https://github.com/Ivan1721/PikaAnyArm/blob/pika-custom-ros2/piper/piper_ros/src/piper_description/meshes/link6.STL) | 166 586 | MIT (repo `piper_ros`; su `package.xml` dice Apache-2.0) | Visual y colisión con las mismas mallas |
+| Pika Gripper | AgileX, `pika_gripper_description` (20-10-2026) | 3 STL: [cuerpo](https://github.com/Ivan1721/pika_ros/blob/sim-gazebo/src/pika_description/meshes/agilex/gripper/gripper_base_link.STL), [garra izq.](https://github.com/Ivan1721/pika_ros/blob/sim-gazebo/src/pika_description/meshes/agilex/gripper/gripper_left_link.STL), [garra der.](https://github.com/Ivan1721/pika_ros/blob/sim-gazebo/src/pika_description/meshes/agilex/gripper/gripper_right_link.STL) | 173 508 | Publicación autorizada por AgileX | Visual con las mallas; colisión con cajas medidas de ellas |
+| Pika Sense | AgileX, `pika_sensor_description` (20-10-2026) | 17 STL; se usan [cuerpo](https://github.com/Ivan1721/pika_ros/blob/sim-gazebo/src/pika_description/meshes/agilex/sense/base_link.STL) y las dos garras | 166 984 (las 17) | Publicación autorizada por AgileX | Marcador del Sense falso en RViz; no está en Gazebo |
+| Cámaras D405 y fisheye | sensores de Gazebo | sin malla propia (están dentro del cuerpo del gripper) | — | — | `depth` y `wideanglecamera` con los topics del hardware |
+| Muro frutal de manzano | Helios, modelo `apple_fruitingwall` (640 días, semilla 7) | `madera.obj`, `hojas.obj`, `frutas.obj` + texturas, en `~/.cache/pika_sim/manzanos/` | base 235 000; media 434 000; alta 791 000 (dibujados) | PyHelios MIT; núcleo y texturas LGPL-2.1: **no se versionan**, se generan con `generar_manzano_helios.py` | Visual sin colisión; triángulos en `triangulos.npz` para la visibilidad y los choques de la demo |
+| Manzano libre | Helios, modelo `apple` | igual que el muro | 160 000 | igual | Alternativa al muro; parte de la copa cae sobre la plataforma |
+| Manzana | Helios (`AppleFruitPrototype`), textura fotográfica | dentro de `frutas.obj` | ~206 por manzana | LGPL-2.1 (textura) | Radio de ~5 cm; las que se movían al separarlas llevan un pedúnculo nuevo (tubo de 6 lados) |
+| Hoja | Silueta de la foto de hoja de manzano de Helios, recortada por el generador | dentro de `hojas.obj` | 72 por cara, con las dos caras | LGPL-2.1 (textura) | La cámara de profundidad de Gazebo ignora la transparencia: por eso se recorta la silueta |
+| Manzano de primitivas | `escena_manzano.py` (semilla 7) | SDF generado: cilindros, discos y esferas | — | del repo | Tronco, 5 ramas, 83 hojas en disco y 4 manzanas; la primera escena de prueba |
+| Plataforma y suelo | `escena_manzano.py` (`sdf_huerto`) | SDF generado: cajas | — | del repo | Cubierta de 1,0 × 0,7 × 0,08 m con 4 patas; suelo de huerto de 30 × 30 m solo con `fondo:=natural` |
+| Marcadores de vistas | `escena_nbv_demo.py` | SDF generado: esferas y cilindros | — | del repo | Las 20 vistas candidatas coloreadas por visibilidad |
+
 ## 3. NBV en cada escenario
 
 | Escenario | Casquete | Alcanzables | Chocan con ramas | Visibilidad de frente | Mejor vista alcanzable |
