@@ -293,7 +293,9 @@ class Demo(Node):
             PILImage.frombytes('RGB', (ojo.width, ojo.height), bytes(ojo.data)).save(
                 base.replace('_d405', '_fisheye') + '.png')
         if prof.encoding == '16UC1':                                 # mm, como la D405 real
-            z = np.frombuffer(bytes(prof.data), dtype=np.uint16).reshape(prof.height, prof.width) / 1000.0
+            crudo = np.frombuffer(bytes(prof.data), dtype=np.uint16).reshape(prof.height, prof.width)
+            PILImage.fromarray(crudo).save(base + '_profundidad_16bit.png')   # mm en 16 bits, sin colorear
+            z = crudo / 1000.0
         else:
             z = np.frombuffer(bytes(prof.data), dtype=np.float32).reshape(prof.height, prof.width)
         validos = np.isfinite(z) & (z > 0)
@@ -332,6 +334,7 @@ def main():
     ap.add_argument('--salida', default=os.path.expanduser('~/pika_ros/docs/percepcion_activa/img'))
     ap.add_argument('--escena', choices=['manzano', 'prueba'], default='manzano')
     ap.add_argument('--semilla', type=int, default=7)
+    ap.add_argument('--vistas_res', default='848x480', help='resolución de las vistas frontal y elegida (ancho x alto)')
     ap.add_argument('--radio', type=float, default=None,
                     help='radio del casquete de vistas (m); 0,22 con primitivas y 0,30 con Helios')
     ap.add_argument('--despeje', type=float, default=DESPEJE,
@@ -340,6 +343,7 @@ def main():
     os.makedirs(args.salida, exist_ok=True)
     prefijo = 'nbv' if args.escena == 'prueba' else f'nbv_{args.escena}'
     corrida = os.getpid()             # cámaras con nombre propio: así la demo se puede repetir
+    ancho_v, alto_v = (int(v) for v in args.vistas_res.lower().split('x'))
 
     rclpy.init()
     node = Demo()
@@ -408,8 +412,8 @@ def main():
         node.arm.publish(Float64MultiArray(data=[0.0] * 6))
         rclpy.spin_once(node, timeout_sec=0.1)
     time.sleep(3.0)
-    node.spawnear(f'cam_frontal_{corrida}', sdf_camara(f'cam_frontal_{corrida}', pose_mirando(frontal['c'], FRUTA), 1.52, 848, 480))
-    node.spawnear(f'cam_elegida_{corrida}', sdf_camara(f'cam_elegida_{corrida}', pose_mirando(mejor['c'], FRUTA), 1.52, 848, 480))
+    node.spawnear(f'cam_frontal_{corrida}', sdf_camara(f'cam_frontal_{corrida}', pose_mirando(frontal['c'], FRUTA), 1.52, ancho_v, alto_v))
+    node.spawnear(f'cam_elegida_{corrida}', sdf_camara(f'cam_elegida_{corrida}', pose_mirando(mejor['c'], FRUTA), 1.52, ancho_v, alto_v))
     time.sleep(2.0)
     node.foto(f'cam_frontal_{corrida}', os.path.join(args.salida, f'{prefijo}_vista_frontal.png'))
     node.foto(f'cam_elegida_{corrida}', os.path.join(args.salida, f'{prefijo}_vista_elegida.png'))

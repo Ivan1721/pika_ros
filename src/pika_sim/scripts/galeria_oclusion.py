@@ -71,7 +71,12 @@ def capturar(argv):
     ap.add_argument('--salida', required=True)
     ap.add_argument('--semilla', type=int, default=3)
     ap.add_argument('--max_frutas', type=int, default=60)
+    ap.add_argument('--res', default='640x480', help='resolución de las fotos (ancho x alto), con el FOV de la D405')
+    ap.add_argument('--prefijo', default='oclusion', help='prefijo de los archivos de cada ejemplo')
+    ap.add_argument('--sufijo', default='', help='va tras la franja, p. ej. la luz: G3_f30-50_dia_foto.png')
     args, _ = ap.parse_known_args(argv)
+    global ANCHO, ALTO
+    ANCHO, ALTO = (int(v) for v in args.res.lower().split('x'))
     os.makedirs(args.salida, exist_ok=True)
 
     rclpy.init()
@@ -161,14 +166,20 @@ def capturar(argv):
         cerca = (xx - cx) ** 2 + (yy - cy) ** 2 < (1.15 * rho) ** 2
         cambio = (np.abs(b - a).sum(2) > 60) & cerca
         vis_img = float(cambio.sum() / (math.pi * rho * rho))
-        base = os.path.join(args.salida, f'oclusion_{k}')
-        PILImage.fromarray(a.astype(np.uint8)).save(base + '.png')
+        lo, hi = ej['franja']
+        base = os.path.join(args.salida, f'{args.prefijo}_f{round(lo * 100)}-{round(hi * 100)}'
+                                         + (f'_{args.sufijo}' if args.sufijo else ''))
+        PILImage.fromarray(a.astype(np.uint8)).save(base + '_foto.png')
+        PILImage.fromarray(b.astype(np.uint8)).save(base + '_magenta.png')
         PILImage.fromarray((cambio * 255).astype(np.uint8)).save(base + '_mascara.png')
         resultados.append({'k': k, 'manzana': ej['i'], 'centro': np.round(c, 4).tolist(), 'radio': r,
                            'elevacion': ej['elev'], 'azimut': ej['azim'], 'franja': ej['franja'],
                            'camara': np.round(ej['cam'], 4).tolist(),
                            'visibilidad_rayos': round(ej['vis'], 3), 'visibilidad_imagen': round(min(vis_img, 1.0), 3),
-                           'centro_px': [cx, cy], 'radio_px': round(rho, 1), 'imagen': os.path.basename(base) + '.png'})
+                           'centro_px': [cx, cy], 'radio_px': round(rho, 1), 'resolucion': [ANCHO, ALTO], 'hfov': HFOV,
+                           'imagen': os.path.basename(base) + '_foto.png'})
+        with open(base + '.json', 'w') as f:                  # la terna con sus números
+            json.dump(resultados[-1], f, indent=1)
         nodo.get_logger().info(f'franja {ej["franja"]}: manzana {ej["i"]}, rayos {ej["vis"]:.0%}, imagen {vis_img:.0%}')
     with open(os.path.join(args.salida, 'oclusion.json'), 'w') as f:
         json.dump({'casquete_m': R_VISTA, 'pares_evaluados': len(pares), 'ejemplos': resultados}, f, indent=1)
@@ -198,13 +209,13 @@ def panel(argv):
             ax = ejes[i, j]
             img = np.asarray(Image.open(os.path.join(carpeta, ej['imagen'])))
             if es_mascara:
-                m = np.asarray(Image.open(os.path.join(carpeta, ej['imagen'].replace('.png', '_mascara.png')))) > 0
+                m = np.asarray(Image.open(os.path.join(carpeta, ej['imagen'].replace('_foto.png', '_mascara.png')))) > 0
                 img = img.copy()
                 img[m] = (0.35 * img[m] + np.array([165, 0, 165])).astype(np.uint8)
             cx, cy = ej['centro_px']
             lado = max(2.6 * ej['radio_px'], 60)
-            x0, x1 = int(max(cx - lado, 0)), int(min(cx + lado, ANCHO))
-            y0, y1 = int(max(cy - lado, 0)), int(min(cy + lado, ALTO))
+            x0, x1 = int(max(cx - lado, 0)), int(min(cx + lado, img.shape[1]))
+            y0, y1 = int(max(cy - lado, 0)), int(min(cy + lado, img.shape[0]))
             ax.imshow(img[y0:y1, x0:x1])
             ax.add_patch(Circle((cx - x0, cy - y0), ej['radio_px'], fill=False, ls='--', lw=1.2, ec='#ffd23f'))
             ax.set_xticks([])

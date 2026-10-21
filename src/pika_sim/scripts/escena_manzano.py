@@ -273,9 +273,10 @@ def sdf_escena(escena, nombre='manzano'):
     return sdf_modelo(nombre, links)
 
 
-def sdf_huerto(altura):
-    """Suelo de huerto a `altura` bajo la base del Piper y la plataforma remolcable donde va."""
-    links = caja('suelo', (0, 0, -altura - 0.05), (30, 30, 0.1), '0.36 0.30 0.22 1', colision=True)
+def sdf_huerto(altura, suelo=True):
+    """Suelo de huerto a `altura` bajo la base del Piper y la plataforma remolcable donde va.
+    Sin suelo (renders con fondo blanco o croma) queda solo la plataforma."""
+    links = caja('suelo', (0, 0, -altura - 0.05), (30, 30, 0.1), '0.36 0.30 0.22 1', colision=True) if suelo else ''
     links += caja('cubierta', (-0.15, 0, -0.04), (1.0, 0.7, 0.08), '0.25 0.25 0.27 1')
     for i, (x, y) in enumerate([(-0.6, -0.3), (-0.6, 0.3), (0.3, -0.3), (0.3, 0.3)]):
         links += caja(f'pata{i}', (x, y, -(altura + 0.08) / 2), (0.06, 0.06, altura - 0.08), '0.20 0.20 0.22 1')
@@ -319,6 +320,7 @@ def main():
             self.declare_parameter('ruta_helios', RUTA_HELIOS)
             self.declare_parameter('visibilidad_frontal', 0.3)
             self.declare_parameter('vecinos', 1)
+            self.declare_parameter('suelo', True)      # false: sin suelo de huerto (fondo blanco o croma)
             g = lambda n: self.get_parameter(n).value  # noqa: E731
             if g('modelo') == 'helios':
                 self.escena = cargar_helios(os.path.expanduser(g('ruta_helios')), g('visibilidad_frontal'), g('vecinos'))
@@ -343,7 +345,8 @@ def main():
                 borrar = self.create_client(DeleteEntity, '/delete_entity')
                 if borrar.wait_for_service(timeout_sec=10.0):
                     self.llamar(borrar, DeleteEntity.Request(name='ground_plane'))
-                self.llamar(cli, SpawnEntity.Request(name='huerto', xml=sdf_huerto(e['altura_plataforma'])))
+                self.llamar(cli, SpawnEntity.Request(name='huerto', xml=sdf_huerto(e['altura_plataforma'],
+                                                                                  self.get_parameter('suelo').value)))
             res = self.llamar(cli, SpawnEntity.Request(name='manzano', xml=sdf_escena(e)), timeout=120.0)
             ok = res is not None and res.success
             if e['modelo'] == 'helios':

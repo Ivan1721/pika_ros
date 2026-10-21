@@ -17,6 +17,7 @@ install(PROGRAMS
   scripts/profundidad_mm.py
   scripts/panel_nbv.py
   scripts/galeria_oclusion.py
+  scripts/render_camara.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

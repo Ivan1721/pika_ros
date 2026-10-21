@@ -20,6 +20,7 @@
 #                       scripts/generar_manzano_helios.py); ruta_helios:=<carpeta> elige cuál
 #   densidad:=media     con arbol:=helios: muro frutal con más fruta en racimos y más follaje (o alta)
 #   luz:=atardecer      iluminación: dia, atardecer, contraluz, nublado, noche_fria, noche_calida
+#   fondo:=blanco       para renders: fondo blanco o croma (magenta #FF00FF), sin suelo ni sombras
 #   camaras:=false      sin la D405 ni la fisheye del gripper (Gazebo más liviano)
 #   gui:=false          Gazebo sin ventana (solo gzserver)
 #   rviz:=false         sin RViz
@@ -104,9 +105,15 @@ LUCES = {
 }
 
 
-def mundo(luz):
-    """Escribe el mundo de Gazebo con la iluminación pedida y devuelve su ruta."""
-    l = LUCES[luz]
+FONDOS = {'blanco': '1 1 1', 'croma': '1 0 1'}   # croma: magenta puro #FF00FF, para recortar
+
+
+def mundo(luz, fondo='natural'):
+    """Escribe el mundo de Gazebo con la iluminación y el fondo pedidos y devuelve su ruta.
+    Con fondo blanco o croma: sin suelo, sin sombras y fondo de un solo color (para renders)."""
+    l = dict(LUCES[luz])
+    if fondo != 'natural':
+        l.update(fondo=FONDOS[fondo], sombras=False)
     focos = ''
     if 'focos' in l:
         for i, (y, z) in enumerate([(0.45, 0.45), (-0.45, 0.45), (0.0, 0.75)]):
@@ -124,10 +131,11 @@ def mundo(luz):
            f'<pose>0 0 10 0 0 0</pose><diffuse>{l["sol"]} 1</diffuse><specular>0.2 0.2 0.2 1</specular>'
            f'<attenuation><range>1000</range><constant>0.9</constant><linear>0.01</linear><quadratic>0.001</quadratic>'
            f'</attenuation><direction>{l["dir_sol"]}</direction></light>{focos}'
-           f'<include><uri>model://ground_plane</uri></include></world></sdf>')
+           + ('<include><uri>model://ground_plane</uri></include>' if fondo == 'natural' else '')
+           + '</world></sdf>')
     carpeta = os.path.expanduser('~/.cache/pika_sim/mundos')
     os.makedirs(carpeta, exist_ok=True)
-    ruta = os.path.join(carpeta, f'huerto_{luz}.world')
+    ruta = os.path.join(carpeta, f'huerto_{luz}_{fondo}.world')
     with open(ruta, 'w') as f:
         f.write(sdf)
     return ruta
@@ -175,7 +183,8 @@ def launch_setup(context):
             executable='escena_manzano.py',
             parameters=[{'semilla': int(LaunchConfiguration('semilla').perform(context)),
                          'modelo': LaunchConfiguration('arbol').perform(context),
-                         'ruta_helios': ruta_helios}],
+                         'ruta_helios': ruta_helios,
+                         'suelo': LaunchConfiguration('fondo').perform(context) == 'natural'}],
             output='screen',
         ))
 
@@ -183,7 +192,8 @@ def launch_setup(context):
 
     gzserver = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(os.path.join(gazebo_launch_dir, 'gzserver.launch.py')),
-        launch_arguments={'world': mundo(LaunchConfiguration('luz').perform(context))}.items())
+        launch_arguments={'world': mundo(LaunchConfiguration('luz').perform(context),
+                                         LaunchConfiguration('fondo').perform(context))}.items())
     gzclient = IncludeLaunchDescription(PythonLaunchDescriptionSource(os.path.join(gazebo_launch_dir, 'gzclient.launch.py')),
                                         condition=IfCondition(LaunchConfiguration('gui')))
 
@@ -241,6 +251,7 @@ def generate_launch_description():
         DeclareLaunchArgument('ruta_helios', default_value=''),
         DeclareLaunchArgument('camaras', default_value='true', choices=['true', 'false']),
         DeclareLaunchArgument('luz', default_value='dia', choices=list(LUCES)),
+        DeclareLaunchArgument('fondo', default_value='natural', choices=['natural', 'blanco', 'croma']),
         DeclareLaunchArgument('densidad', default_value='base', choices=['base', 'media', 'alta']),
         DeclareLaunchArgument('gui', default_value='true'),
         DeclareLaunchArgument('rviz', default_value='true'),

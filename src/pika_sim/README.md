@@ -62,6 +62,7 @@ ros2 topic pub --once /mit_emulador/perturbacion std_msgs/msg/Float64MultiArray 
 | `densidad` | `base` | con `arbol:=helios`: `media` o `alta`, más fruta en racimos y más follaje (hay que generarlos antes) |
 | `ruta_helios` | (según `densidad`) | carpeta de otro árbol de Helios; pisa a `densidad` |
 | `luz` | `dia` | iluminación: `dia`, `atardecer`, `contraluz`, `nublado`, `noche_fria`, `noche_calida` (ver más abajo) |
+| `fondo` | `natural` | para renders: `blanco` o `croma` (magenta `#FF00FF`), sin suelo ni sombras; la plataforma queda |
 | `camaras` | `true` | `false`: sin la D405 ni la fisheye del gripper (Gazebo más liviano, p. ej. en modo MIT) |
 | `gui` | `true` | `false`: Gazebo sin ventana (solo `gzserver`) |
 | `rviz` | `true` | `false`: sin RViz |
@@ -220,6 +221,24 @@ resolver un detector como YOLO.
 
 **Licencias:** PyHelios es MIT, y el núcleo de Helios y sus texturas son LGPL-2.1. Por eso el repo
 guarda el generador y no las mallas: cada máquina las genera.
+
+## Renders para figuras
+
+`render_camara.py` saca una imagen de alta resolución con una cámara virtual de Gazebo, sin
+depender del tamaño de la ventana de `gzclient`. Cada render queda anotado en un `camaras.json`
+junto a la imagen (posición, punto mirado, campo visual, resolución, pose del brazo y escena), para
+repetirlo si cambia la escena:
+
+```bash
+ros2 launch pika_sim sim_piper_single.launch.py gui:=false rviz:=false escena:=manzano arbol:=helios fondo:=blanco
+ros2 run pika_sim escena_nbv_demo.py --salida /tmp/demo --vistas_res 1280x960     # brazo en la mejor vista y marcadores
+ros2 run pika_sim render_camara.py --salida G1.png --pos -0.68 0.78 0.85 --mira 0.33 0 0.24 --hfov 0.95 --res 3000x2000
+```
+
+- `--q` y `--pinza` mueven el brazo antes de la foto; `--fruta x y z r` pone una esfera ámbar como fruta.
+- Con `--hfov` chico y la cámara lejos, la vista se acerca a una ortográfica (siluetas).
+- `galeria_oclusion.py capturar --res 1280x960 --prefijo G3 --sufijo dia` guarda, por franja, la foto, la foto con la esfera magenta, la máscara binaria y un JSON con la visibilidad.
+- La demo guarda además la profundidad de la D405 en crudo (`_d405_profundidad_16bit.png`, mm).
 
 ## Consumo de recursos
 
