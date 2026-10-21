@@ -39,15 +39,26 @@ pika 遥操作：https://github.com/agilexrobotics/PikaAnyArm
 - 操作系统：Ubuntu22.04
 - ROS：humble
 
+## 关于本分支（fork）
 
-notas---
-echo 'export pika_L_code=LHR-55384C5D' >> ~/.bashrc
-echo 'export pika_R_code=LHR-ACF8CAD3' >> ~/.bashrc
-source ~/.bashrc
+本仓库是 [agilexrobotics/pika_ros](https://github.com/agilexrobotics/pika_ros)（`ros2` 分支）的分支，维护于 [Ivan1721/pika_ros](https://github.com/Ivan1721/pika_ros)，工作分支为 `pika-custom-ros2`。
 
+| 新增内容 | 位置 |
+|---|---|
+| PikaAnyArm 分支，保留上游 V2 中删除的 `piper/` 结构（`pika_remote_piper`、`piper_ros`） | 子模块 `src/PikaAnyArm` → [Ivan1721/PikaAnyArm](https://github.com/Ivan1721/PikaAnyArm) |
+| 研究代码：Gazebo 仿真、采用 AgileX 官方夹爪模型的 Piper + Pika、操作指南与项目文档 | 私有仓库 `Ivan1721/Next-Best-View`（以子模块方式引用本分支） |
+| 修复：`setup_device.py` 的 USB 配对、`open_multi_gripper.launch.py` 的节点名与夹爪跟随、从上游移植的 IK/遥操作修复 | git 历史 |
 
-# can_config.sh
-#!/bin/bash
-SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
-bash $SCRIPT_DIR/can_activate.sh can_left 1000000 "3-1.1.3:1.0"
-bash $SCRIPT_DIR/can_activate.sh can_right 1000000 "1-1.1.3:1.0"
+### 快速开始
+
+```bash
+cd ~/pika_ros
+git submodule update --init --recursive
+source /opt/ros/humble/setup.bash
+colcon build --packages-select data_msgs && source install/setup.bash
+colcon build && source install/setup.bash
+```
+
+`pika_locator` 与 `libsurvive`（Vive 定位）仅以预编译二进制形式提供于 `source/install.zip`：解压后放入 `install/`，切勿删除 `install/`。
+
+贡献与上游同步规范见 [AGENTS.md](AGENTS.md)。

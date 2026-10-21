@@ -12,6 +12,8 @@
 
 </div>
 
+> **Investigación y documentación:** la simulación, el modelo del robot y la documentación del proyecto pasaron a un repositorio privado (ver [docs/README.md](docs/README.md)).
+
 ## Introducción
 
 Pika (en adelante, "Pika") es un **producto de captura de datos espaciales** orientado a escenarios de recolección de datos en el campo de la **inteligencia encarnada** (embodied intelligence). Es una solución ligera y portátil de captura-y-ejecución para operación de propósito general, compuesta por una unidad de captura de datos, un ejecutor con inferencia de modelos, y una estación de localización y mochila de datos complementarias. Permite capturar de forma eficiente, precisa, rápida y ligera los datos de operación espacial de un robot.
@@ -38,3 +40,25 @@ Para más información, consulta el [Manual de Usuario del Producto Pika beta (C
 - Arquitectura: x86_64
 - Sistema operativo: Ubuntu 22.04
 - ROS: Humble
+
+## Sobre este fork
+
+Este repositorio es un fork de [agilexrobotics/pika_ros](https://github.com/agilexrobotics/pika_ros) (rama `ros2`), mantenido en [Ivan1721/pika_ros](https://github.com/Ivan1721/pika_ros). La rama de trabajo es `pika-custom-ros2`.
+
+| Qué agrega | Dónde |
+|---|---|
+| Fork de PikaAnyArm que conserva la estructura `piper/` (`pika_remote_piper`, `piper_ros`), eliminada en la V2 de upstream | submódulo `src/PikaAnyArm` → [Ivan1721/PikaAnyArm](https://github.com/Ivan1721/PikaAnyArm) |
+| Código de investigación: simulación en Gazebo, modelo del Piper + Pika con el gripper oficial de AgileX, guía de operación y documentación del proyecto | repositorio privado `Ivan1721/Next-Best-View`, que usa este fork como submódulo |
+| Correcciones: emparejamiento USB en `setup_device.py`, nombres de nodo y mimetismo del gripper en `open_multi_gripper.launch.py`, fixes de IK/teleop traídos de upstream | historial de git |
+
+### Inicio rápido
+
+```bash
+cd ~/pika_ros
+git submodule update --init --recursive
+source /opt/ros/humble/setup.bash
+colcon build --packages-select data_msgs && source install/setup.bash
+colcon build && source install/setup.bash
+```
+
+`pika_locator` y `libsurvive` (localización Vive) solo existen como binarios precompilados en `source/install.zip`: hay que extraerlo para que queden en `install/`, y nunca borrar `install/`. Las pautas de contribución y de sincronización con upstream están en [AGENTS.md](AGENTS.md).
