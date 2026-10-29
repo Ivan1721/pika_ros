@@ -2,7 +2,8 @@ import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
-from launch.substitutions import LaunchConfiguration, Command
+from launch.conditions import IfCondition
+from launch.substitutions import LaunchConfiguration, Command, PythonExpression
 from launch_ros.actions import Node
 from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
@@ -26,7 +27,10 @@ def generate_launch_description():
         DeclareLaunchArgument('motor_current_limit', default_value='1000.0'),
         DeclareLaunchArgument('motor_current_redundancy', default_value='500.0'),
         DeclareLaunchArgument('mit_mode', default_value='true'),
-        DeclareLaunchArgument('ctrl_rate', default_value='50.0')
+        DeclareLaunchArgument('ctrl_rate', default_value='50.0'),
+        # parte:=sensor (Sense + localizador) o parte:=gripper (Gripper con sus cámaras) para repartir el
+        # montaje entre dos computadores con los mismos topics que parte:=todo
+        DeclareLaunchArgument('parte', default_value='todo')
     ]
     camera_fps = LaunchConfiguration('camera_fps')
     camera_height = LaunchConfiguration('camera_height')
@@ -42,9 +46,13 @@ def generate_launch_description():
     motor_current_redundancy = LaunchConfiguration('motor_current_redundancy')
     mit_mode = LaunchConfiguration('mit_mode')
     ctrl_rate = LaunchConfiguration('ctrl_rate')
+    parte = LaunchConfiguration('parte')
+    con_sensor = IfCondition(PythonExpression(["'", parte, "' in ('todo', 'sensor')"]))
+    con_gripper = IfCondition(PythonExpression(["'", parte, "' in ('todo', 'gripper')"]))
 
     locator_launch = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource([os.path.join(get_package_share_directory('pika_locator'), 'launch', 'pika_single_locator.launch.py')])
+        PythonLaunchDescriptionSource([os.path.join(get_package_share_directory('pika_locator'), 'launch', 'pika_single_locator.launch.py')]),
+        condition=con_sensor
     )
 
 
@@ -56,7 +64,8 @@ def generate_launch_description():
                           'rgb_camera.color_profile': camera_profile, 
                           'depth_module.color_profile': camera_profile, 
                           'depth_module.depth_profile': camera_profile,
-                          'depth_module.infra_profile': camera_profile}.items()
+                          'depth_module.infra_profile': camera_profile}.items(),
+        condition=con_gripper
     )
 
     return LaunchDescription(declared_arguments+[
@@ -75,6 +84,7 @@ def generate_launch_description():
                 ('/camera_rgb/color/image_raw', '/gripper/camera_fisheye/color/image_raw'),
                 ('/camera_rgb/color/camera_info', '/gripper/camera_fisheye/color/camera_info')
             ],
+            condition=con_gripper,
             respawn=True,
             output='screen'
         ),
@@ -97,6 +107,7 @@ def generate_launch_description():
                 ('/localization_status', '/pika_localization_status'),
                 ('/arm_control_status', '/arm_control_status'),
             ],
+            condition=con_sensor,
             respawn=True,
             output='screen'
         ),
@@ -119,6 +130,7 @@ def generate_launch_description():
                 ('/joint_state_info', '/joint_states_single'),
                 ('/joint_state_gripper', '/joint_states_single_gripper'),
             ],
+            condition=con_gripper,
             respawn=True,
             output='screen'
         )
